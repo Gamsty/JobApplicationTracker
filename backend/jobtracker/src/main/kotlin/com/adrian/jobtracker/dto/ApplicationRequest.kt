@@ -1,5 +1,11 @@
 package com.adrian.jobtracker.dto
 
+import com.adrian.jobtracker.entity.ApplicationStatus
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Size
+import java.time.LocalDate
+
 data class ApplicationRequest (
     @field:NotBlank(message = "Company name is required")
     @field:Size(max = 255, message = "Company name must be less than 255 characters")

@@ -1,5 +1,11 @@
 package com.adrian.jobtracker.repository
 
+import com.adrian.jobtracker.entity.Application
+import com.adrian.jobtracker.entity.ApplicationStatus
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
+import java.time.LocalDate
+
 @Repository
 interface ApplicationRepository : JpaRepository<Application, Long> {
     

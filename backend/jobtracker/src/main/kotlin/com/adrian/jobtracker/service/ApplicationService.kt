@@ -3,6 +3,7 @@ package com.adrian.jobtracker.service
 import com.adrian.jobtracker.dto.ApplicationRequest
 import com.adrian.jobtracker.dto.ApplicationResponse
 import com.adrian.jobtracker.entity.ApplicationStatus
+import com.adrian.jobtracker.entity.Application
 import com.adrian.jobtracker.repository.ApplicationRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -10,11 +11,12 @@ import java.time.LocalDateTime
 
 @Service
 @Transactional
+// Service class for managing job applications
 class ApplicationService(
     private val repository: ApplicationRepository
 ) {
     // Get all applications
-    fun getAllApplications(): List<AppliocationResponse> {
+    fun getAllApplications(): List<ApplicationResponse> {
         return repository.findAllByOrderByApplicationDateDesc()
             .map { ApplicationResponse.fromEntity(it) }
     }

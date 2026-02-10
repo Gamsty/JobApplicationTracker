@@ -13,7 +13,7 @@ data class ApplicationResponse(
     val applicationDate: LocalDate,
     val status: ApplicationStatus,
     val jobPostingUrl: String?,
-    val notes: String?
+    val notes: String?,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 ) {
