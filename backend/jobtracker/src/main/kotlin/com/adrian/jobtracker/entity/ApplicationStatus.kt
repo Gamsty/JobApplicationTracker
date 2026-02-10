@@ -1,8 +1,9 @@
 package com.adrian.jobtracker.entity
 
+// Enum representing the status of a job application
 enum class ApplicationStatus {
     APPLIED,
-    INTERVIEW_SCHEDULED,
+    INTERVIEWING,
     OFFER_RECEIVED,
     REJECTED,
     WITHDRAWN,

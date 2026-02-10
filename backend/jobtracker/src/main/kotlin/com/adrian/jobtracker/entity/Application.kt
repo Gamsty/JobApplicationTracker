@@ -5,14 +5,17 @@ import java.time.LocalDateTime
 import jakarta.persistence.*
 
 @Entity
+// Database table configuration with indexes for performance optimization
 @Table(name = "applications", 
 indexes = [
     Index(name = "idx_company_name", columnList = "companyName"),
     Index(name = "idx_position_title", columnList = "positionTitle"),
     Index(name = "idx_status", columnList = "status"),
     Index(name = "idx_application_date", columnList = "applicationDate")
-]
+    ]
 )
+
+// Application entity representing a job application
 data class Application(
 
     @Id // Primary key annotation
@@ -32,7 +35,7 @@ data class Application(
     @Column(nullable = false, length = 30)
     var status: ApplicationStatus, // Application status
 
-    @Column(columnDefinition = "TEXT", length = 1000)
+    @Column(columnDefinition = "TEXT")
     var notes: String? = null, // Additional notes
 
     @Column(length = 500)

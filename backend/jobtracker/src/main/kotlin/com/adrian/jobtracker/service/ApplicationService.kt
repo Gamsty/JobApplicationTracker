@@ -17,21 +17,21 @@ class ApplicationService(
 ) {
     // Get all applications
     fun getAllApplications(): List<ApplicationResponse> {
-        return repository.findAllByOrderByApplicationDateDesc()
-            .map { ApplicationResponse.fromEntity(it) }
+        return repository.findAllByOrderByApplicationDateDesc() // Fetch all applications ordered by application date descending
+            .map { ApplicationResponse.fromEntity(it) } // Convert each application entity to a response DTO
     }
 
     // Get applications filtered by status
     fun getApplicationsByStatus(status: ApplicationStatus): List<ApplicationResponse> {
-        return repository.findByStatus(status)
-            .map { ApplicationResponse.fromEntity(it) }
+        return repository.findByStatus(status) // Fetch applications with the specified status
+            .map { ApplicationResponse.fromEntity(it) } // Convert each application entity to a response DTO
     }
 
     // Get single application by ID
     fun getApplicationById(id: Long): ApplicationResponse {
         val application = repository.findById(id)
             .orElseThrow { ApplicationNotFoundException("Application with ID $id not found") }
-        return ApplicationResponse.fromEntity(application)
+        return ApplicationResponse.fromEntity(application) // Convert the application entity to a response DTO
     }
 
     // Create a new application
@@ -45,7 +45,7 @@ class ApplicationService(
             notes = request.notes
         )
 
-        val savedApplication = repository.save(application)
+        val savedApplication = repository.save(application) // Save the new application to the database
         return ApplicationResponse.fromEntity(savedApplication)
     }
 
@@ -63,13 +63,13 @@ class ApplicationService(
         application.notes = request.notes
         application.updatedAt = LocalDateTime.now()
 
-        val updatedApplication = repository.save(application)
+        val updatedApplication = repository.save(application) // Save the updated application to the database
         return ApplicationResponse.fromEntity(updatedApplication)
     }
 
     // Delete an application by ID
     fun deleteApplication(id: Long) {
-        if (!repository.existsById(id)) {
+        if (!repository.existsById(id)) { // Check if application exists before deleting
             throw ApplicationNotFoundException("Application with ID $id not found")
         }
         repository.deleteById(id)
@@ -83,11 +83,14 @@ class ApplicationService(
 
     // Get statictics
     fun getStatistics(): Map<String, Any> {
+        // Get total applications and count by status
         val totalApplications = repository.count()
+        
+        // Count applications by each status using a map
         val statusCounts = ApplicationStatus.values().associate { status ->
             status.name to repository.countByStatus(status)
         }
-
+        // Return statistics as a map
         return mapOf(
             "totalApplications" to totalApplications,
             "statusCounts" to statusCounts
