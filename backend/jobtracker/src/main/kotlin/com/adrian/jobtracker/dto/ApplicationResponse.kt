@@ -12,7 +12,7 @@ data class ApplicationResponse(
     val positionTitle: String,
     val applicationDate: LocalDate,
     val status: ApplicationStatus,
-    val jobPostingUrl: String?,
+    val jobUrl: String?,
     val notes: String?,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
@@ -27,7 +27,7 @@ data class ApplicationResponse(
                 positionTitle = application.positionTitle,
                 applicationDate = application.applicationDate,
                 status = application.status,
-                jobPostingUrl = application.jobPostingUrl,
+                jobUrl = application.jobUrl,
                 notes = application.notes,
                 createdAt = application.createdAt,
                 updatedAt = application.updatedAt

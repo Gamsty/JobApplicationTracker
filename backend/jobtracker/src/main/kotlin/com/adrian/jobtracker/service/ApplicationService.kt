@@ -37,11 +37,11 @@ class ApplicationService(
     // Create a new application
     fun createApplication(request: ApplicationRequest): ApplicationResponse {
         val application = Application(
-            companyName = request.companyName,
-            positionTitle = request.positionTitle,
-            applicationDate = request.applicationDate,
-            status = request.status,
-            jobPostingUrl = request.jobPostingUrl,
+            companyName = request.companyName!!,
+            positionTitle = request.positionTitle!!,
+            applicationDate = request.applicationDate!!,
+            status = request.status!!,
+            jobUrl = request.jobUrl,
             notes = request.notes
         )
 
@@ -55,11 +55,11 @@ class ApplicationService(
             .orElseThrow { ApplicationNotFoundException("Application with ID $id not found") }
 
         // Update fields
-        application.companyName = request.companyName
-        application.positionTitle = request.positionTitle
-        application.applicationDate = request.applicationDate
-        application.status = request.status
-        application.jobPostingUrl = request.jobPostingUrl
+        application.companyName = request.companyName!!
+        application.positionTitle = request.positionTitle!!
+        application.applicationDate = request.applicationDate!!
+        application.status = request.status!!
+        application.jobUrl = request.jobUrl
         application.notes = request.notes
         application.updatedAt = LocalDateTime.now()
 
@@ -77,7 +77,7 @@ class ApplicationService(
 
     // Search applications by company name
     fun searchApplicationsByCompanyName(companyName: String): List<ApplicationResponse> {
-        return repository.findByCompanyNameIgnoreCase(companyName)
+        return repository.findByCompanyNameContainingIgnoreCase(companyName)
             .map { ApplicationResponse.fromEntity(it) }
     }
 

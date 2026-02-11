@@ -18,11 +18,11 @@ interface ApplicationRepository : JpaRepository<Application, Long> {
     // SELECT * FROM applications ORDER BY application_date DESC
 
     // Find applications by company name (case insensitive)
-    fun findByCompanyNameIgnoreCase(companyName: String): List<Application>
+    fun findByCompanyNameContainingIgnoreCase(companyName: String): List<Application>
     // SELECT * FROM applications WHERE LOWER(company_name) LIKE LOWER(?)
 
     // Find applications by position title (case insensitive)
-    fun findByPositionTitleIgnoreCase(positionTitle: String): List<Application>
+    fun findByPositionTitleContainingIgnoreCase(positionTitle: String): List<Application>
     // SELECT * FROM applications WHERE LOWER(position_title) LIKE LOWER(?)
 
     // Find applications between two application dates

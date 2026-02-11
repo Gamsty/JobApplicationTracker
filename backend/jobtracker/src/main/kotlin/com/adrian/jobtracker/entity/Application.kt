@@ -32,14 +32,14 @@ data class Application(
     var applicationDate: LocalDate, // Date of application
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, columnDefinition = "varchar(30)")
     var status: ApplicationStatus, // Application status
 
     @Column(columnDefinition = "TEXT")
     var notes: String? = null, // Additional notes
 
     @Column(length = 500)
-    var jobPostingUrl: String? = null, // URL of the job posting
+    var jobUrl: String? = null, // URL of the job posting
 
     @Column(nullable = false, updatable = false)
     val createdAt: LocalDateTime = LocalDateTime.now(), // Timestamp of creation
