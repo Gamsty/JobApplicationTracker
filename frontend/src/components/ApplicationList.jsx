@@ -5,7 +5,7 @@ import './ApplicationList.css';
 
 // Component to display the list of applications with filtering and sorting options
 function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
-    const [statusFilter, setStatusFilter] = useState('All'); // Local state to track selected status filter
+    const [statusFilter, setStatusFilter] = useState('ALL'); // Local state to track selected status filter
     const [sortOrder, setSortOrder] = useState('Newest'); // Local state to track selected sort order
 
     // Handle status filter change
@@ -21,8 +21,8 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
 
     // Sort applications based on selected sort order
     const sortedApplications = [...applications].sort((a, b) => {
-        const dateA = new Date(a.dateApplied);
-        const dateB = new Date(b.dateApplied);
+        const dateA = new Date(a.applicationDate);
+        const dateB = new Date(b.applicationDate);
         return sortOrder === 'Newest' ? dateB - dateA : dateA - dateB; // Sort by date applied
     });
 
@@ -36,7 +36,7 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
     };
 
     const getStatusBadgeColor = (status) => ({
-        backkgroundColor: STATUS_COLORS[status],
+        backgroundColor: STATUS_COLORS[status],
         color: 'white',
         padding: '4px 12px',
         borderRadius: '12px',
@@ -59,7 +59,7 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
                         <option value="ALL">All Statuses</option>
                         {Object.keys(APPLICATION_STATUS).map(status => (
                             <option key={status} value={status}>
-                                {STATUS_COLORS[status]}
+                                {APPLICATION_STATUS[status]}
                             </option>
                         ))}
                     </select>
@@ -116,10 +116,10 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
                                             )}
                                         </td>
                                         <td>{app.positionTitle}</td>
-                                        <td>{formatDate(app.dateApplied)}</td>
+                                        <td>{formatDate(app.applicationDate)}</td>
                                         <td>
                                             <span style={getStatusBadgeColor(app.status)}>
-                                                {STATUS_COLORS[app.status]}
+                                                {APPLICATION_STATUS[app.status]}
                                             </span>
                                         </td>
                                         <td className="notes-cell">
@@ -154,5 +154,8 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
                 </div>
             )}
         </div>
-    );  
+    );
 }
+
+// Export the ApplicationList component as the default export of this module
+export default ApplicationList;

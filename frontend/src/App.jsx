@@ -16,7 +16,6 @@ function App() {
   // Function to load applications with optional status filter
   const loadApplications = async (status = null) => {
     try {
-      setLoading(true); // Set loading state to true before fetching data
       const data = await applicationService.getApplications(status); // Fetch applications with optional status filter
       setApplications(data); // Update state with fetched applications
       setError(null); // Clear any previous errors on successful load
@@ -55,9 +54,10 @@ function App() {
   // Render loading spinner and message while data is being fetched
   if (loading) {
     return (
-      <div className='loading-container'> /* Container for loading state with spinner and message */
-        <div className='spinner'></div> /* CSS spinner for visual loading indication */
-        <p>Loading applications...</p> 
+      // Simple loading spinner and message to indicate that applications are being loaded
+      <div className='loading-container'>
+        <div className='spinner'></div>
+        <p>Loading applications...</p>
       </div>
     );
   }
@@ -65,7 +65,8 @@ function App() {
   // Render error message with retry button if there is an error 
   if (error) {
     return (
-      <div className='error-container'> /* Container for error state with message and retry button */
+      // Error container that displays the error message and provides a retry button to attempt loading applications again
+      <div className='error-container'>
         <h2>
           ⚠️ Error: {error} 
         </h2>
@@ -82,8 +83,7 @@ function App() {
         <h1>📋 Job Application Tracker</h1>
         <p>Manage and track your job applications</p>
       </header>
-
-      /* Header actions section with Add Application button (currently non-functional) */
+      
       <main className='app-main'>
         <div className='container'>
           <div className='header-actions'>
@@ -91,12 +91,11 @@ function App() {
               ➕ Add Application
             </button>
             </div>
-            /* ApplicationList component that displays the list of applications and handles edit, delete, and status filter actions */
-            <ApplicationList 
-              applications={applications} 
-              onEdit={handleEdit} 
-              onDelete={handleDelete}
-              onStatusFilter={handleStatusFilter}
+            <ApplicationList
+              applications={applications}  /* Pass the list of applications to the ApplicationList component for rendering */
+              onEdit={handleEdit} /* Pass the edit handler to the ApplicationList component to allow editing applications from the list */
+              onDelete={handleDelete} /* Pass the delete handler to the ApplicationList component to allow deleting applications from the list */
+              onStatusFilter={handleStatusFilter} /* Pass the status filter handler to the ApplicationList component to allow filtering applications by status */
             />
           </div>
         </main>
