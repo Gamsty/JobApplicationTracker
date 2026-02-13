@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const API_BASE_URL = 'http://localhost:8080/api/applications';
 
 // Create axios instance with default configuration
@@ -9,7 +11,8 @@ const api = axios.create({
 });
 
 // API functions
-export const getApplications = {
+export const applicationService = {
+
     // Get all applications with optional filters
     getApplications: async (status = null) => { // Optional status filter (e.g., "Applied", "Interviewing", "Offered", "Rejected")
         try {
