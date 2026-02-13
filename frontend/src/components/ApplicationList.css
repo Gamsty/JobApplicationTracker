@@ -1,0 +1,181 @@
+.applicaton-list {
+    margin-top: 20px;
+}
+
+.list-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-group label {
+    font-weight: bold;
+    color: #333;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: white;
+}
+
+.filter-select:hover {
+    border-color: lightblue;
+}
+
+.sort-button {
+    padding: 8px 16px;
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.sort-button:hover {
+    background-color: white;
+}
+
+.applications-count {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: gray; 
+}
+
+.table-container {
+    overflow-x: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.applications-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.applications-table td {
+    padding: 12px;
+    border-bottom: 1px solid white;
+}
+
+.applications-table tbody tr:hover {
+    background-color: white;
+}
+
+.company-cell {
+    min-width: 150px;
+}
+
+.company-cell strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.job-link {
+    font-size: 12px;
+    color: lightskyblue;
+    text-decoration: none;
+}
+
+.job-link:hover {
+    text-decoration: underline;
+}
+
+.notes-cell {
+    max-width: 200px;
+    font-size: 13px;
+    color: gray;
+}
+
+.no-notes {
+    color: lightslategray;
+    font-style: italic;
+}
+
+.actions-cell {
+    white-space: nowrap;
+}
+
+.edit-button, .delete-button {
+    padding: 6px 12px;
+    border: none;
+    margin-right: 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.edit-button {
+    background-color: lightskyblue;
+    color: white;
+}
+
+.edit-button:hover {
+    background-color: lightseagreen;
+}
+
+.delete-button {
+    background-color: red;
+    color: white;
+}
+
+.delete-button:hover {
+  background-color: red;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state p:first-child {
+    font-size: 18px;
+    color: gray;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.empty-state p:last-child {
+  color: lightslategray;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .list-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .applications-table {
+        font-size: 12px;
+    }
+
+    .applications-table th,
+    .applications-table td {
+        padding: 8px;
+    }
+
+    .notes-cell {
+        display: none; /* Hide notes on smaller screens for cleaner layout */
+    }
+}
