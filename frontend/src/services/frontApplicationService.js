@@ -16,8 +16,8 @@ export const applicationService = {
     // Get all applications with optional filters
     getApplications: async (status = null) => { // Optional status filter (e.g., "Applied", "Interviewing", "Offered", "Rejected")
         try {
-            const url = status ? `${API_BASE_URL}?status=${status}` : API_BASE_URL; // Append status query parameter if provided
-            const response = await api.get(url); // Make GET request to fetch applications
+            const params = status ? { status } : {}; // If status is provided, include it as a query parameter; otherwise, use an empty object
+            const response = await api.get('', { params }); // Make GET request to fetch applications with optional status filter
             return response.data;
         } catch (error) {
             console.error('Error fetching applications:', error);
