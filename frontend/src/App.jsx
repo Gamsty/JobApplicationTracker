@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { applicationService } from './services/frontApplicationService';
 import ApplicationList from './components/ApplicationList';
 import ApplicationForm from './components/ApplicationForm';
+import Toast from './components/ToastNotification'
 import './App.css';
 
 // Main application component that manages state and interactions for the job application tracker
@@ -11,10 +12,15 @@ function App() {
   const [error, setError] = useState(null); // State to track any errors during data fetching or operations
   const [showForm, setShowForm] = useState(false);
   const [editingApplication, setEditingApplication] = useState(null);
+  const [toast, setToast] = useState(null); // { message, type }
 
   useEffect(() => {
     loadApplications(); // Load applications when component mounts
   }, []);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  }
 
   // Function to load applications with optional status filter
   const loadApplications = async (status = null) => {
@@ -45,11 +51,10 @@ function App() {
       await applicationService.createApplication(FormData);
       await loadApplications(); // Reload list
       handleCloseForm();
-
-      // Show success message
-      alert('Application created successfully');
+      showToast('Application added successfully!', 'success')
     } catch (err) {
       console.error('Error creating application:', err);
+      showToast('Failed to create application', 'error')
       throw err; // Let form handle the error
     }
   };
@@ -65,11 +70,10 @@ function App() {
       await applicationService.updateApplication(editingApplication.id, formData);
       await loadApplications(); // Reload list
       handleCloseForm();
-
-      // Show success message
-      alert('Application updated successfully');
+      showToast('Application updated successfully', 'success')
     } catch (err) {
       console.error('Error updating application:', err);
+      showToast('Failed to update application', 'error')
       throw err;
     }
   };
@@ -81,9 +85,9 @@ function App() {
         await applicationService.deleteApplication(id); // Call delete API with application ID
         // Refresh the list after deletion
         await loadApplications();
-        alert('Application deleted successfully');
+        showToast('Application deleted successfully', 'sucess')
       } catch (err) {
-        alert('Failed to delete application');
+        showToast('Failed to delete application', 'error')
         console.error(err);
       }
     }
@@ -151,7 +155,16 @@ function App() {
             onCancel={handleCloseForm}
           />
         )}
-        </div>
+
+        {/* Render toast notification when a toast message exists, auto-dismissed via onClose clearing the toast state */}
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </div>
   );
 }
 
