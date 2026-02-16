@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {APPLICATION_STATUS, STATUS_COLORS} from "../utils/constants";
+import {APPLICATION_STATUS, STATUS_COLORS, STATUS_LABELS} from "../utils/constants";
 import './ApplicationList.css';
 
 
@@ -59,7 +59,7 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
                         <option value="ALL">All Statuses</option>
                         {Object.keys(APPLICATION_STATUS).map(status => (
                             <option key={status} value={status}>
-                                {APPLICATION_STATUS[status]}
+                                {STATUS_LABELS[status]}
                             </option>
                         ))}
                     </select>
@@ -119,7 +119,7 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
                                         <td>{formatDate(app.applicationDate)}</td>
                                         <td>
                                             <span style={getStatusBadgeColor(app.status)}>
-                                                {APPLICATION_STATUS[app.status]}
+                                                {STATUS_LABELS[app.status]}
                                             </span>
                                         </td>
                                         <td className="notes-cell">

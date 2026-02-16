@@ -1,10 +1,10 @@
 export const APPLICATION_STATUS = {
-    APPLIED: 'Applied',
-    INTERVIEWING: 'Interviewing',
-    OFFER_RECEIVED: 'Offered',
-    REJECTED: 'Rejected',
-    WITHDRAWN: 'Withdrawn',
-    HIRED: 'Hired'
+    APPLIED: 'APPLIED',
+    INTERVIEWING: 'INTERVIEWING',
+    OFFER_RECEIVED: 'OFFER RECEIVED',
+    REJECTED: 'REJECTED',
+    WITHDRAWN: 'WITHDRAWN',
+    HIRED: 'HIRED'
 };
 
 export const STATUS_COLORS = {
@@ -14,4 +14,13 @@ export const STATUS_COLORS = {
     REJECTED: 'red',
     WITHDRAWN: 'gray',
     HIRED: 'purple'
+};
+
+export const STATUS_LABELS = {
+  APPLIED: 'Applied',
+  INTERVIEWING: 'Interviewing',
+  OFFER_RECEIVED: 'Offer Received',
+  REJECTED: 'Rejected',
+  WITHDRAWN: 'Withdrawn',
+HIRED: 'Hired'
 };
