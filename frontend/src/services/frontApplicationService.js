@@ -39,7 +39,7 @@ export const applicationService = {
     // Create new application
     createApplication: async (applicationData) => {
         try {
-            const response = await api.post('/', applicationData); // Make POST request to create new application
+            const response = await api.post('', applicationData); // Make POST request to create new application
             return response.data;
         } catch (error) {
             console.error('Error creating application:', error);
