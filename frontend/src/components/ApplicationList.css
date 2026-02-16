@@ -8,9 +8,9 @@
     align-items: center;
     margin-bottom: 20px;
     padding: 15px;
-    background-color: white;
+    background-color: var(--bg-secondary);
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow);
 }
 
 .filter-group {
@@ -21,61 +21,64 @@
 
 .filter-group label {
     font-weight: bold;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .filter-select {
     padding: 8px 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
-    background-color: white;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
 }
 
 .filter-select:hover {
-    border-color: lightblue;
+    border-color: var(--accent-color);
 }
 
 .sort-button {
     padding: 8px 16px;
-    background-color: white;
-    border: 1px solid white;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.3s;
+    color: var(--text-primary);
 }
 
 .sort-button:hover {
-    background-color: white;
+    background-color: var(--bg-hover);
 }
 
 .applications-count {
     margin-bottom: 15px;
     font-size: 14px;
-    color: gray; 
+    color: var(--text-secondary);
 }
 
 .table-container {
     overflow-x: auto;
-    background-color: white;
+    background-color: var(--bg-secondary);
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow);
 }
 
 .applications-table {
     width: 100%;
     border-collapse: collapse;
+    color: var(--text-primary);
 }
 
 .applications-table td {
     padding: 12px;
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .applications-table tbody tr:hover {
-    background-color: white;
+    background-color: var(--bg-hover);
 }
 
 .company-cell {
@@ -89,7 +92,7 @@
 
 .job-link {
     font-size: 12px;
-    color: lightskyblue;
+    color: var(--accent-color);
     text-decoration: none;
 }
 
@@ -100,11 +103,11 @@
 .notes-cell {
     max-width: 200px;
     font-size: 13px;
-    color: gray;
+    color: var(--text-secondary);
 }
 
 .no-notes {
-    color: lightslategray;
+    color: var(--text-muted);
     font-style: italic;
 }
 
@@ -123,40 +126,40 @@
 }
 
 .edit-button {
-    background-color: lightskyblue;
+    background-color: var(--accent-color);
     color: white;
 }
 
 .edit-button:hover {
-    background-color: lightseagreen;
+    background-color: var(--accent-hover);
 }
 
 .delete-button {
-    background-color: red;
+    background-color: var(--error-color);
     color: white;
 }
 
 .delete-button:hover {
-  background-color: red;
+    opacity: 0.85;
 }
 
 .empty-state {
     text-align: center;
     padding: 60px 20px;
-    background-color: white;
+    background-color: var(--bg-secondary);
     border-radius: 8px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 2px 4px var(--shadow);
 }
 
 .empty-state p:first-child {
     font-size: 18px;
-    color: gray;
+    color: var(--text-secondary);
     margin-bottom: 10px;
     font-weight: bold;
 }
 
 .empty-state p:last-child {
-  color: lightslategray;
+  color: var(--text-muted);
 }
 
 /* Responsive adjustments */

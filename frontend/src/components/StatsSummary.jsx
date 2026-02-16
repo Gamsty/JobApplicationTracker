@@ -26,8 +26,8 @@ function StatsSummary() {
         return null;
     }
 
-    const statusEntries = Object.entries(stats.byStatus);
-    const total = stats.total;
+    const statusEntries = Object.entries(stats.statusCounts);
+    const total = stats.totalApplications;
 
     return (
         <div className="stats-summary">

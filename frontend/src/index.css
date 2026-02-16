@@ -10,5 +10,37 @@ body {
   sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+:root {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-hover: #f0f0f0;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --border-color: #dddddd;
+  --input-border: #e8e5e5;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --accent-color: #667eea;
+  --accent-hover: #5568d3;
+  --error-color: #f44336;
+}
+
+[data-theme='dark'] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-hover: #3a3a3a;
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-muted: #888888;
+  --border-color: #444444;
+  --input-border: #555555;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --accent-color: #7b93ff;
+  --accent-hover: #6a80e8;
+  --error-color: #ff6b6b;
 }

@@ -3,6 +3,7 @@ import { applicationService } from './services/frontApplicationService';
 import ApplicationList from './components/ApplicationList';
 import ApplicationForm from './components/ApplicationForm';
 import Toast from './components/ToastNotification'
+import StatsSummary from './components/StatsSummary';
 import './App.css';
 
 // Main application component that manages state and interactions for the job application tracker
@@ -13,10 +14,18 @@ function App() {
   const [showForm, setShowForm] = useState(false);
   const [editingApplication, setEditingApplication] = useState(null);
   const [toast, setToast] = useState(null); // { message, type }
+  // Initialize dark mode from localStorage, defaulting to light mode
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
 
   useEffect(() => {
     loadApplications(); // Load applications when component mounts
   }, []);
+
+  // Apply the data-theme attribute to <html> whenever darkMode changes, and persist in localStorage
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -85,7 +94,7 @@ function App() {
         await applicationService.deleteApplication(id); // Call delete API with application ID
         // Refresh the list after deletion
         await loadApplications();
-        showToast('Application deleted successfully', 'sucess')
+        showToast('Application deleted successfully', 'success')
       } catch (err) {
         showToast('Failed to delete application', 'error')
         console.error(err);
@@ -129,10 +138,15 @@ function App() {
       <header className='app-header'>
         <h1>📋 Job Application Tracker</h1>
         <p>Manage and track your job applications</p>
+        {/* Toggle button to switch between light and dark mode */}
+        <button className='theme-toggle' onClick={() => setDarkMode(prev => !prev)}>
+          {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+        </button>
       </header>
       
       <main className='app-main'>
         <div className='container'>
+          <StatsSummary key={applications.length}/>
           <div className='header-actions'>
             <button className='primary-button' onClick={handleOpenForm}>
               ➕ Add Application
