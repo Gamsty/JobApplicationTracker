@@ -13,7 +13,7 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
         companyName: '',
         positionTitle: '',
         applicationDate: '',
-        status: STATUS_LABELS.APPLIED,
+        status: 'APPLIED',
         jobUrl: '',
         notes: ''
     });
@@ -74,11 +74,9 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
         if (!formData.applicationDate) {
             newErrors.applicationDate = 'Application date is required';
         } else  {
-            const selectedDate = new Date(formData.applicationDate);
-            const today = new Date();
-            today.setHours(0,0,0,0); // Reset time to midnight for date-only comparison
+            const today = new Date().toISOString().split('T')[0]; // Get today as 'YYYY-MM-DD' string
 
-            if (selectedDate > today) {
+            if (formData.applicationDate > today) { // String comparison works correctly for YYYY-MM-DD format
                 newErrors.applicationDate = 'Application date cannot be in the future';
             }
         }
@@ -231,6 +229,7 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
                                 value={formData.status}
                                 onChange={handleChange}
                                 className={errors.status ? 'input-error': ''}
+                                disabled={!application} // Only allow status change when editing
                             >
                                 {/* Iterate over status enum keys and display human-readable labels */}
                                 {Object.keys(APPLICATION_STATUS).map(status => (
@@ -242,8 +241,8 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
                             {errors.status && (
                                 <span className='error-message'>{errors.status}</span>
                             )}
-                            </div>
                         </div>
+                    </div>
 
                         {/* Job URL - optional URL field with format validation */}
                         <div className='form-group'>
