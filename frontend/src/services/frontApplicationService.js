@@ -68,13 +68,15 @@ export const applicationService = {
         }
     },
 
-    // Search applications by company name or position
-    searchApplications: async (query) => {
+    // Search applications by company name (partial, case-insensitive match via backend)
+    // Calls GET /api/applications/search?company={company}
+    // The backend uses ContainingIgnoreCase so "goo" will match "Google"
+    searchApplications: async (company) => {
         try {
-            const response = await api.get(`/search?query=${query}`); // Make GET request to search applications with query parameter
+            const response = await api.get('/search', { params: { company } }); // Pass company as a query parameter
             return response.data;
         } catch (error) {
-            console.error(`Error searching applications with query "${query}":`, error);
+            console.error('Error searching applications:', error);
             throw error;
         }
     },

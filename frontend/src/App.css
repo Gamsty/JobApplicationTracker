@@ -1,8 +1,13 @@
+/* ========== App Root ========== */
+/* Full-height container that fills the viewport with the theme background color */
 .app {
     min-height: 100vh;
     background-color: var(--bg-primary);
 }
 
+/* ========== App Header ========== */
+/* Gradient banner at the top of every page — always uses white text on the colored background */
+/* Colors here are intentionally hardcoded (not themed) since the gradient provides its own contrast */
 .app-header {
     background: linear-gradient(135deg, var(--accent-color) 0%, #764ba2 100%);
     padding: 40px 20px;
@@ -21,13 +26,16 @@
     opacity: 0.9;
 }
 
+/* ========== Dark Mode Toggle ========== */
+/* Pill-shaped button in the header — semi-transparent white on the gradient background */
+/* Toggles between light and dark mode, persisted in localStorage */
 .theme-toggle {
     margin-top: 12px;
     padding: 8px 16px;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent to blend with the gradient */
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 20px;
+    border-radius: 20px; /* Pill shape */
     font-size: 14px;
     cursor: pointer;
     transition: all 0.3s;
@@ -37,15 +45,19 @@
     background-color: rgba(255, 255, 255, 0.3);
 }
 
+/* ========== Main Content Area ========== */
 .app-main {
     padding: 30px 20px;
 }
 
+/* Centered content container with a max-width for readability on wide screens */
 .container {
     max-width: 1200px;
     margin: 0 auto;
 }
 
+/* ========== Header Actions ========== */
+/* Row containing the "Add New Application" button above the application list */
 .header-actions {
     display: flex;
     justify-content: space-between;
@@ -53,6 +65,7 @@
     margin-bottom: 20px;
 }
 
+/* Primary action button — accent color with a hover lift effect */
 .primary-button {
     background-color: var(--accent-color);
     color: white;
@@ -69,9 +82,11 @@
 .primary-button:hover {
     background-color: var(--accent-hover);
     box-shadow: 0 4px 8px var(--shadow);
-    transform: translateY(-2px);
+    transform: translateY(-2px); /* Subtle lift on hover */
 }
 
+/* ========== Loading & Error States ========== */
+/* Centered full-page containers shown while data is loading or when an API error occurs */
 .loading-container, .error-container {
     display: flex;
     flex-direction: column;
@@ -81,9 +96,11 @@
     padding: 20px;
 }
 
+/* Spinning circle animation for the loading state */
+/* Uses a colored top border to create the spinning effect */
 .spinner {
-    border: 4px solid var(--border-color);
-    border-top: 4px solid var(--accent-color);
+    border: 4px solid var(--border-color); /* Light gray circle */
+    border-top: 4px solid var(--accent-color); /* Colored arc that spins */
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -96,6 +113,7 @@
     100% { transform: rotate(360deg); }
 }
 
+/* Error state heading and retry button */
 .error-container h2 {
     color: var(--error-color);
     margin-bottom: 10px;
@@ -115,6 +133,9 @@
     background-color: var(--accent-hover);
 }
 
+/* ========== Navigation Links ========== */
+/* Horizontal nav bar in the header — links to Applications (/) and Dashboard (/dashboard) */
+/* Uses white text and semi-transparent hover to blend with the gradient header */
 .nav-links {
     margin-top: 20px;
     display: flex;
@@ -123,7 +144,7 @@
 }
 
 .nav-links a {
-    color: white;
+    color: white; /* White text on gradient background — intentionally not themed */
     text-decoration: none;
     padding: 8px 16px;
     border-radius: 4px;
@@ -131,10 +152,11 @@
 }
 
 .nav-links a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white highlight */
 }
 
-/* Responsive design for smaller screens */
+/* ========== Responsive Design ========== */
+/* On mobile: smaller header text, tighter container padding */
 @media (max-width: 768px) {
     .app-header h1 {
         font-size: 24px;
