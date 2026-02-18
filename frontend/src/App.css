@@ -115,6 +115,25 @@
     background-color: var(--accent-hover);
 }
 
+.nav-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
 /* Responsive design for smaller screens */
 @media (max-width: 768px) {
     .app-header h1 {

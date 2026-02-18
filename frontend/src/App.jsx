@@ -1,9 +1,11 @@
+import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom'
 import { useEffect, useState } from 'react';
 import { applicationService } from './services/frontApplicationService';
 import ApplicationList from './components/ApplicationList';
 import ApplicationForm from './components/ApplicationForm';
 import Toast from './components/ToastNotification'
 import StatsSummary from './components/StatsSummary';
+import Dashboard from './pages/Dashboard';
 import './App.css';
 
 // Main application component that manages state and interactions for the job application tracker
@@ -34,6 +36,7 @@ function App() {
   // Function to load applications with optional status filter
   const loadApplications = async (status = null) => {
     try {
+      setLoading(true);
       const data = await applicationService.getApplications(status); // Fetch applications with optional status filter
       setApplications(data); // Update state with fetched applications
       setError(null); // Clear any previous errors on successful load
@@ -107,57 +110,58 @@ function App() {
     loadApplications(status); // Load applications with the selected status filter
   };
 
-  // Render loading spinner and message while data is being fetched
-  if (loading) {
-    return (
-      // Simple loading spinner and message to indicate that applications are being loaded
-      <div className='loading-container'>
-        <div className='spinner'></div>
-        <p>Loading applications...</p>
-      </div>
-    );
-  }
-
-  // Render error message with retry button if there is an error 
-  if (error) {
-    return (
-      // Error container that displays the error message and provides a retry button to attempt loading applications again
-      <div className='error-container'>
-        <h2>
-          ⚠️ Error: {error} 
-        </h2>
-        <p>{error}</p>
-        <button onClick={() => loadApplications()}>Retry</button> 
-      </div>
-    );
-  }
-
-  // Render the main application interface with header, add button, and application list
   return (
-    <div className="app"> 
-      <header className='app-header'>
-        <h1>📋 Job Application Tracker</h1>
-        <p>Manage and track your job applications</p>
-        {/* Toggle button to switch between light and dark mode */}
-        <button className='theme-toggle' onClick={() => setDarkMode(prev => !prev)}>
-          {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-        </button>
-      </header>
-      
-      <main className='app-main'>
-        <div className='container'>
-          <StatsSummary key={applications.length}/>
-          <div className='header-actions'>
-            <button className='primary-button' onClick={handleOpenForm}>
-              ➕ Add Application
-            </button>
-            </div>
-            <ApplicationList
-              applications={applications}  /* Pass the list of applications to the ApplicationList component for rendering */
-              onEdit={handleEdit} /* Pass the edit handler to the ApplicationList component to allow editing applications from the list */
-              onDelete={handleDelete} /* Pass the delete handler to the ApplicationList component to allow deleting applications from the list */
-              onStatusFilter={handleStatusFilter} /* Pass the status filter handler to the ApplicationList component to allow filtering applications by status */
-            />
+    <Router>
+      <div className="app">
+        <header className="app-header">
+          <h1>📋 Job Application Tracker</h1>
+          <nav className="nav-links">
+            <Link to="/">Applications</Link>
+            <Link to="/dashboard">Dashboard</Link>
+          </nav>
+          {/* Toggle button to switch between light and dark mode */}
+          <button className='theme-toggle' onClick={() => setDarkMode(prev => !prev)}>
+            {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+          </button>
+        </header>
+
+        <main className="app-main">
+          <div className="container">
+            <Routes>
+              <Route path="/" element={
+                <>
+                  {loading ? (
+                    <div className="loading-container">
+                      <div className="spinner"></div>
+                      <p>Loading applications...</p>
+                    </div>
+                  ) : error ? (
+                    <div className="error-container">
+                      <h2>⚠️ Error</h2>
+                      <p>{error}</p>
+                      <button onClick={() => loadApplications()}>Retry</button>
+                    </div>
+                  ) : (
+                    <>
+                      <StatsSummary />
+                      <div className="header-actions">
+                        <button className="primary-button" onClick={handleOpenForm}>
+                          + Add New Application
+                        </button>
+                      </div>
+                      <ApplicationList
+                        applications={applications}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        onStatusFilter={handleStatusFilter}
+                      />
+                    </>
+                  )}
+                </>
+              } />
+
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
           </div>
         </main>
 
@@ -165,7 +169,7 @@ function App() {
         {showForm && (
           <ApplicationForm
             application={editingApplication}
-            onSubmit={editingApplication ? handleUpdateApplication: handleCreateApplication}
+            onSubmit={editingApplication ? handleUpdateApplication : handleCreateApplication}
             onCancel={handleCloseForm}
           />
         )}
@@ -179,6 +183,7 @@ function App() {
           />
         )}
       </div>
+    </Router>
   );
 }
 

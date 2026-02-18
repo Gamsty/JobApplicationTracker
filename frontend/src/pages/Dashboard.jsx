@@ -1,22 +1,25 @@
+// Dashboard page component that displays analytics, charts, and recent activity
+// Uses recharts library for pie chart (status distribution) and bar chart (applications over time)
 import { useEffect, useState } from "react";
 import { applicationService } from "../services/frontApplicationService";
-import { Piechart, Pie, Cell, Barchart, Bar, XAxis, YAxis, 
-        CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
-        PieChart} from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis,
+        CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
 import './Dashboard.css';
 
 function Dashboard() {
-    const [applications, setApplications] = useState();
-    const [stats, setStats] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [applications, setApplications] = useState(); // Full list of applications for charts and recent activity
+    const [stats, setStats] = useState(null); // Statistics object from backend (totalApplications, statusCounts)
+    const [loading, setLoading] = useState(true); // Loading state while fetching data
 
+    // Fetch both applications and statistics in parallel when component mounts
     useEffect(() => {
         loadData();
     }, []);
 
     const loadData = async () => {
         try {
+            // Fetch applications and statistics simultaneously for faster page load
             const [appsData, statsData] = await Promise.all([
                 applicationService.getApplications(),
                 applicationService.getStatistics()
@@ -30,27 +33,32 @@ function Dashboard() {
         }
     };
 
+    // Show loading indicator while data is being fetched
     if (loading) {
-        return 
+        return (
             <div className="loading">
                 Loading dashboard
             </div>
+        );
     }
 
-    // Prepare data for pie chart
-    const pieData = Object.entries(stats.byStatus).map(([status, count]) => ({
+    // Transform statusCounts into array format required by recharts PieChart
+    // Each entry gets a human-readable name, count value, and color from constants
+    const pieData = Object.entries(stats.statusCounts).map(([status, count]) => ({
         name: STATUS_LABELS[status],
         value: count,
         color: STATUS_COLORS[status]
     }));
 
-    // Calculate response rate (interview + (offers / total))
-    const totalApps = stats.total;
-    const interviews = stats.byStatus.INTERVIEWING || 0;
-    const offers = stats.byStatus.OFFER_RECEIVED || 0;
+    // Calculate key metrics from statistics data
+    const totalApps = stats.totalApplications;
+    const interviews = stats.statusCounts.INTERVIEWING || 0;
+    const offers = stats.statusCounts.OFFER_RECEIVED || 0;
+    // Response rate = percentage of applications that received an interview or offer
     const responseRate = totalApps > 0 ? ((interviews + offers) / totalApps * 100).toFixed(1) : 0;
 
-    // Calculate applications by month
+    // Group applications by month for the bar chart
+    // Uses reduce to count applications per month-year string (e.g., "Feb 2026")
     const applicationsByMonth = applications.reduce((acc, app) => {
         const date = new Date(app.applicationDate);
         const monthYear = date.toLocaleDateString('en-US', {year: 'numeric', month: 'short'});
@@ -58,11 +66,12 @@ function Dashboard() {
         return acc;
     }, {});
 
+    // Convert grouped data to array and sort chronologically for the bar chart
     const barData = Object.entries(applicationsByMonth)
     .map(([month, count]) => ({month, count}))
     .sort((a, b) => new Date(a.month) - new Date(b.month));
 
-    // Calculate average time to response (mock data for now)
+    // Placeholder value for average response time (not yet calculated from real data)
     const avgDaysToResponse = applications.length > 0 ? 7 : 0;
 
     return (
@@ -71,7 +80,7 @@ function Dashboard() {
                 Dashboard & Analytics
             </h2>
 
-            {/* Key Metrics */}
+            {/* Key Metrics - 4 cards showing total apps, response rate, offers, and avg response time */}
             <div className="metrics-grid">
                 <div className="metric-card">
                     <div className="metric-icon">📊</div>
@@ -88,8 +97,8 @@ function Dashboard() {
                 <div className="metric-card">
                     <div className="metric-icon">📈</div>
                     <div className="metric-content">
-                        <div className="metric-valuie">
-                            {responseRate}
+                        <div className="metric-value">
+                            {responseRate}%
                         </div>
                         <div className="metric-label">
                             Response Rate
@@ -100,7 +109,7 @@ function Dashboard() {
                 <div className="metric-card">
                     <div className="metric-icon">🎯</div>
                     <div className="metric-content">
-                        <div className="metric-valuie">
+                        <div className="metric-value">
                             {offers}
                         </div>
                         <div className="metric-label">
@@ -112,7 +121,7 @@ function Dashboard() {
                 <div className="metric-card">
                     <div className="metric-icon">⏱️</div>
                     <div className="metric-content">
-                        <div className="metric-valuie">
+                        <div className="metric-value">
                             {avgDaysToResponse} days
                         </div>
                         <div className="metric-label">
@@ -122,9 +131,9 @@ function Dashboard() {
                 </div>
             </div>
 
-            {/* Charts */}
+            {/* Charts Section - Pie chart for status breakdown, bar chart for timeline */}
             <div className="charts-grid">
-                {/* Status Distrubution Pie Chart */}
+                {/* Status Distribution Pie Chart - each slice colored by status */}
                 <div className="chart-card">
                     <h3>Applications by Status</h3>
                     <ResponsiveContainer width='100%' height={300}>
@@ -134,42 +143,44 @@ function Dashboard() {
                                 cx='50%'
                                 cy='50%'
                                 labelLine={false}
-                                label={({name, percent}) => '${name}: ${(percent * 100).toFixed(0)}%'}
+                                label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
                                 outerRadius={80}
                                 fill="#8884d8"
                                 dataKey='value'
                             >
-                                {pieData.map((entry, index) => {
-                                    <Cell key={'cell-${index}'} fill={entry.color} />
-                                })}
+                                {/* Apply a unique color to each pie slice based on status */}
+                                {pieData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
                             </Pie>
                             <Tooltip />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
 
-                {/* Applications Over Time Bar Chart */}
+                {/* Applications Over Time Bar Chart - grouped by month */}
                 <div className="chart-card">
                     <h3>Applications Over Time</h3>
                     <ResponsiveContainer width='100%' height={300}>
-                        <Barchart data={barData}>
+                        <BarChart data={barData}>
                             <CartesianGrid strokeDasharray='3 3' />
                             <XAxis dataKey='month' />
                             <YAxis />
                             <Tooltip />
                             <Legend />
                             <Bar dataKey='count' fill='#667eea' name='Applications' />
-                        </Barchart>
+                        </BarChart>
                     </ResponsiveContainer>
                 </div>
             </div>
 
-            {/* Recent Activity */}
+            {/* Recent Activity - shows the 5 most recent applications with status icons */}
             <div className="recent-activity">
                 <h3>Recent Applications</h3>
                 <div className="activity-list">
                     {applications.slice(0, 5).map(app => (
                         <div key={app.id} className="activity-item">
+                            {/* Colored circle with first letter of the status label */}
                             <div className="activity-icon" style={{ backgroundColor: STATUS_COLORS[app.status] }}>
                                 {STATUS_LABELS[app.status][0]}
                             </div>
@@ -181,6 +192,7 @@ function Dashboard() {
                                     {new Date(app.applicationDate).toLocaleDateString()}
                                 </div>
                             </div>
+                            {/* Status text colored to match the status icon */}
                             <div className="activity-status" style={{ color: STATUS_COLORS[app.status] }}>
                                 {STATUS_LABELS[app.status]}
                             </div>
