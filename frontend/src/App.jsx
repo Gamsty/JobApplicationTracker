@@ -45,9 +45,9 @@ function App() {
 
   // Fetch applications from the backend API, optionally filtered by status
   // Called on mount, after create/update/delete, and when status filter changes
-  const loadApplications = async (status = null) => {
+  const loadApplications = async (status = null, showSpinner = true) => {
     try {
-      setLoading(true);
+      if (showSpinner) setLoading(true);
       const data = await applicationService.getApplications(status);
       setApplications(data);
       setError(null); // Clear any previous errors on successful load
@@ -126,8 +126,9 @@ function App() {
   };
 
   // Re-fetch applications filtered by the selected status (null = show all)
+  // Uses showSpinner=false to avoid unmounting ApplicationList and losing dropdown state
   const handleStatusFilter = async (status) => {
-    loadApplications(status);
+    loadApplications(status, false);
   };
 
   // --- Render ---
