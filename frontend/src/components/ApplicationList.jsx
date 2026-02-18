@@ -1,40 +1,51 @@
+// Application list component that displays all applications in a table format
+// Provides status filtering (server-side via API) and date sorting (client-side)
+// Props:
+//   applications - array of application objects to display
+//   onEdit - callback to open the edit form with a selected application
+//   onDelete - callback to delete an application (receives id and companyName)
+//   onStatusFilter - callback to re-fetch applications filtered by status from the backend
 import { useState } from "react";
 import {APPLICATION_STATUS, STATUS_COLORS, STATUS_LABELS} from "../utils/constants";
 import './ApplicationList.css';
 
 
-// Component to display the list of applications with filtering and sorting options
 function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
-    const [statusFilter, setStatusFilter] = useState('ALL'); // Local state to track selected status filter
-    const [sortOrder, setSortOrder] = useState('Newest'); // Local state to track selected sort order
+    const [statusFilter, setStatusFilter] = useState('ALL'); // Tracks the selected filter dropdown value
+    const [sortOrder, setSortOrder] = useState('Newest'); // Tracks sort direction: 'Newest' (descending) or 'Oldest' (ascending)
 
-    // Handle status filter change
+    // Handle status filter dropdown change
+    // Updates local state and calls parent callback to re-fetch filtered data from the backend
     const handleStatusFilterChange = (e) => {
-        const newFilter = e.target.value; // Get selected filter value
-        setStatusFilter(newFilter); // Update local state for filter
-        onStatusFilter(newFilter === 'ALL' ? null: newFilter); // Pass null for "All" to remove filter
+        const newFilter = e.target.value;
+        setStatusFilter(newFilter);
+        onStatusFilter(newFilter === 'ALL' ? null: newFilter); // Pass null for "All" so backend returns all applications
     };
 
+    // Toggle sort order between newest-first and oldest-first
     const handleSortToggle = () => {
-        setSortOrder(prev => prev === 'Newest' ? 'Oldest' : 'Newest'); // Toggle sort order between Newest and Oldest
+        setSortOrder(prev => prev === 'Newest' ? 'Oldest' : 'Newest');
     };
 
-    // Sort applications based on selected sort order
+    // Create a sorted copy of applications array (does not mutate the original)
+    // Sorting is done client-side since all filtered results are already loaded
     const sortedApplications = [...applications].sort((a, b) => {
         const dateA = new Date(a.applicationDate);
         const dateB = new Date(b.applicationDate);
-        return sortOrder === 'Newest' ? dateB - dateA : dateA - dateB; // Sort by date applied
+        return sortOrder === 'Newest' ? dateB - dateA : dateA - dateB;
     });
 
+    // Format a date string (e.g., "2026-02-18") into a human-readable format (e.g., "Feb 18, 2026")
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
-        }); // Format date to a readable string
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
     };
 
+    // Generate inline styles for status badge pill — colored background based on status
     const getStatusBadgeColor = (status) => ({
         backgroundColor: STATUS_COLORS[status],
         color: 'white',
@@ -46,11 +57,12 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
 
     return (
         <div className="application-list">
-            {/* Filter and Sort Controls */}
+            {/* Controls bar — status filter dropdown and sort toggle button */}
             <div className="list-controls">
                 <div className="filter-group">
                     <label htmlFor="statusFilter">Filter by Status:</label>
-                    <select 
+                    {/* Dropdown populated from APPLICATION_STATUS constants with an "All" option */}
+                    <select
                         id="statusFilter"
                         value={statusFilter}
                         onChange={handleStatusFilterChange}
@@ -65,17 +77,18 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
                     </select>
                 </div>
 
+                {/* Sort button toggles between newest and oldest first, with arrow indicator */}
                 <button onClick={handleSortToggle} className="sort-button">
                     Sort by date: {sortOrder === 'Newest' ? '↓ Newest First' : '↑ Oldest First'}
                 </button>
             </div>
 
-            {/* Application Count */}
+            {/* Application count with pluralization (e.g., "1 application" vs "3 applications") */}
             <div className="applications-count">
                 Showing {sortedApplications.length} application{sortedApplications.length !== 1 ? 's' : ''}
             </div>
 
-            {/* Application Table */}
+            {/* Conditional rendering: empty state message or the applications table */}
             {sortedApplications.length === 0 ? (
                 <div className="empty-state">
                     <p>
@@ -101,15 +114,17 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
                         <tbody>
                             {sortedApplications.map(app => (
                                 <tr key={app.id}>
+                                    {/* Company cell — shows name and optional job posting link */}
                                     <td className="company-cell">
                                         <strong>{app.companyName}</strong>
+                                        {/* Only render job link if a URL was provided */}
                                         {app.jobUrl && (
-                                            <a 
+                                            <a
                                                 href={app.jobUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="job-link"
-                                                onClick={(e) => e.stopPropagation()}
+                                                onClick={(e) => e.stopPropagation()} // Prevent row click events from firing
                                             >
                                                 🔗 View Job
                                             </a>
@@ -117,22 +132,25 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
                                         </td>
                                         <td>{app.positionTitle}</td>
                                         <td>{formatDate(app.applicationDate)}</td>
+                                        {/* Status badge — colored pill with human-readable label */}
                                         <td>
                                             <span style={getStatusBadgeColor(app.status)}>
                                                 {STATUS_LABELS[app.status]}
                                             </span>
                                         </td>
+                                        {/* Notes cell — truncated to 50 chars with full text in tooltip */}
                                         <td className="notes-cell">
                                             {app.notes ? (
                                                 <span title={app.notes}>
-                                                    {app.notes.length > 50 
-                                                    ? `${app.notes.substring(0, 50)}...` 
+                                                    {app.notes.length > 50
+                                                    ? `${app.notes.substring(0, 50)}...`
                                                     : app.notes}
                                                 </span>
                                             ) : (
                                                 <span className="no-notes">No notes</span>
                                             )}
                                         </td>
+                                        {/* Action buttons — edit opens the form modal, delete shows confirmation dialog */}
                                         <td className="actions-cell">
                                             <button
                                                 onClick={() => onEdit(app)}
@@ -157,5 +175,4 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
     );
 }
 
-// Export the ApplicationList component as the default export of this module
 export default ApplicationList;

@@ -1,14 +1,20 @@
+// Modal form component for creating and editing job applications
+// Rendered as a full-screen overlay on top of the current page
+// Handles its own validation client-side before submitting to the parent component
+//
+// Props:
+//   application - existing application object when editing, null when creating new
+//   onSubmit - async callback that receives the prepared form data (handles POST or PUT)
+//   onCancel - callback to close the modal without saving
 import { useState, useEffect } from 'react';
 import { APPLICATION_STATUS, STATUS_LABELS } from '../utils/constants';
 import './ApplicationForm.css';
 
-// Modal form component for creating and editing job applications
-// Props:
-//   application - existing application object when editing, null when creating
-//   onSubmit - callback to handle form submission with the form data
-//   onCancel - callback to close the modal without saving
 function ApplicationForm({ application, onSubmit, onCancel}) {
-    // Form state initialized with empty defaults for new applications
+    // --- State ---
+
+    // Form fields initialized with empty defaults for creating new applications
+    // When editing, these get overwritten by the useEffect below
     const [formData, setFormData] = useState({
         companyName: '',
         positionTitle: '',
@@ -18,10 +24,13 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
         notes: ''
     });
 
-    const [errors, setErrors] = useState({}); // Tracks validation errors per field
-    const [isSubmitting, setIsSubmitting] = useState(false); // Prevents duplicate submissions while API call is in progress
+    const [errors, setErrors] = useState({}); // Map of field name -> error message string, empty object = no errors
+    const [isSubmitting, setIsSubmitting] = useState(false); // True while awaiting API response, disables all buttons
 
-    // If editing, populate form with existing application data when component mounts
+    // --- Side Effects ---
+
+    // When editing, populate form fields with the existing application's data
+    // jobUrl and notes use || '' because they can be null in the backend response
     useEffect(() => {
         if (application) {
             setFormData({
@@ -35,7 +44,10 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
         }
     }, [application]);
 
-    // Generic change handler for all form inputs using the input's name attribute to update the correct field
+    // --- Event Handlers ---
+
+    // Generic change handler shared by all form inputs
+    // Uses the input's name attribute as the key to update the correct formData field
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -52,7 +64,10 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
         }
     };
 
+    // --- Validation ---
+
     // Validates all form fields and returns true if the form is valid
+    // Validation rules mirror the backend constraints in ApplicationRequest.kt
     const validateForm = () => {
         const newErrors = {};
 
@@ -91,10 +106,11 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
             newErrors.jobUrl = 'Job URL must be less than 500 characters';
         }
 
-        // Basic URL format validation using the URL constructor
+        // URL format validation using the built-in URL constructor
+        // Requires a protocol (e.g., https://) to be considered valid
         if (formData.jobUrl && formData.jobUrl.trim()) {
             try {
-                new URL(formData.jobUrl); // Throws if URL format is invalid
+                new URL(formData.jobUrl); // Throws TypeError if URL format is invalid
             } catch {
                 newErrors.jobUrl = 'Please enter a valid URL';
             }
@@ -104,7 +120,10 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
         return Object.keys(newErrors).length === 0; // Return true if no errors found
     };
 
-    // Handles form submission: validates, prepares data, and calls parent onSubmit callback
+    // --- Submission ---
+
+    // Handles form submission: validates fields, converts empty optionals to null, and calls parent callback
+    // The parent (App.jsx) determines whether this is a create (POST) or update (PUT) operation
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent default browser form submission
 
@@ -115,11 +134,12 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
         setIsSubmitting(true); // Disable buttons to prevent duplicate submissions
 
         try {
-            // Prepare data for API: convert empty optional strings to null for backend compatibility
+            // Prepare data for API: trim whitespace and convert empty optional strings to null
+            // The backend expects null (not "") for empty optional fields (jobUrl, notes)
             const submitData = {
                 ...formData,
-                jobUrl: formData.jobUrl.trim() || null,
-                notes: formData.notes.trim() || null
+                jobUrl: formData.jobUrl.trim() || null, // Empty string becomes null
+                notes: formData.notes.trim() || null    // Empty string becomes null
             };
 
             await onSubmit(submitData); // Call parent handler to make the API request (POST or PUT)
@@ -131,7 +151,8 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
         }
     };
 
-    // Resets all form fields to their default empty state and clears any validation errors
+    // Resets all form fields to their default empty state and clears all validation errors
+    // Note: resets to blank defaults even when editing (does not restore the original application data)
     const handleReset = () => {
         setFormData({
             companyName: '',
@@ -143,6 +164,8 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
         });
         setErrors({});
     };
+
+    // --- Render ---
 
     return (
         // Dark semi-transparent overlay that covers the entire screen behind the modal
@@ -158,6 +181,7 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
                         className='close-button' onClick={onCancel}>x
                     </button>
                 </div>
+                {/* Form element — onSubmit triggers validation then API call */}
                 <form onSubmit={handleSubmit} className='application-form'>
                     {/* Company Name - required text field */}
                     <div className='form-group'>
@@ -281,7 +305,7 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
                             </span>
                         </div>
 
-                        {/* Form action buttons: Cancel, Reset, and Submit */}
+                        {/* Form action buttons — all disabled while submitting to prevent duplicate requests */}
                         <div className='form-actions'>
                             {/* Cancel button closes the modal without saving */}
                             <button
@@ -301,7 +325,7 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
                             >
                                 Reset
                             </button>
-                            {/* Submit button shows "Saving..." while API call is in progress */}
+                            {/* Submit button — label changes based on mode (create vs edit) and loading state */}
                             <button
                                 type='submit'
                                 className='submit-button'
