@@ -1,3 +1,6 @@
+/* ========== Toast Notification ========== */
+/* Fixed-position notification bar that appears in the bottom-right corner of the screen */
+/* Slides in from below with an animation, auto-dismisses after 3 seconds */
 .toast {
     position: fixed;
     bottom: 20px;
@@ -5,14 +8,15 @@
     padding: 16px 20px;
     border-radius: 8px;
     box-shadow: 0 4px 12px var(--shadow);
-    display: flex;
+    display: flex; /* Icon, message, and close button laid out horizontally */
     align-items: center;
     gap: 12px;
     min-width: 300px;
     animation: slideInUp 0.3s ease-out;
-    z-index: 2000;
+    z-index: 2000; /* Above the form modal overlay (z-index: 1000) */
 }
 
+/* Entrance animation — slides up from below the viewport with a fade-in */
 @keyframes slideInUp {
     from {
         transform: translateY(100px);
@@ -24,30 +28,41 @@
     }
 }
 
+/* ========== Toast Type Colors ========== */
+/* Each type has a distinct semantic color — these stay hardcoded (not themed) */
+/* because the toast always uses white text on a colored background */
+
+/* Green — used for successful operations (create, update, delete) */
 .toast-success {
     background-color: #4caf50;
     color: white;
 }
 
+/* Red — used for failed operations or API errors */
 .toast-error {
     background-color: #f44336;
     color: white;
 }
 
+/* Blue — used for informational messages */
 .toast-info {
     background-color: #2196f3;
     color: white;
 }
 
+/* ========== Toast Content ========== */
+/* Icon on the left (checkmark, X, or info symbol depending on type) */
 .toast-icon {
     font-size: 20px;
     font-weight: bold;
 }
 
+/* Message text — flex: 1 makes it fill the remaining space between icon and close button */
 .toast-message {
     flex: 1;
 }
 
+/* Close (x) button on the right side of the toast */
 .toast-close {
     background: none;
     border: none;
@@ -64,6 +79,7 @@
     transition: background-color 0.2s;
 }
 
+/* Subtle dark overlay on hover for visual feedback */
 .toast-close:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }

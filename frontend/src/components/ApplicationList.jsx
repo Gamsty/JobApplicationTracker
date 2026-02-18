@@ -6,13 +6,14 @@
 //   onDelete - callback to delete an application (receives id and companyName)
 //   onStatusFilter - callback to re-fetch applications filtered by status from the backend
 import { useState } from "react";
-import {APPLICATION_STATUS, STATUS_COLORS, STATUS_LABELS} from "../utils/constants";
+import { APPLICATION_STATUS, STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
 import './ApplicationList.css';
 
 
 function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
     const [statusFilter, setStatusFilter] = useState('ALL'); // Tracks the selected filter dropdown value
     const [sortOrder, setSortOrder] = useState('Newest'); // Tracks sort direction: 'Newest' (descending) or 'Oldest' (ascending)
+    const [searchQuery, setSearchQuery] = useState(''); // Tracks the current search input text for client-side filtering
 
     // Handle status filter dropdown change
     // Updates local state and calls parent callback to re-fetch filtered data from the backend
@@ -55,8 +56,37 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
         fontWeight: 'bold',
     });
 
+    // Update search query state as the user types in the search input
+    const handleSearch = (e) => {
+        setSearchQuery(e.target.value);
+    }
+
+    // Client-side filter: narrows down the sorted list to only show applications
+    // where the company name or position title contains the search query (case-insensitive)
+    // This runs after sorting, so results maintain the selected sort order
+    const filteredApplications = sortedApplications.filter(app =>
+        app.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        app.positionTitle.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <div className="application-list">
+            {/* Search box — filters applications client-side by company name or position title */}
+            {/* The clear button (×) only appears when there is text in the search input */}
+            <div className="search-box">
+                <input
+                    type="text"
+                    placeholder="Search by company or position..."
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    className="search-input"
+                />
+                {/* Clear button resets search query, showing all applications again */}
+                {searchQuery && (
+                    <button onClick={() => setSearchQuery('')} className="clear-search">×</button>
+                )}
+            </div>
+
             {/* Controls bar — status filter dropdown and sort toggle button */}
             <div className="list-controls">
                 <div className="filter-group">
@@ -85,11 +115,11 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
 
             {/* Application count with pluralization (e.g., "1 application" vs "3 applications") */}
             <div className="applications-count">
-                Showing {sortedApplications.length} application{sortedApplications.length !== 1 ? 's' : ''}
+                Showing {filteredApplications.length} application{filteredApplications.length !== 1 ? 's' : ''}
             </div>
 
             {/* Conditional rendering: empty state message or the applications table */}
-            {sortedApplications.length === 0 ? (
+            {filteredApplications.length === 0 ? (
                 <div className="empty-state">
                     <p>
                         No applications found. Try adjusting your filters or add a new application.
@@ -112,7 +142,7 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {sortedApplications.map(app => (
+                            {filteredApplications.map(app => (
                                 <tr key={app.id}>
                                     {/* Company cell — shows name and optional job posting link */}
                                     <td className="company-cell">
