@@ -136,15 +136,15 @@ function Dashboard() {
                 {/* Status Distribution Pie Chart - each slice colored by status */}
                 <div className="chart-card">
                     <h3>Applications by Status</h3>
-                    <ResponsiveContainer width='100%' height={300}>
+                    <ResponsiveContainer width='100%' height={350}>
                         <PieChart>
                             <Pie
                                 data={pieData}
                                 cx='50%'
                                 cy='50%'
-                                labelLine={false}
-                                label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                                outerRadius={80}
+                                labelLine={true}
+                                label={({name, percent}) => percent > 0 ? `${name}: ${(percent * 100).toFixed(0)}%` : ''}
+                                outerRadius={90}
                                 fill="#8884d8"
                                 dataKey='value'
                             >
@@ -154,6 +154,7 @@ function Dashboard() {
                                 ))}
                             </Pie>
                             <Tooltip />
+                            <Legend />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
