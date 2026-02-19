@@ -1,6 +1,6 @@
 # Job Application Tracker
 
-A full-stack web application for tracking job applications throughout the hiring process. Built with a Spring Boot REST API backend and PostgreSQL database.
+A full-stack web application for tracking job applications throughout the hiring process. Built with a Spring Boot REST API backend, PostgreSQL database, and a React frontend.
 
 ## Tech Stack
 
@@ -13,7 +13,35 @@ A full-stack web application for tracking job applications throughout the hiring
 - **Build Tool:** Gradle
 
 ### Frontend
-- Planned
+- **Framework:** React 19 (Vite)
+- **Routing:** React Router DOM 7
+- **HTTP Client:** Axios
+- **Charts:** Recharts
+- **Styling:** Plain CSS with CSS variables (light/dark theme)
+
+## Features
+
+### Applications Page
+- View all job applications in a sortable table
+- Add new applications via a modal form
+- Edit existing applications (pre-filled modal)
+- Delete applications with a confirmation dialog
+- Filter applications by status (All, Applied, Interviewing, etc.)
+- Search applications by company name or position title (client-side, instant)
+- Stats summary bar showing total count and counts per status
+
+### Dashboard Page
+- Pie chart showing application distribution by status
+- Bar chart showing applications over time
+- Key metrics: total applications, active pipeline, success rate, interviews
+- Recent applications list
+
+### General
+- Dark mode toggle (persisted to `localStorage`)
+- Toast notifications for create / update / delete actions
+- Offline detection banner when network is lost
+- Error boundary fallback UI for unexpected crashes
+- Fully responsive layout
 
 ## Project Structure
 
@@ -22,15 +50,40 @@ JobApplicationTracker/
 ├── backend/
 │   └── jobtracker/
 │       └── src/main/kotlin/com/adrian/jobtracker/
-│           ├── controller/       # REST API endpoints
-│           ├── dto/              # Request/Response data transfer objects
-│           ├── entity/           # JPA entities and enums
-│           ├── exception/        # Global exception handling
-│           ├── repository/       # Database query interfaces
-│           ├── service/          # Business logic
-│           └── JobtrackerApplication.kt
-├── frontend/                     # (planned)
-└── docs/
+│           ├── config/
+│           │   └── WebConfig.kt             # CORS configuration
+│           ├── controller/
+│           │   └── ApplicationController.kt  # REST endpoints at /api/applications
+│           ├── dto/
+│           │   ├── ApplicationRequest.kt     # Validated input DTO
+│           │   └── ApplicationResponse.kt    # Output DTO with fromEntity()
+│           ├── entity/
+│           │   ├── Application.kt            # JPA entity
+│           │   └── ApplicationStatus.kt      # Enum (6 statuses)
+│           ├── exception/
+│           │   └── GlobalExceptionHandler.kt # 400/404/500 handling + ErrorResponse
+│           ├── repository/
+│           │   └── ApplicationRepository.kt  # JpaRepository + search queries
+│           ├── service/
+│           │   └── ApplicationService.kt     # Business logic + ApplicationNotFoundException
+│           └── JobtrackerApplication.kt      # Entry point
+└── frontend/
+    └── src/
+        ├── components/
+        │   ├── ApplicationForm.jsx     # Modal form for create/edit
+        │   ├── ApplicationList.jsx     # Table with sort, filter, search
+        │   ├── ErrorBoundary.jsx       # Catches React rendering errors
+        │   ├── NetworkStatus.jsx       # Offline detection banner
+        │   ├── StatsSummary.jsx        # Status count summary bar
+        │   └── ToastNotification.jsx   # Auto-dismissing toast alerts
+        ├── pages/
+        │   └── Dashboard.jsx           # Analytics page with charts
+        ├── services/
+        │   └── frontApplicationService.js  # Axios API calls
+        ├── utils/
+        │   └── constants.js            # Status labels and colors
+        ├── App.jsx                     # Root component, routing, global state
+        └── main.jsx                    # React entry point
 ```
 
 ## API Endpoints
@@ -87,8 +140,11 @@ The API returns structured error responses:
 - JDK 17+
 - PostgreSQL
 - Gradle
+- Node.js 18+ and npm (for the frontend)
 
 ## Setup
+
+### Backend
 
 1. **Create the PostgreSQL database:**
    ```sql
@@ -102,10 +158,27 @@ The API returns structured error responses:
    spring.datasource.password=your_password
    ```
 
-3. **Run the application:**
+3. **Run the backend:**
    ```bash
    cd backend/jobtracker
    ./gradlew bootRun
    ```
 
-4. The API will be available at `http://localhost:8080`
+   The API will be available at `http://localhost:8080`.
+
+### Frontend
+
+1. **Install dependencies:**
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+2. **Start the dev server:**
+   ```bash
+   npm run dev
+   ```
+
+   The app will be available at `http://localhost:5173`.
+
+> The frontend proxies API requests to `http://localhost:8080` via the Vite dev server config, so both must be running.
