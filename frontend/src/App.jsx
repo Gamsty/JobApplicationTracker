@@ -1,7 +1,7 @@
 // Root component of the Job Application Tracker
 // Handles routing (Applications page + Dashboard page), global state, dark mode, and CRUD operations
 import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom'
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { applicationService } from './services/frontApplicationService';
 import ApplicationList from './components/ApplicationList';
 import ApplicationForm from './components/ApplicationForm';
@@ -43,6 +43,11 @@ function App() {
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
   }
+
+  // Stable reference for closing the toast — wrapped in useCallback so the function reference
+  // doesn't change on every App re-render, which would cause Toast's useEffect to restart
+  // the 3-second auto-dismiss timer each time unrelated state (e.g. applications) updates
+  const handleToastClose = useCallback(() => setToast(null), []);
 
   // Fetch applications from the backend API, optionally filtered by status
   // Called on mount, after create/update/delete, and when status filter changes
@@ -206,12 +211,15 @@ function App() {
           />
         )}
 
+        {/* Offline detection banner — fixed at the top of the screen, renders nothing when online */}
+        <NetworkStatus />
+
         {/* Toast notification — auto-dismissed via onClose clearing the toast state */}
         {toast && (
           <Toast
             message={toast.message}
             type={toast.type}
-            onClose={() => setToast(null)}
+            onClose={handleToastClose}
           />
         )}
       </div>
