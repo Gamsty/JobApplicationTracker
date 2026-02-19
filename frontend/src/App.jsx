@@ -8,6 +8,7 @@ import ApplicationForm from './components/ApplicationForm';
 import Toast from './components/ToastNotification'
 import StatsSummary from './components/StatsSummary';
 import Dashboard from './pages/Dashboard';
+import NetworkStatus from './components/NetworkStatus';
 import './App.css';
 
 // Main application component that manages state and interactions for the job application tracker
