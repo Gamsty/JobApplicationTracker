@@ -1,0 +1,44 @@
+/* ========== Error Boundary Fallback ========== */
+/* Full-page centered error message shown when a React component crashes */
+/* Uses CSS variables so the error page adapts to dark mode */
+.error-boundary {
+    padding: 40px;
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Error heading with emoji */
+.error-boundary h1 {
+    font-size: 28px;
+    margin-bottom: 12px;
+}
+
+/* Descriptive message below the heading */
+.error-boundary p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+/* Refresh button — accent colored, matches the app's primary button style */
+.error-boundary-button {
+    padding: 10px 20px;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.error-boundary-button:hover {
+    background-color: var(--accent-hover);
+}

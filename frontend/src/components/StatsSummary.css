@@ -1,0 +1,70 @@
+/* ========== Stats Summary Grid ========== */
+/* Responsive grid of stat cards — auto-fits as many 200px+ cards per row as space allows */
+/* Displayed above the application list on the home page */
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* ========== Stat Card ========== */
+/* Individual card for each status count (e.g., "Applied: 5") */
+/* Left border provides a colored accent stripe */
+.stat-card {
+    background-color: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow);
+    border-left: 4px solid var(--accent-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+    color: var(--text-primary);
+}
+
+/* Lift effect on hover for interactive feel */
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+/* Special "Total Applications" card — gradient background to stand out from status cards */
+.stat-card.total {
+    border-left-color: var(--accent-color);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white; /* White text on gradient background */
+}
+
+/* ========== Card Content ========== */
+/* Large number displayed prominently (e.g., "12") */
+.stat-value {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+/* Status name label below the number (e.g., "Applied") */
+.stat-label {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 4px;
+}
+
+/* Percentage of total shown below the label (e.g., "25%") */
+.stat-percentage {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+/* Increase opacity of label and percentage text on the gradient "total" card for readability */
+.stat-card.total .stat-label,
+.stat-card.total .stat-percentage {
+    opacity: 0.9;
+}
+
+/* ========== Responsive Design ========== */
+/* On mobile: 2 cards per row instead of auto-fit */
+@media (max-width: 768px) {
+    .stats-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+}

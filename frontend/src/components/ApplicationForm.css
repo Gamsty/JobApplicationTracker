@@ -1,0 +1,258 @@
+/* ========== Modal Overlay ========== */
+/* Full-screen semi-transparent backdrop that covers the page behind the form modal */
+/* Uses flexbox to center the form container both horizontally and vertically */
+.form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark semi-transparent overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensures the modal sits above all other content */
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* ========== Form Container ========== */
+/* The white card that holds the form content, with a slide-in animation on mount */
+.form-container {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px var(--shadow);
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh; /* Prevents the form from being taller than 90% of the viewport */
+    overflow-y: auto; /* Scrolls internally if content exceeds max-height */
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Entrance animation — slides down from above with a fade-in effect */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========== Form Header ========== */
+/* Top section of the modal with the title ("Add New Application" / "Edit Application") and close button */
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: var(--text-primary);
+}
+
+/* Close (x) button in the top-right corner of the modal header */
+.close-button {
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: var(--text-secondary);
+    padding: 0;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.close-button:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* ========== Form Layout ========== */
+/* Inner padding for the form content area below the header */
+.application-form {
+    padding: 24px;
+}
+
+/* Each form field group (label + input + error message) */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Side-by-side layout for date and status fields using CSS Grid */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal-width columns */
+    gap: 16px;
+}
+
+/* ========== Form Labels ========== */
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+/* Red asterisk (*) next to required field labels */
+.required {
+    color: var(--error-color);
+}
+
+/* ========== Form Inputs ========== */
+/* Shared styles for all input types (text, date, select, textarea) */
+/* Uses CSS variables for theming so inputs adapt to dark mode */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* Focus state — accent-colored border with a subtle glow ring */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Textarea-specific: allow vertical resizing with a minimum height */
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ========== Validation Error States ========== */
+/* Red border on inputs that failed validation — uses !important to override default border */
+.input-error {
+    border-color: var(--error-color) !important;
+}
+
+/* Red glow ring on focused error inputs */
+.input-error:focus {
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1) !important;
+}
+
+/* Error message text displayed below invalid inputs */
+.error-message {
+    display: block;
+    margin-top: 6px;
+    color: var(--error-color);
+    font-size: 12px;
+}
+
+/* Character count displayed below the notes textarea (e.g., "42 characters") */
+.char-count {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+/* ========== Form Action Buttons ========== */
+/* Button row at the bottom of the form (Cancel, Reset, Submit) */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color); /* Visual separator above the buttons */
+}
+
+/* Shared base styles for all three action buttons */
+.cancel-button,
+.reset-button,
+.submit-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+/* Cancel button — neutral/muted style to de-emphasize */
+.cancel-button {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.cancel-button:hover {
+    background-color: var(--bg-hover);
+}
+
+/* Reset button — orange to indicate a cautionary action */
+.reset-button {
+    background-color: #ff9800;
+    color: white;
+}
+
+.reset-button:hover {
+    background-color: #f57c00;
+}
+
+/* Submit button — accent color for the primary action */
+.submit-button {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.submit-button:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Disabled state for all buttons — faded appearance with no-click cursor */
+/* Applied when the form is submitting (isSubmitting = true) */
+.submit-button:disabled,
+.cancel-button:disabled,
+.reset-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ========== Responsive Design ========== */
+/* On mobile: full-width form, single-column layout, stacked buttons */
+@media (max-width: 768px) {
+    .form-container {
+        max-width: 100%;
+        margin: 10px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr; /* Stack date and status fields vertically */
+    }
+
+    .form-actions {
+        flex-direction: column; /* Stack buttons vertically */
+    }
+
+    .cancel-button,
+    .reset-button,
+    .submit-button {
+        width: 100%; /* Full-width buttons on mobile */
+    }
+}

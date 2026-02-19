@@ -1,0 +1,164 @@
+/* ========== Dashboard Page ========== */
+.dashboard {
+    padding: 20px;
+}
+
+/* Page title — "Dashboard & Analytics" */
+.dashboard h2 {
+    margin-bottom: 30px;
+    color: var(--text-primary);
+}
+
+/* ========== Key Metrics Grid ========== */
+/* Responsive grid of 4 metric cards (Total Apps, Response Rate, Offers, Avg Response Time) */
+/* auto-fit with minmax ensures cards wrap to new rows on smaller screens */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+/* Individual metric card — icon on the left, value and label on the right */
+.metric-card {
+    background-color: var(--bg-secondary);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--shadow);
+    display: flex; /* Horizontal layout: icon | content */
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.2s;
+}
+
+/* Lift effect on hover */
+.metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+/* Large emoji icon on the left side of each metric card */
+.metric-icon {
+    font-size: 40px;
+}
+
+/* The numeric value displayed prominently (e.g., "12", "85.7%") */
+.metric-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--accent-color);
+    margin-bottom: 4px;
+}
+
+/* Description label below the value (e.g., "Total Applications") */
+.metric-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* ========== Charts Grid ========== */
+/* Side-by-side layout for the pie chart and bar chart */
+/* min 400px per chart ensures they stack on narrow screens */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+/* Card container for each chart (pie chart or bar chart) */
+.chart-card {
+    background-color: var(--bg-secondary);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+/* Chart title (e.g., "Applications by Status", "Applications Over Time") */
+.chart-card h3 {
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    font-size: 18px;
+}
+
+/* ========== Recent Activity Section ========== */
+/* Shows the 5 most recent applications with colored status icons */
+.recent-activity {
+    background-color: var(--bg-secondary);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+/* Section title — "Recent Applications" */
+.recent-activity h3 {
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    font-size: 18px;
+}
+
+/* Vertical list of activity items with spacing between them */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Each activity row — icon, content (company + date), and status label */
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.activity-item:hover {
+    background-color: var(--bg-hover);
+}
+
+/* Colored circle showing the first letter of the status (e.g., "A" for Applied) */
+/* Background color is set inline via style prop from STATUS_COLORS */
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Makes it a circle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white; /* White letter on colored background */
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* Middle section — takes up remaining space between icon and status */
+.activity-content {
+    flex: 1;
+}
+
+/* Company name and position title (e.g., "Google - Software Engineer") */
+.activity-title {
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+/* Application date shown below the title */
+.activity-date {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Status label on the right side — color set inline from STATUS_COLORS */
+.activity-status {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* ========== Responsive Design ========== */
+/* On mobile: stack charts vertically instead of side-by-side */
+@media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
