@@ -22,5 +22,5 @@ export const STATUS_LABELS = {
   OFFER_RECEIVED: 'Offer Received',
   REJECTED: 'Rejected',
   WITHDRAWN: 'Withdrawn',
-HIRED: 'Hired'
+  HIRED: 'Hired'
 };

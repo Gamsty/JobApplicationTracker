@@ -75,13 +75,16 @@ class ApplicationService(
         repository.deleteById(id)
     }
 
-    // Search applications by company name
+    // Search applications by company name (partial, case-insensitive)
+    // Returns an empty list immediately if the query is blank —
+    // ContainingIgnoreCase("") would otherwise match every record in the database
     fun searchApplicationsByCompanyName(companyName: String): List<ApplicationResponse> {
+        if (companyName.isBlank()) return emptyList()
         return repository.findByCompanyNameContainingIgnoreCase(companyName)
             .map { ApplicationResponse.fromEntity(it) }
     }
 
-    // Get statictics
+    // Get statistics
     fun getStatistics(): Map<String, Any> {
         // Get total applications and count by status
         val totalApplications = repository.count()
