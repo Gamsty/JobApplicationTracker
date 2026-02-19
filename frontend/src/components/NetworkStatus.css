@@ -1,0 +1,21 @@
+/* ========== Network Status Banner ========== */
+/* Fixed banner at the very top of the screen — sits above all other content including the modal overlay */
+/* Only rendered when the user is offline (component returns null when online) */
+.network-status {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0; /* Stretches the full width of the viewport */
+    padding: 12px;
+    text-align: center;
+    z-index: 9999; /* Higher than the modal overlay (1000) and toast notifications (2000) */
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Offline state — red background with white text to clearly signal a connectivity problem */
+/* Color is intentionally hardcoded (not themed) since red always signals an error regardless of theme */
+.network-status.offline {
+    background-color: #f44336;
+    color: white;
+}
