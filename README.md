@@ -203,8 +203,8 @@ The API returns structured error responses:
    | `DATABASE_USERNAME` | Your DB username |
    | `DATABASE_PASSWORD` | Your DB password |
    | `DDL_AUTO` | `update` |
-   | `ALLOWED_ORIGINS` | Your Vercel frontend URL (add after frontend is deployed) |
-5. Note your Render URL: `https://your-backend-name.onrender.com`
+   | `ALLOWED_ORIGINS` | http://localhost:5173 |
+5. Note your Render URL: `https://jobapplicationtracker-sto4.onrender.com`
 
 > **Free tier note:** Render spins down services after 15 minutes of inactivity. The first request after a period of inactivity may take ~30 seconds.
 
@@ -219,7 +219,7 @@ The API returns structured error responses:
 3. Add this environment variable in the Vercel dashboard:
    | Variable | Value |
    |----------|-------|
-   | `VITE_API_URL` | `https://your-backend-name.onrender.com/api/applications` |
+   | `VITE_API_URL` | `https://jobapplicationtracker-sto4.onrender.com/api/applications` |
 4. Deploy — Vercel will give you a URL like `https://job-tracker.vercel.app`
 5. Go back to Render and set `ALLOWED_ORIGINS` to your Vercel URL so CORS allows it
 
