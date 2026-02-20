@@ -203,7 +203,7 @@ The API returns structured error responses:
    | `DATABASE_USERNAME` | Your DB username |
    | `DATABASE_PASSWORD` | Your DB password |
    | `DDL_AUTO` | `update` |
-   | `ALLOWED_ORIGINS` | Your Vercel frontend URL (add after frontend is deployed) |
+   | `ALLOWED_ORIGINS` | http://localhost:5173 |
 5. Note your Render URL: `https://jobapplicationtracker-sto4.onrender.com`
 
 > **Free tier note:** Render spins down services after 15 minutes of inactivity. The first request after a period of inactivity may take ~30 seconds.
