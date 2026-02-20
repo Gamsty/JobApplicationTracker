@@ -5,24 +5,19 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-// Web configuration class to set up CORS for the application
+// Configures CORS so the frontend can call the backend API from a different origin
 @Configuration
 class WebConfig : WebMvcConfigurer {
 
-    // ALLOWED_ORIGINS env var can be a comma-separated list of URLs for production
-    // e.g. "https://job-tracker.vercel.app,https://job-tracker-preview.vercel.app"
-    // Falls back to localhost for local development
-    @Value("\${ALLOWED_ORIGINS:http://localhost:5173}")
-    private lateinit var allowedOrigins: String
-
+    // Allow cross-origin requests to all /api/** endpoints
     override fun addCorsMappings(registry: CorsRegistry) {
-        // Split the env var on commas to support multiple origins (local + production)
-        val origins = allowedOrigins.split(",").map { it.trim() }.toTypedArray()
-
         registry.addMapping("/api/**")
-            .allowedOrigins(*origins)
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            .allowedHeaders("*")
-            .allowCredentials(true)
+            .allowedOrigins(
+                "http://localhost:5173",                                    // Local dev frontend (Vite)
+                "https://job-application-tracker-ivory.vercel.app"         // Production frontend (Vercel)
+            )
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")     // OPTIONS is required for CORS preflight requests
+            .allowedHeaders("*")                                            // Allow all headers (e.g. Content-Type, Authorization)
+            .allowCredentials(true)                                         // Allow cookies/auth headers to be sent cross-origin
     }
 }
