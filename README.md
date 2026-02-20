@@ -17,11 +17,6 @@ A full-stack web application to manage and track job applications throughout the
 ### Add Application Form
 ![Add Application Form](docs/screenshots/create-form.png)
 
-### Mobile View
-![Mobile View](docs/screenshots/mobile-view.png)
-
-> To add screenshots: take them from the live app and save them as `docs/screenshots/list-view.png`, `dashboard.png`, `create-form.png`, and `mobile-view.png`.
-
 ---
 
 ## Features
