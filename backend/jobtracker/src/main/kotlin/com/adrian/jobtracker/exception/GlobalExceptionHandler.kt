@@ -3,6 +3,7 @@ package com.adrian.jobtracker.exception
 import com.adrian.jobtracker.service.ApplicationNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -23,6 +24,21 @@ class GlobalExceptionHandler {
             message = ex.message ?: "Application not found"
         )
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error)
+    }
+
+    // Handle malformed JSON or unrecognized field values (e.g. invalid enum) (400)
+    // Jackson throws HttpMessageNotReadableException when the request body cannot be parsed —
+    // this includes completely invalid JSON syntax and values that don't match the expected type
+    // (e.g. "status": "INVALID_STATUS" where status must be a valid ApplicationStatus enum value)
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleHttpMessageNotReadable(ex: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = "Bad Request",
+            message = "Invalid request body: ${ex.mostSpecificCause.message ?: "Could not parse request"}"
+        )
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
     }
 
     // Handle validation errors (400)
