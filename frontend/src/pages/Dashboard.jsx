@@ -8,9 +8,10 @@ import { STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
 import './Dashboard.css';
 
 function Dashboard() {
-    const [applications, setApplications] = useState(); // Full list of applications for charts and recent activity
+    const [applications, setApplications] = useState([]); // Full list of applications for charts and recent activity — default to [] so .reduce/.slice never crash
     const [stats, setStats] = useState(null); // Statistics object from backend (totalApplications, statusCounts)
     const [loading, setLoading] = useState(true); // Loading state while fetching data
+    const [error, setError] = useState(false); // True if either API call failed on mount
 
     // Fetch both applications and statistics in parallel when component mounts
     useEffect(() => {
@@ -28,6 +29,7 @@ function Dashboard() {
             setStats(statsData);
         } catch (err) {
             console.error('Error loading dashboard data:', err);
+            setError(true); // Signal that the data fetch failed so the error UI is shown
         } finally {
             setLoading(false);
         }
@@ -37,7 +39,18 @@ function Dashboard() {
     if (loading) {
         return (
             <div className="loading">
-                Loading dashboard
+                Loading dashboard...
+            </div>
+        );
+    }
+
+    // Show error state if either API call failed — avoids crashing on stats.statusCounts or applications.reduce
+    if (error || !stats) {
+        return (
+            <div className="error-container">
+                <h2>⚠️ Failed to load dashboard</h2>
+                <p>Could not fetch data from the server. Make sure the backend is running.</p>
+                <button onClick={loadData}>Retry</button>
             </div>
         );
     }
@@ -71,8 +84,9 @@ function Dashboard() {
     .map(([month, count]) => ({month, count}))
     .sort((a, b) => new Date(a.month) - new Date(b.month));
 
-    // Placeholder value for average response time (not yet calculated from real data)
-    const avgDaysToResponse = applications.length > 0 ? 7 : 0;
+    // Average response time is not yet tracked in the data model (no response date field exists)
+    // Shown as N/A until a responseDate field is added to the backend
+    const avgDaysToResponse = 'N/A';
 
     return (
         <div className="dashboard">
@@ -122,7 +136,7 @@ function Dashboard() {
                     <div className="metric-icon">⏱️</div>
                     <div className="metric-content">
                         <div className="metric-value">
-                            {avgDaysToResponse} days
+                            {avgDaysToResponse}
                         </div>
                         <div className="metric-label">
                             Avg. Time to Response

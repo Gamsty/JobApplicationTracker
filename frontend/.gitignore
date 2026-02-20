@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Environment files
+# .env.development and .env.production are committed (they hold non-secret defaults/placeholders)
+# .env.local and .env.*.local are NOT committed — use them for local secret overrides
+.env.local
+.env.*.local
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

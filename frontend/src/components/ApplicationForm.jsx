@@ -253,7 +253,6 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
                                 value={formData.status}
                                 onChange={handleChange}
                                 className={errors.status ? 'input-error': ''}
-                                disabled={!application} // Only allow status change when editing
                             >
                                 {/* Iterate over status enum keys and display human-readable labels */}
                                 {Object.keys(APPLICATION_STATUS).map(status => (
@@ -270,7 +269,7 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
 
                         {/* Job URL - optional URL field with format validation */}
                         <div className='form-group'>
-                            <label htmlFor='jobURL'>
+                            <label htmlFor='jobUrl'>
                                 Job Posting URL
                             </label>
                             <input
