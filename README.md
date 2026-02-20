@@ -138,7 +138,7 @@ JobApplicationTracker/
    CREATE DATABASE "jobTracker";
    ```
 
-3. **Create `src/main/resources/application-local.properties`** (this file is git-ignored — never commit it):
+3. **Create `src/main/resources/application-local.properties`**:
    ```properties
    spring.datasource.username=your_postgres_username
    spring.datasource.password=your_postgres_password
@@ -207,8 +207,6 @@ See [docs/API.md](docs/API.md) for full endpoint reference with request/response
    | `SPRING_PROFILES_ACTIVE` | `prod` |
 
 5. Note your service URL (e.g. `https://your-service.onrender.com`)
-
-> **Free tier note:** Render spins down services after 15 minutes of inactivity. The first request after a period of inactivity may take ~30–60 seconds to wake up.
 
 ### Production Database — Render PostgreSQL
 
