@@ -151,11 +151,14 @@ The API returns structured error responses:
    CREATE DATABASE "jobTracker";
    ```
 
-2. **Configure database credentials** in `backend/jobtracker/src/main/resources/application.properties`:
+2. **Set database credentials** via environment variables or by creating `application-local.properties` (this file is git-ignored):
    ```properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/jobTracker
    spring.datasource.username=your_username
    spring.datasource.password=your_password
+   ```
+   Activate it by adding `spring.profiles.active=local` to `application.properties`, or pass the variables directly:
+   ```bash
+   DATABASE_USERNAME=postgres DATABASE_PASSWORD=secret ./gradlew bootRun
    ```
 
 3. **Run the backend:**
@@ -181,4 +184,47 @@ The API returns structured error responses:
 
    The app will be available at `http://localhost:5173`.
 
-> The frontend proxies API requests to `http://localhost:8080` via the Vite dev server config, so both must be running.
+> Both backend and frontend must be running together. The frontend uses `VITE_API_URL` (set in `frontend/.env.development`) to reach the backend.
+
+## Deployment
+
+### Backend — Render.com
+
+1. Sign up at [render.com](https://render.com) and create a new **Web Service**
+2. Connect your GitHub repository, set the root directory to `backend/jobtracker`
+3. Configure the service:
+   - **Environment:** Java
+   - **Build Command:** `./gradlew clean build -x test`
+   - **Start Command:** `java -jar build/libs/jobtracker-0.0.1-SNAPSHOT.jar`
+4. Add these environment variables in the Render dashboard:
+   | Variable | Value |
+   |----------|-------|
+   | `DATABASE_URL` | PostgreSQL connection string from your DB provider |
+   | `DATABASE_USERNAME` | Your DB username |
+   | `DATABASE_PASSWORD` | Your DB password |
+   | `DDL_AUTO` | `update` |
+   | `ALLOWED_ORIGINS` | Your Vercel frontend URL (add after frontend is deployed) |
+5. Note your Render URL: `https://your-backend-name.onrender.com`
+
+> **Free tier note:** Render spins down services after 15 minutes of inactivity. The first request after a period of inactivity may take ~30 seconds.
+
+### Frontend — Vercel
+
+1. Sign up at [vercel.com](https://vercel.com) and create a new project
+2. Import your GitHub repository and configure:
+   - **Framework Preset:** Vite
+   - **Root Directory:** `frontend`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+3. Add this environment variable in the Vercel dashboard:
+   | Variable | Value |
+   |----------|-------|
+   | `VITE_API_URL` | `https://your-backend-name.onrender.com/api/applications` |
+4. Deploy — Vercel will give you a URL like `https://job-tracker.vercel.app`
+5. Go back to Render and set `ALLOWED_ORIGINS` to your Vercel URL so CORS allows it
+
+### Production Database — Render PostgreSQL (Free Tier)
+
+1. In Render, create a new **PostgreSQL** instance
+2. Copy the **Internal Database URL** and use it as the `DATABASE_URL` env var on your Web Service
+3. Hibernate will create the schema automatically on first boot (`DDL_AUTO=update`)
