@@ -39,8 +39,7 @@ class SecurityConfig(
     // how to load a user and verify their password during login.
     @Bean
     fun authenticationProvider(): DaoAuthenticationProvider {
-        val authProvider = DaoAuthenticationProvider()
-        authProvider.setUserDetailsService(userDetailsService)
+        val authProvider = DaoAuthenticationProvider(userDetailsService)
         authProvider.setPasswordEncoder(passwordEncoder())
         return authProvider
     }
@@ -66,9 +65,8 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/auth/**").permitAll()          // Login and register are public
-                    .requestMatchers("/api/applications/**").authenticated() // All application endpoints require login
-                    .anyRequest().authenticated()
+                    .requestMatchers("/api/auth/login", "/api/auth/register").permitAll() // Only login and register are public
+                    .anyRequest().authenticated()                                         // Everything else requires a valid JWT
             }
             .authenticationProvider(authenticationProvider())
             // Run the JWT filter before Spring's default username/password filter
