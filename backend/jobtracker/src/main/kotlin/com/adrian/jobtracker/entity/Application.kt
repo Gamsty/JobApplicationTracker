@@ -22,6 +22,11 @@ data class Application(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null, // Application ID. Nullable because auto generated
 
+    // User relationship
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    var user: User,
+
     @Column(nullable = false)
     var companyName: String, // Company name
 
