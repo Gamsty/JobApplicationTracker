@@ -1,6 +1,8 @@
 package com.adrian.jobtracker.exception
 
 import com.adrian.jobtracker.service.ApplicationNotFoundException
+import com.adrian.jobtracker.service.EmailAlreadyExistsException
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -67,6 +69,36 @@ class GlobalExceptionHandler {
             message = ex.message ?: "An unexpected error occurred"
         )
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error)
+    }
+
+    // Handle duplicate email during registration (409 Conflict).
+    // Thrown by AuthService when the submitted email is already associated with an account.
+    // Returns the exception's message so the frontend can display exactly which email is taken.
+    @ExceptionHandler(EmailAlreadyExistsException::class)
+    fun handleEmailExists(ex: EmailAlreadyExistsException): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.CONFLICT.value(),
+            error = "Email already exists",
+            message = ex.message ?: "Email is already registered"
+        )
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error)
+    }
+
+    // Handle invalid login credentials (401 Unauthorized).
+    // Spring Security throws BadCredentialsException automatically when the email doesn't exist
+    // or the password doesn't match — no manual credential check needed in the service layer.
+    // The message is intentionally vague ("Invalid email or password") to avoid leaking which
+    // field was wrong (a common security best practice).
+    @ExceptionHandler(BadCredentialsException::class)
+    fun handleBadCredentials(ex: Exception): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.UNAUTHORIZED.value(),
+            error = "Unauthorized",
+            message = "Invalid email or password"
+        )
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error)
     }
 }
 
