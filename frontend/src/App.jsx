@@ -1,7 +1,8 @@
 // Root component of the Job Application Tracker
 // Handles routing (Applications page + Dashboard page), global state, dark mode, and CRUD operations
-import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom'
-import { useCallback, useEffect, useState } from 'react';
+import { Routes, Route, Navigate, NavLink } from 'react-router-dom'
+import { useEffect, useState, useCallback } from 'react';
+import { useAuth } from './context/AuthContext';
 import { applicationService } from './services/frontApplicationService';
 import ApplicationList from './components/ApplicationList';
 import ApplicationForm from './components/ApplicationForm';
@@ -9,6 +10,9 @@ import Toast from './components/ToastNotification'
 import StatsSummary from './components/StatsSummary';
 import Dashboard from './pages/Dashboard';
 import NetworkStatus from './components/NetworkStatus';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 // Main application component that manages state and interactions for the job application tracker
@@ -22,13 +26,19 @@ function App() {
   const [toast, setToast] = useState(null); // Toast notification state: { message, type } or null when hidden
   // Initialize dark mode from localStorage, defaulting to light mode if no preference is saved
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
+  const { isAuthenticated, user, logout } = useAuth();
 
   // --- Side Effects ---
 
-  // Load applications from backend on initial mount
+  // Load applications when the user is authenticated.
+  // Re-runs when isAuthenticated changes (e.g. after login) so the list
+  // is always populated immediately after the user signs in.
+  // Guard prevents a wasted 401 API call while the user is logged out.
   useEffect(() => {
-    loadApplications();
-  }, []);
+    if (isAuthenticated) {
+      loadApplications();
+    }
+  }, [isAuthenticated]);
 
   // Sync dark mode preference to the DOM and localStorage whenever it changes
   // Sets data-theme attribute on <html> which CSS variables use to switch themes
@@ -82,9 +92,9 @@ function App() {
   // Submit handler for creating a new application via POST request
   // On success: reloads list, closes form, shows success toast
   // On failure: shows error toast and re-throws so the form can handle it
-  const handleCreateApplication = async (FormData) => {
+  const handleCreateApplication = async (formData) => {
     try {
-      await applicationService.createApplication(FormData);
+      await applicationService.createApplication(formData);
       await loadApplications(); // Reload list to include the new application
       handleCloseForm();
       showToast('Application added successfully!', 'success')
@@ -137,24 +147,59 @@ function App() {
     loadApplications(status, false);
   };
 
+  // Public routes (login/register)
+  if (!isAuthenticated) {
+    return (
+      <>
+        <NetworkStatus />
+        <Routes>
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
+          <Route path='*' element={<Navigate to='/login' replace />} />
+        </Routes>
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </>
+    );
+  }
+
   // --- Render ---
   // Router wraps the entire app to enable client-side navigation
   // The header with nav links and theme toggle is always visible on both routes
   return (
-    <Router>
+    <>
+      <NetworkStatus />
       <div className="app">
         {/* App header with title, navigation links, and dark mode toggle */}
         <header className="app-header">
-          <h1>📋 Job Application Tracker</h1>
-          {/* Navigation between the Applications list and Dashboard analytics page */}
-          <nav className="nav-links">
-            <Link to="/">Applications</Link>
-            <Link to="/dashboard">Dashboard</Link>
-          </nav>
-          {/* Toggle button to switch between light and dark mode */}
-          <button className='theme-toggle' onClick={() => setDarkMode(prev => !prev)}>
-            {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-          </button>
+          <div className='header-content'>
+            <div>
+              <h1>📋 Job Application Tracker</h1>
+              <p className='user-greeting'>Welcome back, {user?.fullName}!</p>
+            </div>
+
+            {/* Navigation links — NavLink automatically adds an "active" class
+                when its href matches the current URL, enabling active-link styling */}
+            <nav className='header-nav'>
+              <NavLink to='/' end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                Applications
+              </NavLink>
+              <NavLink to='/dashboard' className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                Dashboard
+              </NavLink>
+            </nav>
+
+            <button onClick={logout} className='logout-button'>Logout</button>
+            {/* Toggle button to switch between light and dark mode */}
+            <button className='theme-toggle' onClick={() => setDarkMode(prev => !prev)}>
+              {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+            </button>
+          </div>
         </header>
 
         <main className="app-main">
@@ -162,7 +207,7 @@ function App() {
             <Routes>
               {/* Home route — displays stats summary, add button, and application list */}
               <Route path="/" element={
-                <>
+                <ProtectedRoute>
                   {/* Conditional rendering: loading spinner → error message → main content */}
                   {loading ? (
                     <div className="loading-container">
@@ -192,11 +237,17 @@ function App() {
                       />
                     </>
                   )}
-                </>
+                </ProtectedRoute>
               } />
 
               {/* Dashboard route — analytics page with charts and metrics */}
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+
+              <Route path='*' element={<Navigate to="/" replace />} />
             </Routes>
           </div>
         </main>
@@ -211,9 +262,6 @@ function App() {
           />
         )}
 
-        {/* Offline detection banner — fixed at the top of the screen, renders nothing when online */}
-        <NetworkStatus />
-
         {/* Toast notification — auto-dismissed via onClose clearing the toast state */}
         {toast && (
           <Toast
@@ -223,7 +271,7 @@ function App() {
           />
         )}
       </div>
-    </Router>
+    </>
   );
 }
 

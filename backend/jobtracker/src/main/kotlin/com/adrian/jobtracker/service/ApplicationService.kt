@@ -18,10 +18,11 @@ class ApplicationService(
     private val userRepository: UserRepository,
     private val authService: AuthService
 ) {
-    // Gett current user from auth context
+    // Resolve the full User entity for the currently authenticated principal.
+    // Uses the ID from the JWT-backed UserDetailsImpl so the lookup always hits the primary-key index.
     private fun getCurrentUser() = userRepository.findById(authService.getCurrentUser().getId())
         .orElseThrow {
-            RuntimeException("User not found")
+            UnauthorizedAccessException("Authenticated user no longer exists in the database")
         }
 
     // Get all applications for current user
