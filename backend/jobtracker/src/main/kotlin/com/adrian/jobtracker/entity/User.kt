@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "users") // Maps to the "users" table in the database
-class User(
+data class User(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
