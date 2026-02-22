@@ -139,7 +139,9 @@ class ApplicationService(
     }
 }
 
-// Custom exception for not found entities
+// Thrown when a requested application ID does not exist in the database (mapped to 404)
 class ApplicationNotFoundException(message: String) : RuntimeException(message)
 
+// Thrown when the JWT principal cannot be resolved to a DB user, or when a user
+// attempts to access an application that belongs to a different account (mapped to 403)
 class UnauthorizedAccessException(message: String) : RuntimeException(message)

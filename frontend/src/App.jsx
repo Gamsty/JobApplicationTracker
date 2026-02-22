@@ -186,6 +186,8 @@ function App() {
             {/* Navigation links — NavLink automatically adds an "active" class
                 when its href matches the current URL, enabling active-link styling */}
             <nav className='header-nav'>
+              {/* "end" prevents this link from staying active on /dashboard —
+                  without it, "/" would match as a prefix of every route */}
               <NavLink to='/' end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
                 Applications
               </NavLink>
