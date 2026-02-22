@@ -12,6 +12,39 @@ const api = axios.create({
     },
 });
 
+// Request interceptor — runs before every outgoing API call.
+// Reads the JWT from localStorage and attaches it as a Bearer token in the
+// Authorization header so the backend can identify the logged-in user.
+// If no token is stored (e.g. user is not logged in), the header is simply omitted.
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Response interceptor — runs after every incoming API response.
+// If the backend returns 401 Unauthorized (token expired, invalid, or missing),
+// the stored token and user data are cleared from localStorage and the user is
+// redirected to the login page. All other errors are passed through unchanged.
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
+    }
+);
+
 // API functions
 export const applicationService = {
 

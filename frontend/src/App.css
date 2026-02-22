@@ -155,6 +155,72 @@
     background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white highlight */
 }
 
+/* Inline nav container sitting between the title block and the action buttons */
+.header-nav {
+    display: flex;
+    gap: 8px;
+}
+
+/* Individual nav link — ghost pill style to blend with the gradient header */
+.nav-link {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Solid white fill + accent text when the link matches the current URL */
+.nav-link.active {
+    background-color: white;
+    color: #667eea;
+}
+
+/* Inner flex row inside the header — constrains content to 1200px and spreads
+   the title/greeting block, logout button, and theme toggle across the full width */
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* "Welcome back, John!" subtitle beneath the page title.
+   Slightly faded (opacity 0.9) so it doesn't compete with the h1 */
+.user-greeting {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-top: 4px;
+}
+
+/* Ghost-style logout button — semi-transparent white fill keeps it visible
+   against the purple header gradient without being too prominent */
+.logout-button {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid white;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+/* On hover the button inverts: solid white fill with the accent purple text,
+   giving clear visual feedback that it is clickable */
+.logout-button:hover {
+    background-color: white;
+    color: #667eea;
+}
+
 /* ========== Responsive Design ========== */
 /* On mobile: smaller header text, tighter container padding */
 @media (max-width: 768px) {
