@@ -2,7 +2,6 @@ package com.adrian.jobtracker.security
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.userdetails.UserDetails
@@ -29,10 +28,10 @@ class JwtUtils(
     // Called after successful login to return a token to the client.
     fun generateToken(email: String): String {
         return Jwts.builder()
-            .setSubject(email)                                            // Identifies the user
-            .setIssuedAt(Date())                                          // Token creation time
-            .setExpiration(Date(System.currentTimeMillis() + jwtExpiration)) // Expiry time
-            .signWith(key, SignatureAlgorithm.HS256)                      // Sign with HMAC-SHA256
+            .subject(email)                                               // Identifies the user
+            .issuedAt(Date())                                             // Token creation time
+            .expiration(Date(System.currentTimeMillis() + jwtExpiration)) // Expiry time
+            .signWith(key)                                                // Sign with HMAC-SHA256 (algorithm inferred from key)
             .compact()
     }
 
@@ -58,10 +57,10 @@ class JwtUtils(
     // Parses and verifies the token signature, returning all embedded claims.
     // Throws an exception if the token is malformed, expired, or has an invalid signature.
     private fun getClaims(token: String): Claims {
-        return Jwts.parserBuilder()
-            .setSigningKey(key)
+        return Jwts.parser()
+            .verifyWith(key)
             .build()
-            .parseClaimsJws(token)
-            .body
+            .parseSignedClaims(token)
+            .payload
     }
 }

@@ -2,6 +2,7 @@ package com.adrian.jobtracker.exception
 
 import com.adrian.jobtracker.service.ApplicationNotFoundException
 import com.adrian.jobtracker.service.EmailAlreadyExistsException
+import com.adrian.jobtracker.service.UnauthorizedAccessException
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -99,6 +100,18 @@ class GlobalExceptionHandler {
             message = "Invalid email or password"
         )
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error)
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException::class)
+    fun handleUnauthorizedAccessException(ex: UnauthorizedAccessException): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.FORBIDDEN.value(),
+            error = "Forbidden",
+            message = ex.message ?: "Access denied"
+        )
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error)
     }
 }
 

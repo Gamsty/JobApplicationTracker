@@ -35,7 +35,7 @@ class AuthService(
         val user = User(
             email = request.email,
             fullName = request.fullName,
-            password = passwordEncoder.encode(request.password),
+            password = passwordEncoder.encode(request.password)!!,
             role = UserRole.USER
         )
 
@@ -72,15 +72,17 @@ class AuthService(
             id = userDetails.getId(),
             email = userDetails.username,
             fullName = userDetails.getFullName(),
-            role = userDetails.authorities.first().authority.removePrefix("ROLE_") // Strip prefix to return e.g. "USER" not "ROLE_USER"
+            role = userDetails.authorities.first().authority!!.removePrefix("ROLE_") // Strip prefix to return e.g. "USER" not "ROLE_USER"
         )
     }
 
     // Returns the currently authenticated user from the Spring Security context.
-    // Useful for endpoints that need to know who is making the request.
+    // Uses 'is' check instead of unsafe cast to avoid ClassCastException if called
+    // without a valid JWT (principal would be the String "anonymousUser" instead of UserDetailsImpl).
     fun getCurrentUser(): UserDetailsImpl {
-        val authentication = SecurityContextHolder.getContext().authentication
-        return authentication.principal as UserDetailsImpl
+        val principal = SecurityContextHolder.getContext().authentication?.principal
+        if (principal is UserDetailsImpl) return principal
+        throw UnauthorizedAccessException("Not authenticated")
     }
 }
 
