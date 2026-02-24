@@ -65,8 +65,15 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/auth/login", "/api/auth/register").permitAll() // Only login and register are public
-                    .anyRequest().authenticated()                                         // Everything else requires a valid JWT
+                    // Login and register are public — no JWT required
+                    .requestMatchers("/api/auth/**").permitAll()
+                    // All application and interview endpoints require a valid JWT.
+                    // Rules are listed explicitly so intent is clear; anyRequest() below
+                    // also catches them, but being explicit makes future changes safer.
+                    .requestMatchers("/api/applications/**").authenticated()
+                    .requestMatchers("/api/interviews/**").authenticated()
+                    // Catch-all: any endpoint not matched above also requires authentication
+                    .anyRequest().authenticated()
             }
             .authenticationProvider(authenticationProvider())
             // Run the JWT filter before Spring's default username/password filter
