@@ -2,6 +2,7 @@ package com.adrian.jobtracker.exception
 
 import com.adrian.jobtracker.service.ApplicationNotFoundException
 import com.adrian.jobtracker.service.EmailAlreadyExistsException
+import com.adrian.jobtracker.service.InterviewNotFoundException
 import com.adrian.jobtracker.service.UnauthorizedAccessException
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.http.HttpStatus
@@ -102,6 +103,9 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error)
     }
 
+    // Handle ownership violations and unauthenticated access (403 Forbidden).
+    // Thrown when a user tries to read/edit/delete an application or interview that
+    // belongs to a different account, or when no valid principal is in the security context.
     @ExceptionHandler(UnauthorizedAccessException::class)
     fun handleUnauthorizedAccessException(ex: UnauthorizedAccessException): ResponseEntity<ErrorResponse> {
         val error = ErrorResponse(
@@ -112,6 +116,20 @@ class GlobalExceptionHandler {
         )
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error)
+    }
+
+    // Handle missing interview records (404 Not Found).
+    // Thrown by InterviewService when the requested interview ID does not exist in the database.
+    @ExceptionHandler(InterviewNotFoundException::class)
+    fun handleInterviewNotFound(ex: InterviewNotFoundException): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.NOT_FOUND.value(),
+            error = "Not Found",
+            message = ex.message ?: "Interview not found"
+        )
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error)
     }
 }
 
