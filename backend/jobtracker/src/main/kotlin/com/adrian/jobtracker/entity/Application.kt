@@ -22,6 +22,12 @@ data class Application(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null, // Application ID. Nullable because auto generated
 
+    // Many applications belong to one user — stores the owner's ID as a foreign key (user_id).
+    // LAZY loading means the User is not fetched from the database unless explicitly accessed.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    var user: User,
+
     @Column(nullable = false)
     var companyName: String, // Company name
 

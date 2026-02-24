@@ -16,7 +16,8 @@ class WebConfig : WebMvcConfigurer {
                 "https://job-application-tracker-ivory.vercel.app"         // Production frontend (Vercel)
             )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")     // OPTIONS is required for CORS preflight requests
-            .allowedHeaders("*")                                            // Allow all headers (e.g. Content-Type, Authorization)
+            .allowedHeaders("*")        
+            .exposedHeaders("Authorization")                                    // Allow all headers (e.g. Content-Type, Authorization)
             .allowCredentials(true)                                         // Allow cookies/auth headers to be sent cross-origin
     }
 }
