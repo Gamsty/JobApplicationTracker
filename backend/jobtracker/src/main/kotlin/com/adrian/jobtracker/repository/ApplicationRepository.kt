@@ -2,6 +2,7 @@ package com.adrian.jobtracker.repository
 
 import com.adrian.jobtracker.entity.Application
 import com.adrian.jobtracker.entity.ApplicationStatus
+import com.adrian.jobtracker.entity.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
@@ -32,4 +33,28 @@ interface ApplicationRepository : JpaRepository<Application, Long> {
     // Count applications by status
     fun countByStatus(status: ApplicationStatus): Long
     // SELECT COUNT(*) FROM applications WHERE status = ?
+
+    // Find all applications for a specific user, ordered by application date descending
+    fun findByUserOrderByApplicationDateDesc(user: User): List<Application>
+    // SELECT * FROM applications WHERE user_id = ? ORDER BY application_date DESC
+
+    // Find applications for a specific user filtered by status
+    fun findByUserAndStatus(user: User, status: ApplicationStatus): List<Application>
+    // SELECT * FROM applications WHERE user_id = ? AND status = ?
+
+    // Search applications for a specific user by company name (case insensitive)
+    fun findByUserAndCompanyNameContainingIgnoreCase(user: User, companyName: String): List<Application>
+    // SELECT * FROM applications WHERE user_id = ? AND LOWER(company_name) LIKE LOWER(?)
+
+    // Find applications for a specific user within a date range
+    fun findByUserAndApplicationDateBetween(user: User, startDate: LocalDate, endDate: LocalDate): List<Application>
+    // SELECT * FROM applications WHERE user_id = ? AND application_date BETWEEN ? AND ?
+
+    // Count applications for a specific user filtered by status
+    fun countByUserAndStatus(user: User, status: ApplicationStatus): Long
+    // SELECT COUNT(*) FROM applications WHERE user_id = ? AND status = ?
+
+    // Count all applications belonging to a specific user
+    fun countByUser(user: User): Long
+    // SELECT COUNT(*) FROM applications WHERE user_id = ?
 }

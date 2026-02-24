@@ -1,0 +1,40 @@
+# Activates application-local.yml for local development (credentials, etc.)
+# Safe to commit — on Render/production this file simply doesn't exist and Spring ignores it
+# Override by setting SPRING_PROFILES_ACTIVE env var in production
+spring:
+  profiles:
+    active: local
+  application:
+    name: jobtracker
+  datasource:
+    # Database configuration — credentials must be set as environment variables in production
+    # For local development, set these in application-local.yml
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/jobTracker}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      # Auto-creates/updates schema on startup
+      ddl-auto: ${DDL_AUTO:update}
+    # show-sql and verbose logging are disabled in production to reduce noise
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        "[format_sql]": true
+    open-in-view: false
+
+# Server port — uses PORT env var on Render, falls back to 8080 for local dev
+server:
+  port: ${PORT:8080}
+
+# Logging — reduced to WARN in production, override locally if needed
+logging:
+  level:
+    "[org.hibernate]": ${LOG_LEVEL_HIBERNATE:WARN}
+    "[org.hibernate.type.descriptor.sql.BasicBinder]": ${LOG_LEVEL_BINDER:WARN}
+
+# JWT authentication
+jwt:
+  secret: ${JWT_SECRET:your-256-bit-secret-key-change-this-in-production-minimum-32-characters-required}
+  expiration: 86400000 # 24 hours in milliseconds
