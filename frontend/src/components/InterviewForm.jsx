@@ -5,7 +5,7 @@ import {
     INTERVIEW_FORMAT,
     INTERVIEW_FORMAT_LABELS
 } from '../utils/constants';
-import './InterviewForm.css';
+import './ApplicationForm.css';
 
 // Modal form used for both creating and editing an interview.
 // Props:
