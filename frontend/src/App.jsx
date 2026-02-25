@@ -6,6 +6,7 @@ import { useAuth } from './context/AuthContext';
 import { applicationService } from './services/frontApplicationService';
 import ApplicationList from './components/ApplicationList';
 import ApplicationForm from './components/ApplicationForm';
+import ApplicationDetails from './components/ApplicationDetails';
 import Toast from './components/ToastNotification'
 import StatsSummary from './components/StatsSummary';
 import Dashboard from './pages/Dashboard';
@@ -27,6 +28,7 @@ function App() {
   // Initialize dark mode from localStorage, defaulting to light mode if no preference is saved
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
   const { isAuthenticated, user, logout } = useAuth();
+  const [viewingApplication, setViewingApplication] = useState(null);
 
   // --- Side Effects ---
 
@@ -111,6 +113,10 @@ function App() {
     setShowForm(true);
   };
 
+  const handleViewDetails = (application) => {
+    setViewingApplication(application);
+  };
+
   // Submit handler for updating an existing application via PUT request
   // Uses editingApplication.id to identify which application to update
   const handleUpdateApplication = async (formData) => {
@@ -139,6 +145,10 @@ function App() {
         console.error(err);
       }
     }
+  };
+
+  const handleCloseDetails = () => {
+    setViewingApplication(null);
   };
 
   // Re-fetch applications filtered by the selected status (null = show all)
@@ -236,6 +246,7 @@ function App() {
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                         onStatusFilter={handleStatusFilter}
+                        onViewDetails={handleViewDetails}
                       />
                     </>
                   )}
@@ -261,6 +272,19 @@ function App() {
             application={editingApplication}
             onSubmit={editingApplication ? handleUpdateApplication : handleCreateApplication}
             onCancel={handleCloseForm}
+          />
+        )}
+
+        {/* ApplicationDetails modal — opens when a row's View button is clicked */}
+        {viewingApplication && (
+          <ApplicationDetails
+            application={viewingApplication}
+            onClose={handleCloseDetails}
+            onUpdate={(app) => {
+              handleEdit(app);
+              setViewingApplication(null);
+            }}
+            showToast={showToast}
           />
         )}
 
