@@ -1,0 +1,277 @@
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+
+/* Outer wrapper — pushes the list below whatever content sits above it */
+.interview-list-container {
+    margin-top: 30px;
+}
+
+/* Header row: section title on the left, "Add Interview" button on the right */
+.interview-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.interview-list-header h3 {
+    font-size: 20px;
+    color: #333;
+    margin: 0;
+}
+
+/* ── Add Interview button (shown when interviews already exist) ───────────── */
+
+.add-button-interview {
+    background-color: #667eea;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+/* Slight left nudge on hover gives a subtle interactive feel */
+.add-button-interview:hover {
+    background-color: #5568d3;
+    transform: translateX(-2px);
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+
+/* Dashed-border placeholder shown when no interviews have been added yet */
+.no-interviews {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 2px dashed #ddd;
+}
+
+.no-interviews p {
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* CTA button rendered inside the empty state */
+.add-button-first {
+    background-color: #667eea;
+    color: white;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.add-button-first:hover {
+    background-color: #5568d3;
+}
+
+/* ── Interview card list ─────────────────────────────────────────────────── */
+
+/* Vertical stack of interview cards with consistent spacing */
+.interviews-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Individual interview card — left border colour changes per status modifier below */
+.interview-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #667eea;
+    transition: all 0.3s;
+}
+
+/* Blue left border for interviews that haven't happened yet */
+.interview-card.upcoming {
+    border-left-color: #2196f3;
+}
+
+/* Grey left border + reduced opacity for interviews in the past */
+.interview-card.past {
+    border-left-color: #999;
+    opacity: 0.85;
+}
+
+/* Lift card slightly on hover to signal it's interactive */
+.interview-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Card header (round title + status badge) ───────────────────────────── */
+
+/* Puts the round name on the left and the status badge on the right */
+.interview-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+/* Inline group: emoji icon + round name */
+.interview-round {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.round-icon {
+    font-size: 20px;
+}
+
+.interview-round h4 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+/* Pill badge — background colour is set inline from INTERVIEW_STATUS_COLORS */
+.interview-status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+/* ── Card detail rows (date, interviewer, format, location) ─────────────── */
+
+/* Vertical stack of metadata rows */
+.interview-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+/* Each row: fixed-width icon + flexible text */
+.interview-details-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Fixed width keeps all detail text left-aligned regardless of icon size */
+.detail-icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.detail-text {
+    flex: 1;
+}
+
+/* Location can be a URL — styled as a branded link */
+.location-text a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.location-text a:hover {
+    text-decoration: underline;
+}
+
+/* ── Notes and feedback blocks ──────────────────────────────────────────── */
+
+/* Shared subtle background for notes and post-interview feedback */
+.interview-notes,
+.interview-feedback {
+    margin-top: 8px;
+    padding: 12px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #555;
+}
+
+.interview-notes strong,
+.interview-feedback strong {
+    color: #333;
+    display: flex;
+    margin-bottom: 4px;
+}
+
+/* Star rating display */
+.interview-rating {
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+/* ── Card action buttons ─────────────────────────────────────────────────── */
+
+/* Edit / Delete row separated from content by a top border */
+.interview-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+/* Shared base styles for both action buttons */
+.edit-button-interview,
+.delete-button-interview {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.edit-button-interview {
+    background-color: #2196F3;
+    color: white;
+}
+
+.edit-button-interview:hover {
+    background-color: #1976D2;
+}
+
+.delete-button-interview {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-button-interview:hover {
+    background-color: #d32f2f;
+}
+
+/* ── Loading / error states ─────────────────────────────────────────────── */
+
+.interview-loading,
+.interview-error {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+/* ── Responsive (≤ 768px) ───────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    /* Stack the header title and button vertically on small screens */
+    .interview-list-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    /* Stack the round name and status badge vertically on small screens */
+    .interview-card-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+}
