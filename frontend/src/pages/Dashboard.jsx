@@ -2,6 +2,7 @@
 // Uses recharts library for pie chart (status distribution) and bar chart (applications over time)
 import { useEffect, useState } from "react";
 import { applicationService } from "../services/frontApplicationService";
+import { interviewService } from "../services/interviewService";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis,
         CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
@@ -12,6 +13,7 @@ function Dashboard() {
     const [stats, setStats] = useState(null); // Statistics object from backend (totalApplications, statusCounts)
     const [loading, setLoading] = useState(true); // Loading state while fetching data
     const [error, setError] = useState(false); // True if either API call failed on mount
+    const [upcomingInterviews, setUpcomingInterviews] = useState([]);
 
     // Fetch both applications and statistics in parallel when component mounts
     useEffect(() => {
@@ -21,12 +23,14 @@ function Dashboard() {
     const loadData = async () => {
         try {
             // Fetch applications and statistics simultaneously for faster page load
-            const [appsData, statsData] = await Promise.all([
+            const [appsData, statsData, interviewsData] = await Promise.all([
                 applicationService.getApplications(),
-                applicationService.getStatistics()
+                applicationService.getStatistics(),
+                interviewService.getUpcomingInterviews()
             ]);
             setApplications(appsData);
             setStats(statsData);
+            setUpcomingInterviews(interviewsData);
         } catch (err) {
             console.error('Error loading dashboard data:', err);
             setError(true); // Signal that the data fetch failed so the error UI is shown
@@ -87,6 +91,26 @@ function Dashboard() {
     // Average response time is not yet tracked in the data model (no response date field exists)
     // Shown as N/A until a responseDate field is added to the backend
     const avgDaysToResponse = 'N/A';
+
+    const formatDateTime = (dateTimeString) => {
+        const date = new Date(dateTimeString);
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+    };
+
+    const daysUntil = (dateTimeString) => {
+        const now = new Date();
+        const target = new Date(dateTimeString);
+        const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+        if (diff === 0) return 'Today';
+        if (diff === 1) return 'Tomorrow';
+        return `In ${diff} days`;
+    };
 
     return (
         <div className="dashboard">
@@ -215,6 +239,44 @@ function Dashboard() {
                     ))}
                 </div>
             </div>
+
+            {/* Upcoming Interviews — only rendered when at least one scheduled interview exists */}
+            {upcomingInterviews.length > 0 && (
+                <div className="upcoming-interviews-section">
+                    <h3>Upcoming Interviews 📅</h3>
+                    <div className="upcoming-interviews-list">
+                        {/* Parentheses give an implicit return so each card is actually rendered */}
+                        {upcomingInterviews.map(interview => (
+                            <div key={interview.id} className="upcoming-interview-card">
+                                {/* "Today" / "Tomorrow" / "In N days" badge */}
+                                <div className="interview-badge">
+                                    {daysUntil(interview.scheduledDate)}
+                                </div>
+                                <div className="interview-info">
+                                    {/* Company name comes from the parent application */}
+                                    <div className="interview-company">
+                                        {interview.applicationCompany}
+                                    </div>
+                                    {/* Round label e.g. "Phone Screen", "Technical" */}
+                                    <div className="interview-round">
+                                        {interview.round}
+                                    </div>
+                                    {/* Formatted local date and time */}
+                                    <div className="interview-time">
+                                        {formatDateTime(interview.scheduledDate)}
+                                    </div>
+                                    {/* Location is optional — only shown if present */}
+                                    {interview.location && (
+                                        <div className="interview-location">
+                                            📍 {interview.location}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
