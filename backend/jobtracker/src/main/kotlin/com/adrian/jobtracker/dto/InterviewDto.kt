@@ -31,7 +31,7 @@ data class InterviewRequest(
     val interviewerName: String? = null, // Optional — name of the person conducting the interview
 
     @field:Size(max = 100, message = "Interviewer role must be less than 100 characters")
-    val interviewRole: String? = null, // Optional — job title of the interviewer
+    val interviewerRole: String? = null, // Optional — job title of the interviewer
 
     val format: InterviewFormat? = null, // Optional — IN_PERSON, VIDEO_CALL, PHONE_CALL, ASSESSMENT
 
@@ -59,7 +59,7 @@ data class InterviewResponse(
     val scheduledDate: LocalDateTime,
     val status: InterviewStatus,
     val interviewerName: String?,
-    val interviewRole: String?,
+    val interviewerRole: String?,
     val format: InterviewFormat?,
     val location: String?,
     val notes: String?,
@@ -82,7 +82,7 @@ data class InterviewResponse(
                 scheduledDate = interview.scheduledDate,
                 status = interview.status,
                 interviewerName = interview.interviewerName,
-                interviewRole = interview.interviewRole,
+                interviewerRole = interview.interviewerRole,
                 format = interview.format,
                 location = interview.location,
                 notes = interview.notes,
