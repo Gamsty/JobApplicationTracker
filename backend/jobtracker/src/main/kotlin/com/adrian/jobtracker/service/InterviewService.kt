@@ -75,7 +75,7 @@ class InterviewService(
             scheduledDate = request.scheduledDate,
             status = request.status,
             interviewerName = request.interviewerName,
-            interviewRole = request.interviewRole,
+            interviewerRole = request.interviewerRole,
             format = request.format,
             location = request.location,
             notes = request.notes,
@@ -104,7 +104,7 @@ class InterviewService(
         interview.scheduledDate = request.scheduledDate
         interview.status = request.status
         interview.interviewerName = request.interviewerName
-        interview.interviewRole = request.interviewRole
+        interview.interviewerRole = request.interviewerRole
         interview.format = request.format
         interview.location = request.location
         interview.notes = request.notes

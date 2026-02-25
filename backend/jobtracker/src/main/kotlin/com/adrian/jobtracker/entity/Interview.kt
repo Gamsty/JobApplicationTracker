@@ -33,7 +33,7 @@ data class Interview(
     var interviewerName: String? = null, // Name of the person conducting the interview
 
     @Column(length = 100)
-    var interviewRole: String? = null,
+    var interviewerRole: String? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
