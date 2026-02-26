@@ -1,7 +1,0 @@
-spring:
-  datasource:
-    username: postgres
-    password: 
-
-jwt:
-  secret: 
