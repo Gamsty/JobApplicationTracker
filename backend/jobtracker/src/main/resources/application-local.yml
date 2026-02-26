@@ -1,7 +1,7 @@
 spring:
   datasource:
     username: postgres
-    password: Risikoanalyse5
+    password: 
 
 jwt:
-  secret: WVCGpDdyyaX3vsAuASHJIPFFj7Hu1dUiky7QH9bnbrg=
+  secret: 
