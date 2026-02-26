@@ -1,7 +1,0 @@
-spring:
-  datasource:
-    username: postgres
-    password: Risikoanalyse5
-
-jwt:
-  secret: WVCGpDdyyaX3vsAuASHJIPFFj7Hu1dUiky7QH9bnbrg=
