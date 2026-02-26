@@ -56,7 +56,7 @@ function InterviewList({ applicationId, onEdit, onAdd }) {
     // Formats an ISO datetime string into a readable local date + time (e.g. "Mar 1, 2026, 10:00 AM")
     const formatDateTime = (dateTimeString) => {
         const date = new Date(dateTimeString);
-        return date.toLocaleDateString('en-us', {
+        return date.toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
             year: 'numeric',
