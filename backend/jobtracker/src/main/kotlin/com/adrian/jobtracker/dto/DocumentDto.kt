@@ -29,7 +29,7 @@ data class DocumentResponse(
     val applicationCompany: String,
     val documentType: DocumentType,
     val fileName: String,           // UUID-based server-side filename
-    val originalFilename: String,   // The name the user originally uploaded
+    val originalFileName: String,   // The name the user originally uploaded
     val fileType: String,           // MIME type (e.g. "application/pdf")
     val fileSize: Long,             // Raw size in bytes
     val fileSizeFormatted: String,  // Human-readable size (e.g. "1.23 MB")
@@ -46,7 +46,7 @@ data class DocumentResponse(
                 applicationCompany = document.application.companyName,  
                 documentType = document.documentType,                   
                 fileName = document.fileName,                           
-                originalFilename = document.originalFilename,           
+                originalFileName = document.originalFileName,           
                 fileType = document.fileType,                           
                 fileSize = document.fileSize,                           
                 fileSizeFormatted = formatFileSize(document.fileSize),  

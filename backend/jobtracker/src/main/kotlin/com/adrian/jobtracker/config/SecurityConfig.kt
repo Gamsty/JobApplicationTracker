@@ -72,6 +72,7 @@ class SecurityConfig(
                     // also catches them, but being explicit makes future changes safer.
                     .requestMatchers("/api/applications/**").authenticated()
                     .requestMatchers("/api/interviews/**").authenticated()
+                    .requestMatchers("/api/documents/**").authenticated()
                     // Catch-all: any endpoint not matched above also requires authentication
                     .anyRequest().authenticated()
             }
