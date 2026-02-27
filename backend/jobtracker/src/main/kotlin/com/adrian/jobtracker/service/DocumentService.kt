@@ -60,7 +60,7 @@ class DocumentService(
             application = application,
             documentType = request.documentType,        
             fileName = fileResult.fileName,
-            originalFilename = fileResult.originalFilename,
+            originalFileName = fileResult.originalFilename,
             filePath = fileResult.filePath,             
             fileType = fileResult.fileType,             
             fileSize = fileResult.fileSize,
@@ -120,7 +120,7 @@ class DocumentService(
         )
 
         // Return both the file resource and the original filename for the Content-Disposition header
-        return Pair(resource, document.originalFilename)
+        return Pair(resource, document.originalFileName)
     }
 
     // Deletes the physical file from disk first, then removes the DB record.

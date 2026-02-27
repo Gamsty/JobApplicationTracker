@@ -37,6 +37,11 @@ data class Document(
     @Column(nullable = false, length = 500)
     var filePath: String,
 
+    // MIME type of the file (e.g. "application/pdf") — stored so the download endpoint
+    // can set the correct Content-Type header without re-detecting it from the filename
+    @Column(nullable = false, length = 100)
+    var fileType: String,
+
     // File size in bytes — no length constraint needed for numeric columns
     @Column(nullable = false)
     var fileSize: Long,
