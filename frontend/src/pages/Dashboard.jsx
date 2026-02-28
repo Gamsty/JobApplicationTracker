@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { applicationService } from "../services/frontApplicationService";
 import { interviewService } from "../services/interviewService";
+import { documentService } from "../services/documentService";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis,
         CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
@@ -14,6 +15,7 @@ function Dashboard() {
     const [loading, setLoading] = useState(true); // Loading state while fetching data
     const [error, setError] = useState(false); // True if either API call failed on mount
     const [upcomingInterviews, setUpcomingInterviews] = useState([]);
+    const [documentSummary, setDocumentSummary] = useState(null);
 
     // Fetch both applications and statistics in parallel when component mounts
     useEffect(() => {
@@ -23,14 +25,16 @@ function Dashboard() {
     const loadData = async () => {
         try {
             // Fetch applications and statistics simultaneously for faster page load
-            const [appsData, statsData, interviewsData] = await Promise.all([
+            const [appsData, statsData, interviewsData, docSummary] = await Promise.all([
                 applicationService.getApplications(),
                 applicationService.getStatistics(),
-                interviewService.getUpcomingInterviews()
+                interviewService.getUpcomingInterviews(),
+                documentService.getDocumentSummary()
             ]);
             setApplications(appsData);
             setStats(statsData);
             setUpcomingInterviews(interviewsData);
+            setDocumentSummary(docSummary);
         } catch (err) {
             console.error('Error loading dashboard data:', err);
             setError(true); // Signal that the data fetch failed so the error UI is shown
@@ -167,6 +171,24 @@ function Dashboard() {
                         </div>
                     </div>
                 </div>
+
+                {/* Documents metric card — shows total file count and total storage used */}
+                <div className="metric-card">
+                    <div className="metric-icon">📎</div>
+                    <div className="metric-content">
+                        {/* Total number of documents uploaded across all applications */}
+                        <div className="metric-value">
+                            {documentSummary?.totalDocuments || 0}
+                        </div>
+                        <div className="metric-label">
+                            Documents
+                        </div>
+                        {/* Human-readable total storage (e.g. "1.2 MB used") — falls back to "0 B" */}
+                        <div className="metric-sublabel">
+                            {documentSummary?.totalStorageFormatted || '0 B'} used
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Charts Section - Pie chart for status breakdown, bar chart for timeline */}
@@ -239,6 +261,39 @@ function Dashboard() {
                     ))}
                 </div>
             </div>
+
+            {/* Recent Documents — only rendered when the summary exists and has at least one document */}
+            {documentSummary && documentSummary.recentDocuments.length > 0 && (
+                <div className="recent-documents-section">
+                    <h3>
+                        Recent Documents 📎
+                    </h3>
+                    <div className="recent-documents-list">
+                        {documentSummary.recentDocuments.map(doc => (
+                            <div
+                                key={doc.id}
+                                className="recent-document-item"
+                            >
+                                {/* Emoji icon chosen based on the file's MIME type */}
+                                <div className="doc-icon">
+                                    {doc.fileType.includes('pdf') ? '📕' :
+                                    doc.fileType.includes('word') ? '📘' : '📄'}
+                                </div>
+                                <div className="doc-info">
+                                    {/* Original file name as uploaded by the user */}
+                                    <div className="doc-filename">
+                                        {doc.originalFileName}
+                                    </div>
+                                    {/* Company the document belongs to and its formatted size */}
+                                    <div className="doc-meta">
+                                        {doc.applicationCompany} • {doc.fileSizeFormatted}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Upcoming Interviews — only rendered when at least one scheduled interview exists */}
             {upcomingInterviews.length > 0 && (
