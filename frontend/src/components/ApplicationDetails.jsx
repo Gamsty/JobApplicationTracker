@@ -1,9 +1,12 @@
 import { useState } from "react";
 import InterviewForm from "./InterviewForm";
 import InterviewList from "./Interviewlist";
+import DocumentList from "./DocumentList";
+import DocumentUploadForm from "./DocumentUploadForm";
 import { interviewService } from "../services/interviewService";
 import { STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
 import './ApplicationDetails.css';
+import { documentService } from "../services/documentService";
 
 // Modal panel that shows the full details of a single application and
 // hosts the InterviewList / InterviewForm sub-components.
@@ -19,6 +22,10 @@ function ApplicationDetails({ application, onClose, onUpdate, showToast }) {
     const [editingInterview, setEditingInterview] = useState(null);
     // Incrementing this key forces InterviewList to remount and re-fetch after a mutation
     const [refreshKey, setRefreshKey] = useState(0);
+    // Controls whether the DocumentUploadForm modal is visible
+    const [showDocumentUpload, setShowDocumentUpload] = useState(false);
+    // Incrementing this key forces DocumentList to remount and re-fetch after an upload or delete
+    const [documentRefreshKey, setDocumentRefreshKey] = useState(0);
 
     // Opens the form in "create" mode (no pre-filled interview)
     const handleAddInterview = () => {
@@ -76,6 +83,32 @@ function ApplicationDetails({ application, onClose, onUpdate, showToast }) {
             month: 'long',
             day: 'numeric'
         });
+    };
+
+    // Opens the DocumentUploadForm modal
+    const handleUploadDocument = () => {
+        setShowDocumentUpload(true);
+    };
+
+    // Closes the DocumentUploadForm modal
+    const handleCloseDocumentUpload = () => {
+        setShowDocumentUpload(false);
+    };
+
+    // Called by DocumentUploadForm on submission.
+    // Uploads the file, bumps documentRefreshKey to reload DocumentList, then closes the modal.
+    // Re-throws on error so DocumentUploadForm can keep its isSubmitting state accurate.
+    const handleDocumentUpload = async (file, documentType, description) => {
+        try {
+            await documentService.uploadDocument(file, application.id, documentType, description);
+            setDocumentRefreshKey(prev => prev + 1);
+            handleCloseDocumentUpload();
+            showToast('Document uploaded successfully!', 'success');
+        } catch (err) {
+            console.error('Error uploading document:', err);
+            showToast('Failed to upload document', 'error');
+            throw err;
+        }
     };
 
     return (
@@ -152,6 +185,15 @@ function ApplicationDetails({ application, onClose, onUpdate, showToast }) {
                                 onAdd={handleAddInterview}
                             />
                         </div>
+                        
+                        {/* Document section — documentRefreshKey forces a remount after upload/delete. */}
+                        <div className="details-section">
+                            <DocumentList
+                                key={documentRefreshKey}
+                                applicationId={application.id}
+                                onUpload={handleUploadDocument}
+                            />
+                        </div>
                     </div>
 
                     {/* Interview form modal — rendered on top of this panel when open.
@@ -162,6 +204,15 @@ function ApplicationDetails({ application, onClose, onUpdate, showToast }) {
                             applicationId={application.id}
                             onSubmit={editingInterview ? handleUpdateInterview : handleCreateInterview}
                             onCancel={handleCloseInterviewForm}
+                        />
+                    )}
+
+                    {/* Document Upload Form */ }
+                    {showDocumentUpload && (
+                        <DocumentUploadForm
+                            applicationId={application.id}
+                            onSubmit={handleDocumentUpload}
+                            onCancel={handleCloseDocumentUpload}
                         />
                     )}
                 </div>
