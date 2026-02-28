@@ -1,0 +1,226 @@
+/* Outer wrapper for the entire document section */
+.document-list-container {
+    margin-top: 30px;
+}
+
+/* Header row: title on the left, upload button on the right */
+.document-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.document-list-header h3 {
+    font-size: 20px;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* Orange upload button shown in the header when documents already exist */
+.upload-button-document {
+    background-color: #FCAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.upload-button-document:hover {
+    background-color: #e09940;
+    transform: translateY(-2px);
+}
+
+/* Empty-state container shown when no documents have been uploaded yet */
+.no-documents {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: var(--bg-primary);
+    border-radius: 8px;
+    border: 2px dashed var(--border-color);
+}
+
+/* Muted prompt text inside the empty state */
+.no-documents p {
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+/* Green call-to-action button shown only in the empty state */
+.upload-button-first {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Darker green on hover to match the base green button color */
+.upload-button-first:hover {
+    background-color: #45a049;
+}
+
+/* Responsive grid — each card is at least 300px wide */
+.documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+/* Individual document card */
+.document-card {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px var(--shadow);
+    display: flex;
+    gap: 12px;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+}
+
+/* Card lifts and gains an accent border on hover */
+.document-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+    border-color: var(--accent-color);
+}
+
+/* Large emoji icon representing the document category */
+.document-icon {
+    font-size: 40px;
+    flex-shrink: 0;
+}
+
+/* Text content section — fills remaining width, clips long names */
+.document-info {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Small blue pill showing the document type (e.g. RESUME, CERTIFICATE) */
+.document-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bolder;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+/* In dark mode use a deeper blue so the badge stays legible */
+[data-theme='dark'] .document-type-badge {
+    background-color: #1a3a5c;
+    color: #90caf9;
+}
+
+/* Original file name — wraps on long names to avoid overflow */
+.document-filename {
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    word-break: break-word;
+    font-size: 14px;
+}
+
+/* Row showing file size and upload date */
+.document-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+/* Bullet separator between metadata items */
+.seperator {
+    color: var(--border-color);
+}
+
+/* Optional description below the metadata row */
+.document-description {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    padding: 8px;
+    background-color: var(--bg-primary);
+    border-radius: 4px;
+    line-height: 1.4;
+}
+
+/* Vertical stack of action buttons on the right side of each card */
+.document-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* Shared style for the download and delete icon buttons */
+.download-button,
+.delete-button-doc {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Blue download button */
+.download-button {
+    background-color: #2196f3;
+}
+
+.download-button:hover {
+    background-color: #1967d2;
+    transform: scale(1.1);
+}
+
+/* Red delete button — uses the theme variable so it softens slightly in dark mode */
+.delete-button-doc {
+    background-color: var(--error-color);
+}
+
+.delete-button-doc:hover {
+    background-color: #d32f2f;
+    transform: scale(1.1);
+}
+
+/* Loading and error states — centered muted text */
+.documents-loading,
+.documents-error {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-secondary);
+}
+
+/* On small screens stack cards into a single column and wrap the header */
+@media (max-width: 768px) {
+    .documents-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .document-list-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+}
