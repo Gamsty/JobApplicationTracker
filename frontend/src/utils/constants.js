@@ -36,6 +36,7 @@ export const INTERVIEW_STATUS = {
     NO_SHOW: 'NO_SHOW'
 };
 
+// CSS colour names used to style interview status badges
 export const INTERVIEW_STATUS_COLORS = {
     SCHEDULED: 'blue', 
     COMPLETED: 'green',   
@@ -65,4 +66,34 @@ export const INTERVIEW_FORMAT_LABELS = {
     VIDEO_CALL: 'Video Call',
     PHONE_CALL: 'Phone Call',
     ASSESSMENT: 'Assessment'
+};
+
+export const DOCUMENT_TYPE = {
+    RESUME: 'RESUME',
+    COVER_LETTER: 'COVER_LETTER',
+    PORTFOLIO: 'PORTFOLIO',
+    CERTIFICATE: 'CERTIFICATE',
+    TRANSCRIPT: 'TRANSCRIPT',
+    REFERENCE: 'REFERENCE',
+    OTHER: 'OTHER'
+};
+
+export const DOCUMENT_TYPE_LABELS = {
+    RESUME: 'Resume',
+    COVER_LETTER: 'Cover Letter',
+    PORTFOLIO: 'Portfolio',
+    CERTIFICATE: 'Certificate',
+    TRANSCRIPT: 'Transcript',
+    REFERENCE: 'Reference',
+    OTHER: 'Other'
+};
+
+export const DOCUMENT_TYPE_ICONS = {
+    RESUME: '📄',
+    COVER_LETTER: '📝',
+    PORTFOLIO: '🎨',
+    CERTIFICATE: '🏆',
+    TRANSCRIPT: '📊',
+    REFERENCE: '✉️',
+    OTHER: '📎'
 };
