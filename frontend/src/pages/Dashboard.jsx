@@ -6,7 +6,7 @@ import { interviewService } from "../services/interviewService";
 import { documentService } from "../services/documentService";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis,
         CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
+import { STATUS_COLORS, STATUS_LABELS, getFileIcon } from "../utils/constants";
 import './Dashboard.css';
 
 function Dashboard() {
@@ -276,8 +276,7 @@ function Dashboard() {
                             >
                                 {/* Emoji icon chosen based on the file's MIME type */}
                                 <div className="doc-icon">
-                                    {doc.fileType.includes('pdf') ? '📕' :
-                                    doc.fileType.includes('word') ? '📘' : '📄'}
+                                    {getFileIcon(doc.fileType)}
                                 </div>
                                 <div className="doc-info">
                                     {/* Original file name as uploaded by the user */}

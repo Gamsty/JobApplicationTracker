@@ -150,14 +150,12 @@
     color: var(--border-color);
 }
 
-/* Optional description below the metadata row */
+/* Optional description below the metadata row — left border distinguishes it without a background box */
 .document-description {
     font-size: 13px;
     color: var(--text-secondary);
     margin-top: 8px;
     padding: 8px;
-    background-color: var(--bg-primary);
-    border-radius: 4px;
     line-height: 1.4;
 }
 
