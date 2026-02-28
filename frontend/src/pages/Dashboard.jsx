@@ -2,9 +2,11 @@
 // Uses recharts library for pie chart (status distribution) and bar chart (applications over time)
 import { useEffect, useState } from "react";
 import { applicationService } from "../services/frontApplicationService";
+import { interviewService } from "../services/interviewService";
+import { documentService } from "../services/documentService";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis,
         CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
+import { STATUS_COLORS, STATUS_LABELS, getFileIcon } from "../utils/constants";
 import './Dashboard.css';
 
 function Dashboard() {
@@ -12,6 +14,8 @@ function Dashboard() {
     const [stats, setStats] = useState(null); // Statistics object from backend (totalApplications, statusCounts)
     const [loading, setLoading] = useState(true); // Loading state while fetching data
     const [error, setError] = useState(false); // True if either API call failed on mount
+    const [upcomingInterviews, setUpcomingInterviews] = useState([]);
+    const [documentSummary, setDocumentSummary] = useState(null);
 
     // Fetch both applications and statistics in parallel when component mounts
     useEffect(() => {
@@ -21,12 +25,16 @@ function Dashboard() {
     const loadData = async () => {
         try {
             // Fetch applications and statistics simultaneously for faster page load
-            const [appsData, statsData] = await Promise.all([
+            const [appsData, statsData, interviewsData, docSummary] = await Promise.all([
                 applicationService.getApplications(),
-                applicationService.getStatistics()
+                applicationService.getStatistics(),
+                interviewService.getUpcomingInterviews(),
+                documentService.getDocumentSummary()
             ]);
             setApplications(appsData);
             setStats(statsData);
+            setUpcomingInterviews(interviewsData);
+            setDocumentSummary(docSummary);
         } catch (err) {
             console.error('Error loading dashboard data:', err);
             setError(true); // Signal that the data fetch failed so the error UI is shown
@@ -88,6 +96,26 @@ function Dashboard() {
     // Shown as N/A until a responseDate field is added to the backend
     const avgDaysToResponse = 'N/A';
 
+    const formatDateTime = (dateTimeString) => {
+        const date = new Date(dateTimeString);
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+    };
+
+    const daysUntil = (dateTimeString) => {
+        const now = new Date();
+        const target = new Date(dateTimeString);
+        const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+        if (diff === 0) return 'Today';
+        if (diff === 1) return 'Tomorrow';
+        return `In ${diff} days`;
+    };
+
     return (
         <div className="dashboard">
             <h2>
@@ -140,6 +168,24 @@ function Dashboard() {
                         </div>
                         <div className="metric-label">
                             Avg. Time to Response
+                        </div>
+                    </div>
+                </div>
+
+                {/* Documents metric card — shows total file count and total storage used */}
+                <div className="metric-card">
+                    <div className="metric-icon">📎</div>
+                    <div className="metric-content">
+                        {/* Total number of documents uploaded across all applications */}
+                        <div className="metric-value">
+                            {documentSummary?.totalDocuments || 0}
+                        </div>
+                        <div className="metric-label">
+                            Documents
+                        </div>
+                        {/* Human-readable total storage (e.g. "1.2 MB used") — falls back to "0 B" */}
+                        <div className="metric-sublabel">
+                            {documentSummary?.totalStorageFormatted || '0 B'} used
                         </div>
                     </div>
                 </div>
@@ -215,6 +261,76 @@ function Dashboard() {
                     ))}
                 </div>
             </div>
+
+            {/* Recent Documents — only rendered when the summary exists and has at least one document */}
+            {documentSummary && documentSummary.recentDocuments.length > 0 && (
+                <div className="recent-documents-section">
+                    <h3>
+                        Recent Documents 📎
+                    </h3>
+                    <div className="recent-documents-list">
+                        {documentSummary.recentDocuments.map(doc => (
+                            <div
+                                key={doc.id}
+                                className="recent-document-item"
+                            >
+                                {/* Emoji icon chosen based on the file's MIME type */}
+                                <div className="doc-icon">
+                                    {getFileIcon(doc.fileType)}
+                                </div>
+                                <div className="doc-info">
+                                    {/* Original file name as uploaded by the user */}
+                                    <div className="doc-filename">
+                                        {doc.originalFileName}
+                                    </div>
+                                    {/* Company the document belongs to and its formatted size */}
+                                    <div className="doc-meta">
+                                        {doc.applicationCompany} • {doc.fileSizeFormatted}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Upcoming Interviews — only rendered when at least one scheduled interview exists */}
+            {upcomingInterviews.length > 0 && (
+                <div className="upcoming-interviews-section">
+                    <h3>Upcoming Interviews 📅</h3>
+                    <div className="upcoming-interviews-list">
+                        {/* Parentheses give an implicit return so each card is actually rendered */}
+                        {upcomingInterviews.map(interview => (
+                            <div key={interview.id} className="upcoming-interview-card">
+                                {/* "Today" / "Tomorrow" / "In N days" badge */}
+                                <div className="interview-badge">
+                                    {daysUntil(interview.scheduledDate)}
+                                </div>
+                                <div className="interview-info">
+                                    {/* Company name comes from the parent application */}
+                                    <div className="interview-company">
+                                        {interview.applicationCompany}
+                                    </div>
+                                    {/* Round label e.g. "Phone Screen", "Technical" */}
+                                    <div className="interview-round">
+                                        {interview.round}
+                                    </div>
+                                    {/* Formatted local date and time */}
+                                    <div className="interview-time">
+                                        {formatDateTime(interview.scheduledDate)}
+                                    </div>
+                                    {/* Location is optional — only shown if present */}
+                                    {interview.location && (
+                                        <div className="interview-location">
+                                            📍 {interview.location}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
