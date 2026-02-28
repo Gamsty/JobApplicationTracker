@@ -68,6 +68,7 @@ export const INTERVIEW_FORMAT_LABELS = {
     ASSESSMENT: 'Assessment'
 };
 
+// Raw type values sent to / received from the backend (must match DocumentType enum)
 export const DOCUMENT_TYPE = {
     RESUME: 'RESUME',
     COVER_LETTER: 'COVER_LETTER',
@@ -78,6 +79,7 @@ export const DOCUMENT_TYPE = {
     OTHER: 'OTHER'
 };
 
+// Human-readable labels displayed in the UI for each document type
 export const DOCUMENT_TYPE_LABELS = {
     RESUME: 'Resume',
     COVER_LETTER: 'Cover Letter',
@@ -88,6 +90,7 @@ export const DOCUMENT_TYPE_LABELS = {
     OTHER: 'Other'
 };
 
+// Emoji icons used alongside document type labels in the UI
 export const DOCUMENT_TYPE_ICONS = {
     RESUME: '📄',
     COVER_LETTER: '📝',
