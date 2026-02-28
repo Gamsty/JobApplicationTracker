@@ -52,6 +52,12 @@ data class Application(
 
     @Column(nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now(), // Timestamp of last update
+
+    @OneToMany(mappedBy = "application", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val interviews: MutableList<Interview> = mutableListOf(),
+
+    @OneToMany(mappedBy = "application", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val documents: MutableList<Document> = mutableListOf()
 ) {
     @PreUpdate
     fun onUpdate() {

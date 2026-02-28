@@ -10,7 +10,7 @@ import { APPLICATION_STATUS, STATUS_COLORS, STATUS_LABELS } from "../utils/const
 import './ApplicationList.css';
 
 
-function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
+function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onViewDetails }) {
     const [statusFilter, setStatusFilter] = useState('ALL'); // Tracks the selected filter dropdown value
     const [sortOrder, setSortOrder] = useState('Newest'); // Tracks sort direction: 'Newest' (descending) or 'Oldest' (ascending)
     const [searchQuery, setSearchQuery] = useState(''); // Tracks the current search input text for client-side filtering
@@ -180,8 +180,14 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter }) {
                                                 <span className="no-notes">No notes</span>
                                             )}
                                         </td>
-                                        {/* Action buttons — edit opens the form modal, delete shows confirmation dialog */}
+                                        {/* Action buttons — view opens the details panel, edit opens the form modal, delete shows confirmation dialog */}
                                         <td className="actions-cell">
+                                            <button
+                                                onClick={() => onViewDetails(app)}
+                                                className="view-button"
+                                            >
+                                                View Details
+                                            </button>
                                             <button
                                                 onClick={() => onEdit(app)}
                                                 className="edit-button"

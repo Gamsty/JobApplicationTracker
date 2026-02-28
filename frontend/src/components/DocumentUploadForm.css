@@ -1,0 +1,168 @@
+/* Constrains the modal width so it doesn't stretch on wide screens */
+.document-upload-form {
+    max-width: 600px;
+}
+
+/* Inner padding for the form content */
+.upload-form {
+    padding: 24px;
+}
+
+/* Drag-and-drop target area — dashed border signals it accepts files */
+.file-drop-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: var(--bg-primary);
+    transition: all 0.3s;
+    cursor: pointer;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* Highlight applied while the user is hovering a file over the drop zone */
+.file-drop-zone.drag-active {
+    border-color: #fcaf50;
+    background-color: #e8f5e9;
+}
+
+/* In dark mode use a muted dark green instead of the light green */
+[data-theme='dark'] .file-drop-zone.drag-active {
+    background-color: #1b2e1b;
+}
+
+/* State after a file has been selected — reduces padding to fit the file preview */
+.file-drop-zone.has-file {
+    border-color: #fcaf50;
+    background-color: #e7f5e9;
+    padding: 20px;
+}
+
+/* In dark mode use a muted dark green for the has-file state */
+[data-theme='dark'] .file-drop-zone.has-file {
+    background-color: #1b2e1b;
+}
+
+/* Large emoji upload icon shown inside the empty drop zone */
+.upload-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+/* Primary instruction text in the empty drop zone */
+.upload-text {
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+/* Highlights the "Click to upload" call-to-action in orange */
+.upload-text strong {
+    color: #fcaf50;
+}
+
+/* Secondary hint line showing accepted file types and size limit */
+.upload-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+/* The actual <input type="file"> is hidden — the styled label triggers it instead */
+.file-input-hidden {
+    display: none;
+}
+
+/* Styled label that acts as the "Select File" button */
+.select-button-file {
+    display: inline-block;
+    padding: 10px 24px;
+    background-color: #4caf50;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+/* Darker green on hover */
+.select-button-file:hover {
+    background-color: #45a049;
+}
+
+/* Row shown inside the drop zone after a file is selected: icon + name/size + remove button */
+.selected-file-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+/* Emoji icon representing the selected file */
+.file-icon {
+    font-size: 36px;
+}
+
+/* Fills remaining width and left-aligns the file name and size text */
+.file-details {
+    flex: 1;
+    text-align: left;
+}
+
+/* File name — breaks long names to prevent overflow */
+.file-name {
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    word-break: break-word;
+}
+
+/* File size displayed below the file name */
+.file-size {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* Circular red button to clear the selected file */
+.remove-button-file {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background-color: var(--error-color);
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Darkens and scales up the remove button on hover */
+.remove-button-file:hover {
+    background-color: #d32f2f;
+    transform: scale(1.1);
+}
+
+/* Red banner shown at the top of the form when submission fails */
+.error-alert {
+    background-color: #fee;
+    color: #c33;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    border-left: 4px solid #c33;
+    margin-bottom: 20px;
+}
+
+/* In dark mode invert the error banner to a dark red background */
+[data-theme='dark'] .error-alert {
+    background-color: #3b1a1a;
+    color: #ff8a8a;
+    border-left-color: #ff6b6b;
+}

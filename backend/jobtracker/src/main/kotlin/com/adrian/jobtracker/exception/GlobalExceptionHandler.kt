@@ -1,7 +1,12 @@
 package com.adrian.jobtracker.exception
 
 import com.adrian.jobtracker.service.ApplicationNotFoundException
+import com.adrian.jobtracker.service.DocumentNotFoundException
 import com.adrian.jobtracker.service.EmailAlreadyExistsException
+import com.adrian.jobtracker.service.FileSizeExceedException
+import com.adrian.jobtracker.service.FileStorageException
+import com.adrian.jobtracker.service.InterviewNotFoundException
+import com.adrian.jobtracker.service.InvalidFileTypeException
 import com.adrian.jobtracker.service.UnauthorizedAccessException
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.http.HttpStatus
@@ -102,6 +107,9 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error)
     }
 
+    // Handle ownership violations and unauthenticated access (403 Forbidden).
+    // Thrown when a user tries to read/edit/delete an application or interview that
+    // belongs to a different account, or when no valid principal is in the security context.
     @ExceptionHandler(UnauthorizedAccessException::class)
     fun handleUnauthorizedAccessException(ex: UnauthorizedAccessException): ResponseEntity<ErrorResponse> {
         val error = ErrorResponse(
@@ -112,6 +120,76 @@ class GlobalExceptionHandler {
         )
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error)
+    }
+
+    // Handle missing interview records (404 Not Found).
+    // Thrown by InterviewService when the requested interview ID does not exist in the database.
+    @ExceptionHandler(InterviewNotFoundException::class)
+    fun handleInterviewNotFound(ex: InterviewNotFoundException): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.NOT_FOUND.value(),
+            error = "Not Found",
+            message = ex.message ?: "Interview not found"
+        )
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error)
+    }
+
+    // Handle unsupported MIME types on upload (400 Bad Request).
+    // Thrown by DocumentService when the uploaded file's content type is not in the allowed list.
+    @ExceptionHandler(InvalidFileTypeException::class)
+    fun handleInvalidFileType(ex: InvalidFileTypeException): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = "Invalid File Type",
+            message = ex.message ?: "File type is not allowed"
+        )
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
+    }
+
+    // Handle files exceeding the 10 MB upload limit (400 Bad Request).
+    // Thrown by DocumentService before the file is written to disk.
+    @ExceptionHandler(FileSizeExceedException::class) // Fixed: was FileSizeExceededException — must match the class name in DocumentService
+    fun handleFileSizeExceeded(ex: FileSizeExceedException): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = "File Too Large",
+            message = ex.message ?: "File size exceeds maximum allowed"
+        )
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
+    }
+
+    // Handle missing document records (404 Not Found).
+    // Thrown by DocumentService when the requested document ID does not exist in the database.
+    @ExceptionHandler(DocumentNotFoundException::class)
+    fun handleDocumentNotFound(ex: DocumentNotFoundException): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.NOT_FOUND.value(),
+            error = "Not Found",
+            message = ex.message ?: "Document not found"
+        )
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error)
+    }
+
+    // Handle filesystem I/O failures during file storage or deletion (500 Internal Server Error).
+    // Thrown by FileStorageService when the file cannot be written, read, or deleted.
+    @ExceptionHandler(FileStorageException::class)
+    fun handleFileStorage(ex: FileStorageException): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            error = "File Storage Error",
+            message = ex.message ?: "Error storing file" // Fixed: was "stroing"
+        )
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error)
     }
 }
 

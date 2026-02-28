@@ -41,7 +41,8 @@ out/
 .kotlin
 
 ### Environment / Secrets ###
-# application-local.properties can be used to override credentials locally without committing them
-# e.g. create application-local.properties with real DATABASE_PASSWORD and add spring.profiles.active=local
+# application-local.yml / application-local.properties hold local credentials and must never be committed
 application-local.properties
+application-local.yml
 *.env
+uploads/

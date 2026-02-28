@@ -29,6 +29,11 @@
     animation: slideIn 0.3s ease-out;
 }
 
+/* Interview form needs extra width to accommodate the two-column layout (date + time, status + format) */
+.interview-form-container {
+    max-width: 700px;
+}
+
 /* Entrance animation — slides down from above with a fade-in effect */
 @keyframes slideIn {
     from {
@@ -141,6 +146,12 @@
 .form-group textarea {
     resize: vertical;
     min-height: 100px;
+}
+
+/* Date and time inputs show a pointer cursor to hint that clicking opens the native picker */
+.form-group input[type="time"],
+.form-group input[type="date"] {
+    cursor: pointer;
 }
 
 /* ========== Validation Error States ========== */

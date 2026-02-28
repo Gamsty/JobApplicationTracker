@@ -1,0 +1,171 @@
+/* ── Panel container ─────────────────────────────────────────────────────── */
+
+/* Wide modal card — wider than ApplicationForm (900px) to fit the interview list */
+/* Reuses the slideIn keyframe animation defined in ApplicationForm.css */
+.application-details-container {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px var(--shadow);
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Inner padding for all panel content */
+.details-content {
+    padding: 24px;
+}
+
+/* ── Sections ────────────────────────────────────────────────────────────── */
+
+/* Each logical block (application info, interview list) is separated by a border */
+.details-section {
+    margin-bottom: 32px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Remove the divider and spacing after the last section */
+.details-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* ── Company header ──────────────────────────────────────────────────────── */
+
+/* Company name on the left, status badge on the right */
+.company-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.company-header h3 {
+    font-size: 28px;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* Status pill — background colour is set inline from STATUS_COLORS lookup */
+.status-badge {
+    padding: 6px 16px;
+    border-radius: 16px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Job title displayed below the company name */
+.position-title {
+    font-size: 20px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+/* ── Details grid ────────────────────────────────────────────────────────── */
+
+/* Two-column grid for application metadata (applied date, job URL, notes) */
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+/* Each label + value pair stacks vertically */
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Notes span both columns since they can be long */
+.detail-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-item strong {
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.detail-item span,
+.detail-item p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* Notes block — subtle tinted background to visually separate it from the grid */
+.notes-text {
+    margin: 0;
+    line-height: 1.6;
+    white-space: pre-wrap; /* Preserves newlines entered by the user */
+    background-color: var(--bg-hover);
+    padding: 12px;
+    border-radius: 6px;
+    color: var(--text-secondary);
+}
+
+/* External link to the original job posting */
+.job-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.job-link:hover {
+    text-decoration: underline;
+}
+
+/* ── Action buttons ──────────────────────────────────────────────────────── */
+
+.details-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* "Edit Application" button — blue semantic action colour (not a theme variable) */
+.edit-button-app {
+    background-color: #2196f3;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.edit-button-app:hover {
+    background-color: #1976d2;
+    transform: translateY(-2px);
+}
+
+/* ── Responsive (≤ 768px) ───────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    /* Full-screen panel on mobile — no rounded corners, full height */
+    .application-details-container {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    /* Stack the two-column grid into a single column */
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Centre-align the company name and status badge when stacked */
+    .company-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+}
