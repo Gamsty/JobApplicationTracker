@@ -90,13 +90,12 @@ export const DOCUMENT_TYPE_LABELS = {
     OTHER: 'Other'
 };
 
-// Emoji icons used alongside document type labels in the UI
-export const DOCUMENT_TYPE_ICONS = {
-    RESUME: '📄',
-    COVER_LETTER: '📝',
-    PORTFOLIO: '🎨',
-    CERTIFICATE: '🏆',
-    TRANSCRIPT: '📊',
-    REFERENCE: '✉️',
-    OTHER: '📎'
+// Maps a file's MIME type to a representative emoji icon.
+// Used in DocumentList and Dashboard wherever a file-format icon is shown.
+export const getFileIcon = (fileType) => {
+    if (fileType.includes('pdf')) return '📕';
+    if (fileType.includes('word') || fileType.includes('document')) return '📘';
+    if (fileType.includes('image')) return '🖼️';
+    if (fileType.includes('text')) return '📄';
+    return '📎';
 };

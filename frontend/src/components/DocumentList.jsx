@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { documentService } from "../services/documentService";
-import { DOCUMENT_TYPE_ICONS, DOCUMENT_TYPE_LABELS } from '../utils/constants';
+import { DOCUMENT_TYPE_LABELS, getFileIcon } from '../utils/constants';
 import './DocumentList.css';
 
 // Displays all documents attached to a single job application.
@@ -66,15 +66,6 @@ function DocumentList({ applicationId, onUpload }) {
         });
     };
 
-    // Maps a MIME type string to a representative emoji icon
-    const getFileIcon = (fileType) => {
-        if (fileType.includes('pdf')) return '📕';
-        if (fileType.includes('word') || fileType.includes('document')) return '📘';
-        if (fileType.includes('image')) return '🖼️';
-        if (fileType.includes('text')) return '📄';
-        return '📎';
-    };
-
     // Show a loading placeholder while documents are being fetched
     if (loading) {
         return <div className="documents-loading">Loading documents...</div>;
@@ -112,9 +103,9 @@ function DocumentList({ applicationId, onUpload }) {
                 <div className="documents-grid">
                     {documents.map((doc) => (
                         <div key={doc.id} className="document-card">
-                            {/* Emoji icon based on the document's category (e.g. Resume, Certificate) */}
+                            {/* Emoji icon based on the actual file format (PDF, Word, image, etc.) */}
                             <div className="document-icon">
-                                {DOCUMENT_TYPE_ICONS[doc.documentType]}
+                                {getFileIcon(doc.fileType)}
                             </div>
 
                             <div className="document-info">
