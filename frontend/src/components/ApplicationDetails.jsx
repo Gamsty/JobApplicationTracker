@@ -1,6 +1,6 @@
 import { useState } from "react";
 import InterviewForm from "./InterviewForm";
-import InterviewList from "./Interviewlist";
+import InterviewList from "./InterviewList";
 import DocumentList from "./DocumentList";
 import DocumentUploadForm from "./DocumentUploadForm";
 import { interviewService } from "../services/interviewService";
