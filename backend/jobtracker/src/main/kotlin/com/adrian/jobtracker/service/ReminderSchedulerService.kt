@@ -22,21 +22,18 @@ class ReminderSchedulerService(
 
         println("📧 Found ${remindersToSend.size} reminder(s) to send")
 
+        // Query already filters out users with emailNotificationsEnabled = false,
+        // so every reminder here is guaranteed to want an email
         remindersToSend.forEach { reminder ->
             try {
-                // Only send if the user has not disabled email notifications in their settings
-                if (reminder.user.emailNotificationsEnabled) {
-                    emailService.sendReminderEmail(reminder)
+                emailService.sendReminderEmail(reminder)
 
-                    // Mark as sent so the scheduler won't pick it up again on the next run
-                    reminder.sent = true
-                    reminder.sentAt = LocalDateTime.now()
-                    reminderRepository.save(reminder)
+                // Mark as sent so the scheduler won't pick it up again on the next run
+                reminder.sent = true
+                reminder.sentAt = LocalDateTime.now()
+                reminderRepository.save(reminder)
 
-                    println("✅ Sent reminder: ${reminder.title} to ${reminder.user.email}")
-                } else {
-                    println("⏭️ Skipping reminder for ${reminder.user.email} - notifications disabled")
-                }
+                println("✅ Sent reminder: ${reminder.title} to ${reminder.user.email}")
             } catch (ex: Exception) {
                 // Log and continue — one failed email should not stop the rest from being sent
                 println("❌ Failed to send reminder ${reminder.id}: ${ex.message}")
