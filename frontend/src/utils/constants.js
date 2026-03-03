@@ -99,3 +99,24 @@ export const getFileIcon = (fileType) => {
     if (fileType.includes('text')) return '📄';
     return '📎';
 };
+
+export const REMINDER_TYPE = {
+    FOLLOW_UP: 'FOLLOW_UP',
+    INTERVIEW_UPCOMING: 'INTERVIEW_UPCOMING',
+    APPLICATION_DEADLINE: 'APPLICATION_DEADLINE',
+    CUSTOM: 'CUSTOM'
+};
+
+export const REMINDER_TYPE_LABELS = {
+    FOLLOW_UP: 'Follow Up',
+    INTERVIEW_UPCOMING: 'Interview Reminder',
+    APPLICATION_DEADLINE: 'Application Deadline',
+    CUSTOM: 'Custom Reminder'
+};
+
+export const REMINDER_TYPE_ICONS = {
+  FOLLOW_UP: '📞',
+  INTERVIEW_UPCOMING: '📅',
+  APPLICATION_DEADLINE: '⏰',
+  CUSTOM: '🔔'
+};
