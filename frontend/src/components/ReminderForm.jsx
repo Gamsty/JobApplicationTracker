@@ -25,9 +25,9 @@ function ReminderForm({ reminder, applications, onSubmit, onCancel }) {
     // When editing, pre-fill the form with the existing reminder's values
     useEffect(() => {
         if (reminder) {
-            const dateTime = new Date(reminder.scheduledFor);
-            const dateStr = dateTime.toISOString().split('T')[0];          
-            const timeStr = dateTime.toISOString().split('T')[1].slice(0, 5);
+            // Split the LocalDateTime string directly to avoid UTC conversion
+            const [dateStr, timeFull] = reminder.scheduledFor.split('T');
+            const timeStr = timeFull.slice(0, 5);
 
             setFormData({
                 reminderType: reminder.reminderType,
@@ -97,15 +97,12 @@ function ReminderForm({ reminder, applications, onSubmit, onCancel }) {
         setIsSubmitting(true);
 
         try {
-            // Combine separate date and time fields into a single LocalDateTime string
-            const scheduledDateTime = new Date(`${formData.scheduledDate}T${formData.scheduledTime}`);
-
             const submitData = {
                 reminderType: formData.reminderType,
                 title: formData.title,
                 message: formData.message || null,
-                // Spring LocalDateTime requires "2026-03-10T14:30:00" — slice removes ms and Z suffix
-                scheduledFor: scheduledDateTime.toISOString().slice(0, 19),
+                // Build LocalDateTime string directly from the form fields to avoid UTC conversion.
+                scheduledFor: `${formData.scheduledDate}T${formData.scheduledTime}:00`,
                 applicationId: formData.applicationId ? parseInt(formData.applicationId) : null,
                 enabled: formData.enabled
             };
