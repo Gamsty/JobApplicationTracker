@@ -115,10 +115,23 @@ class ReminderService(
             throw IllegalStateException("Cannot update a reminder that has already been sent") // Bug fix 6: was "IlligalStateException"
         }
 
+        // Fetch and verify ownership of the new application link (if the field changed)
+        val application = request.applicationId?.let { appId ->
+            applicationRepository.findById(appId)
+                .orElseThrow { ApplicationNotFoundException("Application with id $appId not found") }
+                .also { app ->
+                    if (app.user.id != userId) {
+                        throw UnauthorizedAccessException("You don't have access to this application")
+                    }
+                }
+        }
+
+        reminder.reminderType = request.reminderType
         reminder.title = request.title
         reminder.message = request.message
         reminder.scheduledFor = request.scheduledFor
-        reminder.enabled = request.enabled                          
+        reminder.enabled = request.enabled
+        reminder.application = application   // null clears the link; non-null sets a new one
         reminder.updatedAt = LocalDateTime.now()
 
         val updated = reminderRepository.save(reminder)

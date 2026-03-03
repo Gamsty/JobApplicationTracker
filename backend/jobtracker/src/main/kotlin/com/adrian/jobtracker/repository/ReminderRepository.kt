@@ -18,8 +18,10 @@ interface ReminderRepository : JpaRepository<Reminder, Long> {
     @Query("SELECT r FROM Reminder r WHERE r.user.id = :userId AND r.sent = false AND r.enabled = true AND r.scheduledFor > :now ORDER BY r.scheduledFor ASC")
     fun findPendingRemindersByUser(userId: Long, now: LocalDateTime): List<Reminder>
 
-    // Find reminders that need to be sent (not sent, enabled, scheduled time has passed)
-    @Query("SELECT r FROM Reminder r WHERE r.sent = false AND r.enabled = true AND r.scheduledFor <= :now")
+    // Find reminders that need to be sent (not sent, enabled, scheduled time has passed,
+    // and the owner has email notifications enabled — skipping at the query level prevents
+    // the scheduler from picking up the same reminder every 5 minutes indefinitely)
+    @Query("SELECT r FROM Reminder r WHERE r.sent = false AND r.enabled = true AND r.scheduledFor <= :now AND r.user.emailNotificationsEnabled = true")
     fun findRemindersToSend(now: LocalDateTime): List<Reminder>
     
     // Returns all reminders of a specific type for a user (e.g. all FOLLOW_UP reminders)
