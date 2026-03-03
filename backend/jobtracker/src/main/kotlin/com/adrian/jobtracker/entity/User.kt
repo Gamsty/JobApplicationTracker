@@ -40,7 +40,7 @@ data class User(
 
     // One user owns many applications — deleting a user cascades and removes all their applications
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val applications: MutableList<Application> = mutableListOf()
+    val applications: MutableList<Application> = mutableListOf(),
 
     // One user owns many reminders — deleting a user cascades and removes all their reminders
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
