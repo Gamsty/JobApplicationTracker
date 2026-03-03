@@ -73,6 +73,7 @@ class SecurityConfig(
                     .requestMatchers("/api/applications/**").authenticated()
                     .requestMatchers("/api/interviews/**").authenticated()
                     .requestMatchers("/api/documents/**").authenticated()
+                    .requestMatchers("/api/reminders/**").authenticated()
                     // Catch-all: any endpoint not matched above also requires authentication
                     .anyRequest().authenticated()
             }

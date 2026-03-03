@@ -57,7 +57,11 @@ data class Application(
     val interviews: MutableList<Interview> = mutableListOf(),
 
     @OneToMany(mappedBy = "application", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val documents: MutableList<Document> = mutableListOf()
+    val documents: MutableList<Document> = mutableListOf(),
+
+    // One application can have many reminders — deleting an application cascades and removes all its reminders
+    @OneToMany(mappedBy = "application", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val reminders: MutableList<Reminder> = mutableListOf()
 ) {
     @PreUpdate
     fun onUpdate() {

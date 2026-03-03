@@ -56,7 +56,7 @@ data class Reminder(
     var enabled: Boolean = true,
 
     @Column(nullable = false, updatable = false)
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Column(nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now()
