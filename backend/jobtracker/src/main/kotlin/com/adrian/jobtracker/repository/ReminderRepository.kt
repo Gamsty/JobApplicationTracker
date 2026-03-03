@@ -14,11 +14,14 @@ interface ReminderRepository : JpaRepository<Reminder, Long> {
     // Returns all reminders for a user, sorted by soonest first
     fun findByUserOrderByScheduledForAsc(user: User): List<Reminder>
 
-    // Used by the scheduler to find ALL reminders that are due across all users —
-    // returns unsent, enabled reminders whose scheduled time has arrived
-    @Query("SELECT r FROM Reminder r WHERE r.sent = false AND r.enabled = true AND r.scheduledFor <= :now ORDER BY r.scheduledFor ASC")
-    fun findRemindersToSend(now: LocalDateTime): List<Reminder> 
+    //Find pending reminders for a user (not sent, enabled, scheduled for future)
+    @Query("SELECT r FROM Reminder r WHERE r.user.id = :userId AND r.sent = false AND r.enabled = true AND r.scheduledFor > :now ORDER BY r.scheduledFor ASC")
+    fun findPendingRemindersByUser(userId: Long, now: LocalDateTime): List<Reminder>
 
+    // Find reminders that need to be sent (not sent, enabled, scheduled time has passed)
+    @Query("SELECT r FROM Reminder r WHERE r.sent = false AND r.enabled = true AND r.scheduledFor <= :now")
+    fun findRemindersToSend(now: LocalDateTime): List<Reminder>
+    
     // Returns all reminders of a specific type for a user (e.g. all FOLLOW_UP reminders)
     fun findByUserAndReminderType(user: User, reminderType: ReminderType): List<Reminder>
 
