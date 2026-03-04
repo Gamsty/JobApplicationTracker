@@ -1,15 +1,5 @@
 package com.adrian.jobtracker.exception
 
-import com.adrian.jobtracker.service.ApplicationNotFoundException
-import com.adrian.jobtracker.service.DocumentNotFoundException
-import com.adrian.jobtracker.service.EmailAlreadyExistsException
-import com.adrian.jobtracker.service.FileSizeExceedException
-import com.adrian.jobtracker.service.FileStorageException
-import com.adrian.jobtracker.service.InterviewNotFoundException
-import com.adrian.jobtracker.service.InvalidFileTypeException
-import com.adrian.jobtracker.service.UnauthorizedAccessException
-import com.adrian.jobtracker.service.ReminderNotFoundException
-import com.adrian.jobtracker.service.EmailSendException
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

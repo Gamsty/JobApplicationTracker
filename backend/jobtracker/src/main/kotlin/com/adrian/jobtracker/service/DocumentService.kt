@@ -1,5 +1,10 @@
 package com.adrian.jobtracker.service
 
+import com.adrian.jobtracker.exception.ApplicationNotFoundException
+import com.adrian.jobtracker.exception.DocumentNotFoundException
+import com.adrian.jobtracker.exception.InvalidFileTypeException
+import com.adrian.jobtracker.exception.FileSizeExceedException
+import com.adrian.jobtracker.exception.UnauthorizedAccessException
 import com.adrian.jobtracker.dto.DocumentResponse
 import com.adrian.jobtracker.dto.DocumentSummary
 import com.adrian.jobtracker.dto.DocumentUploadRequest
@@ -206,12 +211,3 @@ class DocumentService(
         }
     }
 }
-
-// Thrown when the uploaded file's MIME type is not in the allowed list
-class InvalidFileTypeException(message: String) : RuntimeException(message)
-
-// Thrown when the uploaded file exceeds the 10 MB size limit
-class FileSizeExceedException(message: String) : RuntimeException(message)
-
-// Thrown when a document ID does not exist in the database
-class DocumentNotFoundException(message: String) : RuntimeException(message)

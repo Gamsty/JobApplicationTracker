@@ -3,7 +3,7 @@
 import { Routes, Route, Navigate, NavLink } from 'react-router-dom'
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from './context/AuthContext';
-import { applicationService } from './services/frontApplicationService';
+import { applicationService } from './services/applicationService';
 import ApplicationList from './components/ApplicationList';
 import ApplicationForm from './components/ApplicationForm';
 import ApplicationDetails from './components/ApplicationDetails';

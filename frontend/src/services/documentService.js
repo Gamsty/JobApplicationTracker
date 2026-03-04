@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:8080/api/documents';
+// VITE_API_URL points to the backend root — each service appends its own path
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api/documents';
 
 // Dedicated axios instance scoped to the documents API base URL.
 // Keeps document requests isolated from other services.

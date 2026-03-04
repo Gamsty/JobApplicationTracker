@@ -11,10 +11,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-// Handles all reminder-related API endpoints under /api/reminders
+// Handles all reminder-related API endpoints under /api/reminders.
+// CORS is configured globally in WebConfig — no @CrossOrigin needed here.
 @RestController
 @RequestMapping("/api/reminders")
-@CrossOrigin(origins = ["http://localhost:5173", "https://job-tracker.vercel.app"])
 class ReminderController(
     private val reminderService: ReminderService,
     private val emailService: EmailService,

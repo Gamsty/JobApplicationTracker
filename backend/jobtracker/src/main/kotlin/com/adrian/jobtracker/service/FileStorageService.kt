@@ -1,5 +1,7 @@
 package com.adrian.jobtracker.service
 
+import com.adrian.jobtracker.exception.FileStorageException
+import com.adrian.jobtracker.exception.FileNotFoundException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
@@ -155,9 +157,3 @@ data class FileStorageResult(
     val fileSize: Long,
     val fileType: String
 )
-
-// Thrown when a file cannot be stored or deleted due to an I/O or validation error.
-class FileStorageException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
-
-// Thrown when a requested file does not exist on the filesystem.
-class FileNotFoundException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
