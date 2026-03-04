@@ -9,10 +9,10 @@ A full-stack web application to manage and track job applications throughout the
 ## Screenshots
 
 ### Login
-![Login](docs/screenshots/Login.png)
+![Login](docs/screenshots/login.png)
 
 ### Register
-![Register](docs/screenshots/Register.png)
+![Register](docs/screenshots/register.png)
 
 ### Applications Details
 ![Application Details](docs/screenshots/application-details.png)
