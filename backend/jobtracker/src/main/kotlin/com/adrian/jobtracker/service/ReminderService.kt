@@ -1,5 +1,9 @@
 package com.adrian.jobtracker.service
 
+import com.adrian.jobtracker.exception.ApplicationNotFoundException
+import com.adrian.jobtracker.exception.InterviewNotFoundException
+import com.adrian.jobtracker.exception.ReminderNotFoundException
+import com.adrian.jobtracker.exception.UnauthorizedAccessException
 import com.adrian.jobtracker.dto.ReminderRequest
 import com.adrian.jobtracker.dto.ReminderResponse
 import com.adrian.jobtracker.dto.ReminderSummary
@@ -198,6 +202,3 @@ class ReminderService(
         )
     }
 }
-
-// Thrown when a requested reminder does not exist in the database
-class ReminderNotFoundException(message: String) : RuntimeException(message)

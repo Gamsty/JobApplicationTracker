@@ -1,7 +1,7 @@
 // Dashboard page component that displays analytics, charts, and recent activity
 // Uses recharts library for pie chart (status distribution) and bar chart (applications over time)
 import { useEffect, useState } from "react";
-import { applicationService } from "../services/frontApplicationService";
+import { applicationService } from "../services/applicationService";
 import { interviewService } from "../services/interviewService";
 import { documentService } from "../services/documentService";
 import { reminderService } from "../services/reminderService";

@@ -1,5 +1,7 @@
 package com.adrian.jobtracker.service
 
+import com.adrian.jobtracker.exception.EmailAlreadyExistsException
+import com.adrian.jobtracker.exception.UnauthorizedAccessException
 import com.adrian.jobtracker.dto.AuthResponse
 import com.adrian.jobtracker.dto.LoginRequest
 import com.adrian.jobtracker.dto.RegisterRequest
@@ -85,6 +87,3 @@ class AuthService(
         throw UnauthorizedAccessException("Not authenticated")
     }
 }
-
-// Thrown during registration when the provided email is already associated with an account
-class EmailAlreadyExistsException(message: String) : RuntimeException(message)

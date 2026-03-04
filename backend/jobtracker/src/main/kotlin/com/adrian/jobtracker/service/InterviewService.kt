@@ -1,5 +1,8 @@
 package com.adrian.jobtracker.service
 
+import com.adrian.jobtracker.exception.ApplicationNotFoundException
+import com.adrian.jobtracker.exception.InterviewNotFoundException
+import com.adrian.jobtracker.exception.UnauthorizedAccessException
 import com.adrian.jobtracker.dto.InterviewRequest
 import com.adrian.jobtracker.dto.InterviewResponse
 import com.adrian.jobtracker.dto.InterviewSummary
@@ -182,6 +185,3 @@ class InterviewService(
         )
     }
 }
-
-// Thrown when a requested interview ID does not exist in the database (mapped to 404)
-class InterviewNotFoundException(message: String) : RuntimeException(message)

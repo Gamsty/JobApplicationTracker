@@ -1,5 +1,6 @@
 package com.adrian.jobtracker.service
 
+import com.adrian.jobtracker.exception.EmailSendException
 import com.adrian.jobtracker.entity.Reminder
 import jakarta.mail.internet.MimeMessage
 import org.springframework.beans.factory.annotation.Value
@@ -272,6 +273,3 @@ class EmailService(
         """.trimIndent()
     }
 }
-
-// Custom exception for email sending failures — wraps the underlying cause for better error tracing
-class EmailSendException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)

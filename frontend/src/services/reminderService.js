@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = "http://localhost:8080/api/reminders";
+// VITE_API_URL points to the backend root — each service appends its own path
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api/reminders';
 
 // Dedicated axios instance for reminder endpoints — baseURL avoids repeating the path in every call
 const api = axios.create({

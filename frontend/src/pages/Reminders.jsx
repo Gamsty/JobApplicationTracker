@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { reminderService } from '../services/reminderService';
-import { applicationService } from '../services/frontApplicationService';
+import { applicationService } from '../services/applicationService';
 import ReminderList from '../components/ReminderList';
 import ReminderForm from '../components/ReminderForm';
 import './Reminders.css';
