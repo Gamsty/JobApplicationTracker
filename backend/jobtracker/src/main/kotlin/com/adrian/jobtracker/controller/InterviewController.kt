@@ -10,12 +10,11 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 // Exposes all interview CRUD and query endpoints under /api/interviews.
-// @CrossOrigin allows requests from the local dev server and the deployed frontend.
+// CORS is configured globally in WebConfig — no @CrossOrigin needed here.
 // Ownership checks (does this interview belong to the current user?) are enforced
 // in InterviewService — this controller only routes and delegates.
 @RestController
 @RequestMapping("/api/interviews")
-@CrossOrigin(origins = ["http://localhost:5173", "https://job-tracker.vercel.app"])
 class InterviewController(
     private val interviewService: InterviewService
 ) {

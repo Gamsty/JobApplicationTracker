@@ -1,6 +1,7 @@
 import axios from "axios"
 
-const API_BASE_URL = "http://localhost:8080/api/interviews";
+// VITE_API_URL points to the backend root — each service appends its own path
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api/interviews';
 
 // Dedicated axios instance for the interview API.
 // Using a separate instance (rather than the global axios) means interview-specific

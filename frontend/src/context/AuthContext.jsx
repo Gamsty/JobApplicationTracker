@@ -2,26 +2,43 @@ import { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// VITE_API_URL points to the backend root — each service appends its own path
+const AUTH_API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api/auth';
+
 // Context that holds the authenticated user's data and auth functions.
 // Wrap the app in <AuthProvider> so any component can access it via useAuth().
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token')); // Initialise from localStorage so auth survives page refresh
+    const [token, setToken] = useState(null); // Starts null — checkAuth validates the stored token before setting it
     const [loading, setLoading] = useState(true); // Prevents a flash of unauthenticated UI on first load
     const navigate = useNavigate();
 
-    // On mount, restore auth state from localStorage.
-    // This runs once so a logged-in user stays logged in after refreshing the page.
+    // On mount, restore auth state from localStorage and verify the token is still valid.
+    // Calls GET /api/auth/me — if the token is expired or invalid, clears stored credentials
+    // so the user is redirected to the login page instead of seeing a broken app.
     useEffect(() => {
         const checkAuth = async () => {
             const storedToken = localStorage.getItem('token');
             const storedUser = localStorage.getItem('user');
 
-            if (storedToken && storedUser)  {
-                setToken(storedToken);
-                setUser(JSON.parse(storedUser)); // Re-hydrate the user object from the stored JSON string
+            if (storedToken && storedUser) {
+                try {
+                    // Verify the stored token is still valid by hitting a protected endpoint
+                    await axios.get(`${AUTH_API_URL}/me`, {
+                        headers: { Authorization: `Bearer ${storedToken}` }
+                    });
+                    // Token is valid — restore auth state
+                    setToken(storedToken);
+                    setUser(JSON.parse(storedUser));
+                } catch {
+                    // Token expired or invalid — clear stale credentials
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    setToken(null);
+                    setUser(null);
+                }
             }
             setLoading(false); // Auth check complete — allow the app to render
         };
@@ -34,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     // Returns { success: true } on success or { success: false, error: string } on failure.
     const login = async (email, password) => {
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/login', {
+            const response = await axios.post(`${AUTH_API_URL}/login`, {
                 email,
                 password
             });
@@ -54,7 +71,7 @@ export const AuthProvider = ({ children }) => {
             return { success: true };
         } catch (error) {
             return {
-                sucess: false,
+                success: false,
                 error: error.response?.data?.message || 'Login failed'
             };
         }
@@ -65,7 +82,7 @@ export const AuthProvider = ({ children }) => {
     // The backend automatically logs the user in after registration (returns a JWT immediately).
     const register = async (fullName, email, password) => {
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/register', {
+            const response = await axios.post(`${AUTH_API_URL}/register`, {
                 fullName,
                 email,
                 password
@@ -86,8 +103,8 @@ export const AuthProvider = ({ children }) => {
             return { success: true };
         } catch (error) {
             return {
-                sucess: false,
-                error: error.response?.data?.message || 'Reistration failed'
+                success: false,
+                error: error.response?.data?.message || 'Registration failed'
             };
         }
     };
@@ -105,7 +122,7 @@ export const AuthProvider = ({ children }) => {
     // The value exposed to all child components via useAuth()
     const value = {
         user,       // The logged-in user's data (id, email, fullName, role)
-        token,      // The raw JWT string (used by the axios interceptor in frontApplicationService)
+        token,      // The raw JWT string (used by the axios interceptor in applicationService)
         login,
         register,
         logout,

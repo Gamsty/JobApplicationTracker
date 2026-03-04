@@ -2,7 +2,7 @@
 // Shows a total applications count card followed by one card per status with count and percentage
 // Fetches its own data independently from the backend statistics endpoint
 import { useEffect, useState } from "react";
-import { applicationService } from "../services/frontApplicationService";
+import { applicationService } from "../services/applicationService";
 import { STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
 import './StatsSummary.css';
 

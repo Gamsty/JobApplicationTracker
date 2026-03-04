@@ -1,0 +1,203 @@
+/* ─── Page layout ─────────────────────────────────────────────────── */
+
+/* Constrains the settings page to a readable width and centres it */
+.settings-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.settings-page h2 {
+    font-size: 28px;
+    color: var(--text-primary); /* was #333 — hardcoded, invisible on dark backgrounds */
+    margin-bottom: 30px;
+}
+
+/* ─── Settings card ───────────────────────────────────────────────── */
+
+/* Each logical group of settings lives in its own card */
+.settings-section {
+    background-color: var(--bg-secondary); /* was white — hardcoded, wrong on dark backgrounds */
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px var(--shadow); /* was rgba(0,0,0,0.1) — hardcoded, too heavy in dark mode */
+    margin-bottom: 24px;
+}
+
+.settings-section h3 {
+    font-size: 20px;
+    color: var(--text-primary); /* was #333 */
+    margin-bottom: 8px;
+}
+
+/* Subtitle below the section heading */
+.section-description {
+    color: var(--text-secondary); /* was #666 */
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+/* ─── Individual setting row ──────────────────────────────────────── */
+
+/* Each row shows a label/description on the left and a control on the right */
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--bg-primary); /* was #f9f9f9 — hardcoded, breaks dark mode */
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+/* Remove bottom margin from the last row so it doesn't double up with the card padding */
+.setting-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Left side — takes remaining space so the control stays right-aligned */
+.setting-info {
+    flex: 1;
+}
+
+.setting-info strong {
+    display: block;
+    color: var(--text-primary); /* was #333 */
+    margin-bottom: 4px;
+    font-size: 16px;
+}
+
+.setting-info p {
+    color: var(--text-secondary); /* was #666 */
+    font-size: 14px;
+    margin: 0;
+}
+
+/* ─── Custom toggle switch ────────────────────────────────────────── */
+
+/* Outer label acts as the clickable hit area for the hidden checkbox */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 54px;
+    height: 28px;
+}
+
+/* Hide the native checkbox — the visual slider below replaces it */
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The rounded pill track behind the sliding thumb */
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color); /* Off state: muted grey — was #ccc */
+    transition: 0.4s;
+    border-radius: 28px; /* Fully rounded ends */
+}
+
+/* The white circular thumb that slides left-to-right */
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white; /* Intentionally hardcoded — thumb is always white */
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+/* On state: track turns accent colour */
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--accent-color); /* was #667eea — hardcoded accent */
+}
+
+/* On state: thumb slides to the right end of the track (54px wide - 20px thumb - 8px padding = 26px) */
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+/* ─── Test Email button ────────────────────────────────────────────── */
+
+/* Intentionally blue (not accent) to distinguish it from primary action buttons */
+.test-button-email {
+    background-color: #2196f3;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+/* :not(:disabled) prevents the lift effect while the request is in-flight */
+.test-button-email:hover:not(:disabled) {
+    background-color: #1976d2;
+    transform: translateY(-2px);
+}
+
+.test-button-email:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ─── Email info box ──────────────────────────────────────────────── */
+
+/* Light blue info panel — semantic colour, intentionally hardcoded; dark mode overrides below */
+.email-info-box {
+    background-color: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    padding: 16px;
+    border-radius: 6px;
+}
+
+.email-info-box p {
+    margin: 8px 0;
+    color: #1565c0;
+    font-size: 14px;
+}
+
+/* Remove extra spacing at the start and end of the box */
+.email-info-box p:first-child {
+    margin-top: 0;
+}
+
+.email-info-box p:last-child {
+    margin-bottom: 0;
+}
+
+/* ─── Dark mode overrides ─────────────────────────────────────────── */
+/* Only semantic colours that can't be expressed as CSS variables need overriding here.
+   Everything using var(--...) above already adapts automatically. */
+
+/* Swap light blue panel to dark navy so it remains readable on dark card backgrounds */
+[data-theme='dark'] .email-info-box {
+    background-color: #0d2137;
+    border-left-color: #42a5f5;
+}
+
+[data-theme='dark'] .email-info-box p {
+    color: #90caf9;
+}
+
+/* ─── Responsive (mobile) ─────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    /* Stack the label and control vertically instead of side-by-side */
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+}

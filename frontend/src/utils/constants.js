@@ -99,3 +99,27 @@ export const getFileIcon = (fileType) => {
     if (fileType.includes('text')) return '📄';
     return '📎';
 };
+
+// Raw type values sent to / received from the backend (must match ReminderType enum)
+export const REMINDER_TYPE = {
+    FOLLOW_UP: 'FOLLOW_UP',
+    INTERVIEW_UPCOMING: 'INTERVIEW_UPCOMING',
+    APPLICATION_DEADLINE: 'APPLICATION_DEADLINE',
+    CUSTOM: 'CUSTOM'
+};
+
+// Human-readable labels displayed in the UI for each reminder type
+export const REMINDER_TYPE_LABELS = {
+    FOLLOW_UP: 'Follow Up',
+    INTERVIEW_UPCOMING: 'Interview Reminder',
+    APPLICATION_DEADLINE: 'Application Deadline',
+    CUSTOM: 'Custom Reminder'
+};
+
+// Emoji icons used alongside reminder type labels in lists and badges
+export const REMINDER_TYPE_ICONS = {
+  FOLLOW_UP: '📞',
+  INTERVIEW_UPCOMING: '📅',
+  APPLICATION_DEADLINE: '⏰',
+  CUSTOM: '🔔'
+};

@@ -1,5 +1,7 @@
 package com.adrian.jobtracker.service
 
+import com.adrian.jobtracker.exception.ApplicationNotFoundException
+import com.adrian.jobtracker.exception.UnauthorizedAccessException
 import com.adrian.jobtracker.dto.ApplicationRequest
 import com.adrian.jobtracker.dto.ApplicationResponse
 import com.adrian.jobtracker.entity.ApplicationStatus
@@ -138,10 +140,3 @@ class ApplicationService(
         )
     }
 }
-
-// Thrown when a requested application ID does not exist in the database (mapped to 404)
-class ApplicationNotFoundException(message: String) : RuntimeException(message)
-
-// Thrown when the JWT principal cannot be resolved to a DB user, or when a user
-// attempts to access an application that belongs to a different account (mapped to 403)
-class UnauthorizedAccessException(message: String) : RuntimeException(message)

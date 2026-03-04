@@ -22,7 +22,6 @@ spring:
     properties:
       hibernate:
         "[format_sql": true
-    open-in-view: false
 
   # File upload configuration
   servlet:
@@ -31,6 +30,21 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
       file-size-threshold: 1MB
+
+  # Email congiguration
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:username@gmail.com}
+    password: ${MAIL_PASSWORD:password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          debug: false
 
 # Server port — uses PORT env var on Render, falls back to 8080 for local dev
 server:
@@ -50,3 +64,7 @@ jwt:
 # File storage congiguration
 file:
   upload-dir: ${FILE_UPLOAD_DIR:./uploads}
+
+# Application configuration
+app:
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}

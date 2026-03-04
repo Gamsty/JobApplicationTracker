@@ -1,9 +1,9 @@
 // Root component of the Job Application Tracker
-// Handles routing (Applications page + Dashboard page), global state, dark mode, and CRUD operations
+// Handles routing (Applications, Dashboard, Reminders, Settings), global state, dark mode, and CRUD operations
 import { Routes, Route, Navigate, NavLink } from 'react-router-dom'
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from './context/AuthContext';
-import { applicationService } from './services/frontApplicationService';
+import { applicationService } from './services/applicationService';
 import ApplicationList from './components/ApplicationList';
 import ApplicationForm from './components/ApplicationForm';
 import ApplicationDetails from './components/ApplicationDetails';
@@ -14,6 +14,8 @@ import NetworkStatus from './components/NetworkStatus';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ProtectedRoute from './components/ProtectedRoute';
+import Reminders from './pages/Reminders';
+import Settings from './pages/Settings';
 import './App.css';
 
 // Main application component that manages state and interactions for the job application tracker
@@ -113,6 +115,7 @@ function App() {
     setShowForm(true);
   };
 
+  // Open the ApplicationDetails modal for the selected application (read-only view with edit/delete actions)
   const handleViewDetails = (application) => {
     setViewingApplication(application);
   };
@@ -147,6 +150,7 @@ function App() {
     }
   };
 
+  // Close the ApplicationDetails modal and clear the viewing state
   const handleCloseDetails = () => {
     setViewingApplication(null);
   };
@@ -180,7 +184,7 @@ function App() {
 
   // --- Render ---
   // Router wraps the entire app to enable client-side navigation
-  // The header with nav links and theme toggle is always visible on both routes
+  // The header with nav links and theme toggle is always visible on all routes
   return (
     <>
       <NetworkStatus />
@@ -203,6 +207,12 @@ function App() {
               </NavLink>
               <NavLink to='/dashboard' className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
                 Dashboard
+              </NavLink>
+              <NavLink to='/reminders' className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                Reminders
+              </NavLink>
+              <NavLink to='/settings' className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                Settings
               </NavLink>
             </nav>
 
@@ -257,6 +267,20 @@ function App() {
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } />
+
+              {/* Reminders route — create, edit, and manage scheduled email reminders */}
+              <Route path="/reminders" element={
+                <ProtectedRoute>
+                  <Reminders showToast={showToast} />
+                </ProtectedRoute>
+              } />
+
+              {/* Settings route — email notification preferences and test email */}
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <Settings showToast={showToast} />
                 </ProtectedRoute>
               } />
 

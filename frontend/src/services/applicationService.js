@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// In production, VITE_API_URL is set as an environment variable (e.g. in Vercel dashboard)
-// In local development, it falls back to the local backend URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/applications';
+// VITE_API_URL points to the backend root (e.g. http://localhost:8080 or https://your-app.onrender.com).
+// Each service appends its own path segment so all services share the same env var.
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api/applications';
 
 // Create axios instance with default configuration
 const api = axios.create({

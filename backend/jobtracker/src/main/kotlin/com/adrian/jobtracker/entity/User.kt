@@ -24,6 +24,14 @@ data class User(
     @Column(nullable = false)
     val role: UserRole = UserRole.USER, // Defaults to USER; ADMIN role reserved for elevated access
 
+    // Allows disabling an account without deleting it (e.g. banned or unverified users)
+    @Column(nullable = false)
+    var enabled: Boolean = true,
+
+    // User-controlled setting — when false, no reminder or notification emails are sent
+    @Column(nullable = false)
+    var emailNotificationsEnabled: Boolean = true,
+
     @Column(nullable = false, updatable = false)
     val createdAt: LocalDateTime = LocalDateTime.now(), // Set once on creation, never updated
 
@@ -32,7 +40,11 @@ data class User(
 
     // One user owns many applications — deleting a user cascades and removes all their applications
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val applications: MutableList<Application> = mutableListOf()
+    val applications: MutableList<Application> = mutableListOf(),
+
+    // One user owns many reminders — deleting a user cascades and removes all their reminders
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val reminders: MutableList<Reminder> = mutableListOf()
 )
 
 // Roles that determine what a user is allowed to do

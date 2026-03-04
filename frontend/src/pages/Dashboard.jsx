@@ -1,9 +1,10 @@
 // Dashboard page component that displays analytics, charts, and recent activity
 // Uses recharts library for pie chart (status distribution) and bar chart (applications over time)
 import { useEffect, useState } from "react";
-import { applicationService } from "../services/frontApplicationService";
+import { applicationService } from "../services/applicationService";
 import { interviewService } from "../services/interviewService";
 import { documentService } from "../services/documentService";
+import { reminderService } from "../services/reminderService";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis,
         CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { STATUS_COLORS, STATUS_LABELS, getFileIcon } from "../utils/constants";
@@ -16,6 +17,7 @@ function Dashboard() {
     const [error, setError] = useState(false); // True if either API call failed on mount
     const [upcomingInterviews, setUpcomingInterviews] = useState([]);
     const [documentSummary, setDocumentSummary] = useState(null);
+    const [reminderSummary, setReminderSummary] = useState(null);
 
     // Fetch both applications and statistics in parallel when component mounts
     useEffect(() => {
@@ -25,16 +27,18 @@ function Dashboard() {
     const loadData = async () => {
         try {
             // Fetch applications and statistics simultaneously for faster page load
-            const [appsData, statsData, interviewsData, docSummary] = await Promise.all([
+            const [appsData, statsData, interviewsData, docSummary, remSummary] = await Promise.all([
                 applicationService.getApplications(),
                 applicationService.getStatistics(),
                 interviewService.getUpcomingInterviews(),
-                documentService.getDocumentSummary()
+                documentService.getDocumentSummary(),
+                reminderService.getReminderSummary()
             ]);
             setApplications(appsData);
             setStats(statsData);
             setUpcomingInterviews(interviewsData);
             setDocumentSummary(docSummary);
+            setReminderSummary(remSummary);
         } catch (err) {
             console.error('Error loading dashboard data:', err);
             setError(true); // Signal that the data fetch failed so the error UI is shown
@@ -189,6 +193,20 @@ function Dashboard() {
                         </div>
                     </div>
                 </div>
+
+                {/* Reminder metric card */}
+                <div className="metric-card">
+                    <div className="metric-icon">🔔</div>
+                    <div className="metric-content">
+                        <div className="metric-value">
+                            {reminderSummary?.pendingReminders || 0}
+                        </div>
+                        <div className="metric-label">Pending Reminders</div>
+                        <div className="metric-sublabel">
+                            {reminderSummary?.totalReminders || 0}
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Charts Section - Pie chart for status breakdown, bar chart for timeline */}
@@ -287,6 +305,35 @@ function Dashboard() {
                                     <div className="doc-meta">
                                         {doc.applicationCompany} • {doc.fileSizeFormatted}
                                     </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Upcoming Reminders — only rendered when the summary has at least one pending reminder */}
+            {reminderSummary && reminderSummary.upcomingReminders.length > 0 && (
+                <div className="upcoming-reminders-section">
+                    <h3>Upcoming Reminders 🔔</h3>
+                    <div className="upcoming-reminders-list">
+                        {reminderSummary.upcomingReminders.map(reminder => (
+                            <div key={reminder.id} className="upcoming-reminder-card">
+                                {/* Formatted scheduled time shown as the primary badge */}
+                                <div className="reminder-time-badge">
+                                    {formatDateTime(reminder.scheduledFor)}
+                                </div>
+                                <div className="reminder-details">
+                                    {/* Reminder title (required field) */}
+                                    <div className="reminder-title-dash">
+                                        {reminder.title}
+                                    </div>
+                                    {/* Linked application company — only shown if reminder is tied to one */}
+                                    {reminder.applicationCompany && (
+                                        <div className="reminder-app">
+                                            📋 {reminder.applicationCompany}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
