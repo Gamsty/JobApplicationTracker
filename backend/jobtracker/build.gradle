@@ -43,6 +43,9 @@ dependencies {
 	// File handling
 	implementation 'commons-io:commons-io:2.15.1'
 
+	//Email support
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	
 	// Development
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 

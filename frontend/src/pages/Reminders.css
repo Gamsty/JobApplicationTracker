@@ -1,0 +1,5 @@
+/* Constrains the reminders page to a readable width and centres it horizontally */
+.reminders-page {
+    max-width: 1000px;
+    margin: 0 auto;
+}

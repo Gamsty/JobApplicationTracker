@@ -15,9 +15,9 @@ import org.springframework.web.multipart.MultipartFile
 
 // REST controller for all document operations: upload, download, update, delete, and listing.
 // All endpoints are under /api/documents and require authentication (enforced by SecurityConfig).
+// CORS is configured globally in WebConfig — no @CrossOrigin needed here.
 @RestController
 @RequestMapping("/api/documents")
-@CrossOrigin(origins = ["http://localhost:5173", "https://job-tracker.vercel.app"])
 class DocumentController(
     private val documentService: DocumentService
 ) {

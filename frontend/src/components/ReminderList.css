@@ -1,0 +1,378 @@
+/* ─── Page layout ─────────────────────────────────────────────────── */
+
+.reminder-list-container {
+    padding: 20px;
+}
+
+/* Header row: title on the left, "Create Reminder" button on the right */
+.reminder-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.reminder-list-header h2 {
+    font-size: 28px;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* ─── Create Reminder button ──────────────────────────────────────── */
+
+.create-button-reminder {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.create-button-reminder:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+/* ─── Filter tabs (Pending / All / Sent) ──────────────────────────── */
+
+.reminder-filter-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* Inactive tab: muted text, no underline */
+.filter-tab {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: -2px; /* overlaps the border-bottom of the container to merge with it */
+}
+
+.filter-tab:hover {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+}
+
+/* Active tab: accent underline shows which filter is currently selected */
+.filter-tab.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+}
+
+/* ─── Empty state ─────────────────────────────────────────────────── */
+
+.no-reminders {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: var(--bg-primary);
+    border-radius: 12px;
+    border: 2px dashed var(--border-color);
+}
+
+.no-reminders p {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+/* "Create Your First Reminder" button shown only when Pending tab is empty */
+.create-button-first {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.create-button-first:hover {
+    background-color: var(--accent-hover);
+}
+
+/* ─── Reminder card list ──────────────────────────────────────────── */
+
+.reminders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Each reminder is a horizontal card with a coloured left border indicating state */
+.reminder-card {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px var(--shadow);
+    display: flex;
+    gap: 16px;
+    border-left: 4px solid var(--accent-color);
+    transition: all 0.3s;
+}
+
+.reminder-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+/* Sent reminders are dimmed with a green border to show they've been processed */
+.reminder-card.sent {
+    opacity: 0.7;
+    border-left-color: #4ca450;
+}
+
+/* Disabled reminders are faded with a muted border */
+.reminder-card.disabled {
+    opacity: 0.5;
+    border-left-color: var(--text-muted);
+}
+
+/* Overdue reminders get a red border to draw attention */
+.reminder-card.overdue {
+    border-left-color: var(--error-color);
+}
+
+/* ─── Card internals ──────────────────────────────────────────────── */
+
+/* Left column: large emoji icon for the reminder type */
+.reminder-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+}
+
+/* Middle column: all text content — takes remaining space */
+.reminder-content {
+    flex: 1;
+    min-width: 0; /* prevents flex children from overflowing */
+}
+
+/* Title row: reminder name on the left, status badges on the right */
+.reminder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.reminder-title {
+    font-size: 18px;
+    color: var(--text-primary);
+    margin: 0;
+    word-break: break-word;
+}
+
+/* ─── Status badges (Sent / Disabled / Overdue) ───────────────────── */
+
+.reminder-badges {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bolder;
+    white-space: nowrap;
+}
+
+/* Semantic green — intentionally hardcoded, not themed */
+.sent-badge {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Disabled uses theme variables so it adapts automatically */
+.disabled-badge {
+    background-color: var(--bg-hover);
+    color: var(--text-secondary);
+}
+
+/* Semantic red — intentionally hardcoded, not themed */
+.overdue-badge {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+/* ─── Card body text ──────────────────────────────────────────────── */
+
+/* Reminder category label (e.g. "Follow Up") shown in accent colour */
+.reminder-type {
+    font-size: 13px;
+    color: var(--accent-color);
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+/* Optional longer message body */
+.reminder-message {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+/* Linked application / interview shown if the reminder is tied to one */
+.reminder-application,
+.reminder-interview {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+/* Scheduled time row — separated from body text by a thin divider */
+.reminder-schedule {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.schedule-time {
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: bold;
+}
+
+/* Countdown text (e.g. "In 3 days") shown only for pending reminders */
+.time-until {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* Timestamp shown after the scheduler has sent the email — semantic green */
+.reminder-sent-at {
+    font-size: 12px;
+    color: #4caf50;
+    margin-top: 8px;
+}
+
+/* ─── Action buttons (right column) ──────────────────────────────── */
+
+/* Right column: stacked icon buttons (toggle, edit, delete) */
+.reminder-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* All three action buttons share the same size and shape */
+.toggle-button,
+.edit-button-reminder,
+.delete-button-reminder {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Toggle (🔔/🔕) — uses theme hover variable so it works in both modes */
+.toggle-button {
+    background-color: var(--bg-hover);
+}
+
+.toggle-button:hover {
+    background-color: var(--border-color);
+    transform: scale(1.1);
+}
+
+/* Edit (✏️) — semantic light blue; overridden for dark mode below */
+.edit-button-reminder {
+    background-color: #e3f2fd;
+}
+
+.edit-button-reminder:hover {
+    background-color: #bbdefb;
+    transform: scale(1.1);
+}
+
+/* Delete (🗑️) — uses error variable so it adapts (red in light, softer red in dark) */
+.delete-button-reminder {
+    background-color: var(--error-color);
+}
+
+.delete-button-reminder:hover {
+    filter: brightness(0.85);
+    transform: scale(1.1);
+}
+
+/* ─── Loading / error states ──────────────────────────────────────── */
+
+.reminders-loading,
+.reminders-error {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+}
+
+/* ─── Dark mode overrides ─────────────────────────────────────────── */
+/* Only semantic colours that can't be expressed as CSS variables need overriding here.
+   Everything using var(--...) above already adapts automatically. */
+
+[data-theme='dark'] .sent-badge {
+    background-color: #1b5e20;
+    color: #a5d6a7;
+}
+
+[data-theme='dark'] .overdue-badge {
+    background-color: #4e0000;
+    color: #ef9a9a;
+}
+
+/* Edit button: dark blue tint instead of washed-out light blue on dark cards */
+[data-theme='dark'] .edit-button-reminder {
+    background-color: #1a3a5c;
+}
+
+[data-theme='dark'] .edit-button-reminder:hover {
+    background-color: #1565c0;
+}
+
+/* ─── Responsive (mobile) ─────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    /* Stack header vertically on small screens */
+    .reminder-list-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    /* Stack card contents vertically instead of side-by-side */
+    .reminder-card {
+        flex-direction: column;
+    }
+
+    /* Action buttons go horizontal at the bottom of the card */
+    .reminder-actions {
+        flex-direction: row;
+    }
+
+    .reminder-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

@@ -5,17 +5,16 @@ import com.adrian.jobtracker.dto.LoginRequest
 import com.adrian.jobtracker.dto.MessageResponse
 import com.adrian.jobtracker.dto.RegisterRequest
 import com.adrian.jobtracker.service.AuthService
-import com.adrian.jobtracker.service.EmailAlreadyExistsException
+import com.adrian.jobtracker.exception.EmailAlreadyExistsException
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 // Handles authentication endpoints — all routes are public (permitted in SecurityConfig).
-// @CrossOrigin allows requests from the local dev frontend and the deployed frontend.
+// CORS is configured globally in WebConfig — no @CrossOrigin needed here.
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = ["http://localhost:5173", "https://job-tracker.vercel.app"])
 class AuthController(
     private val authService: AuthService
 ) {

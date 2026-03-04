@@ -1,13 +1,5 @@
 package com.adrian.jobtracker.exception
 
-import com.adrian.jobtracker.service.ApplicationNotFoundException
-import com.adrian.jobtracker.service.DocumentNotFoundException
-import com.adrian.jobtracker.service.EmailAlreadyExistsException
-import com.adrian.jobtracker.service.FileSizeExceedException
-import com.adrian.jobtracker.service.FileStorageException
-import com.adrian.jobtracker.service.InterviewNotFoundException
-import com.adrian.jobtracker.service.InvalidFileTypeException
-import com.adrian.jobtracker.service.UnauthorizedAccessException
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -186,7 +178,36 @@ class GlobalExceptionHandler {
             timestamp = LocalDateTime.now(),
             status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
             error = "File Storage Error",
-            message = ex.message ?: "Error storing file" // Fixed: was "stroing"
+            message = ex.message ?: "Error storing file"
+        )
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error)
+    }
+
+    // Handle missing reminder records (404 Not Found).
+    // Thrown by ReminderService when the requested reminder ID does not exist in the database.
+    @ExceptionHandler(ReminderNotFoundException::class)
+    fun handleReminderNotFound(ex: ReminderNotFoundException): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.NOT_FOUND.value(),
+            error = "Not Found",
+            message = ex.message ?: "Reminder not found"
+        )
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error)
+    }
+
+    // Handle email sending failures (500 Internal Server Error).
+    // Thrown by EmailService when the SMTP call fails — e.g. wrong credentials, Gmail blocked the request,
+    // or the mail server is unreachable. The frontend should prompt the user to check their email settings.
+    @ExceptionHandler(EmailSendException::class)
+    fun handleEmailSend(ex: EmailSendException): ResponseEntity<ErrorResponse> {
+        val error = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            error = "Email Error",
+            message = ex.message ?: "Failed to send email. Please check your email settings"
         )
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error)
