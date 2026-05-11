@@ -11,7 +11,7 @@
 
 spring:
   datasource:
-    url: jdbc:h2:mem:jobtrackertest;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULTS_TO_REGULAR=TRUE
+    url: jdbc:h2:mem:jobtrackertest;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
     username: sa
     password:
     driver-class-name: org.h2.Driver

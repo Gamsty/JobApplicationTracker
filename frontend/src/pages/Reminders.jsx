@@ -17,19 +17,18 @@ function Reminders({ showToast }) {
     // Incrementing this key forces ReminderList to remount and re-fetch after any mutation
     const [refreshKey, setRefreshKey] = useState(0);
 
-    const loadApplications = async () => {
-        try {
-            const data = await applicationService.getApplications();
-            setApplications(data);
-        } catch (err) {
-            console.error('Error loading applications:', err);
-        }
-    };
-
     // Fetch the user's applications once so the form can offer an "Link to Application" dropdown.
-    // Declared after loadApplications so the function reference is hoisted before the effect reads it.
+    // Inlined as an async IIFE so setState happens inside a callback rather than the effect
+    // body — keeps the react-hooks/set-state-in-effect lint rule happy without bypassing it.
     useEffect(() => {
-        loadApplications();
+        (async () => {
+            try {
+                const data = await applicationService.getApplications();
+                setApplications(data);
+            } catch (err) {
+                console.error('Error loading applications:', err);
+            }
+        })();
     }, []);
 
     // Opens the form in create mode (no pre-filled reminder)
