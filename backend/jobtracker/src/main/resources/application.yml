@@ -22,13 +22,6 @@ spring:
     properties:
       hibernate:
         "[format_sql": true
-        # Pin dialect explicitly. spring.jpa.database-platform is deprecated in Spring Boot 4,
-        # so set it directly under hibernate.* properties where Hibernate 7 actually reads it.
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        # Disable JDBC metadata fetch at startup. Without this, when the DB is briefly
-        # unreachable, Hibernate hides the real connection error behind a misleading
-        # "Unable to determine Dialect" message — which is useless for debugging.
-        "[boot.allow_jdbc_metadata_access": false
 
   # File upload configuration
   servlet:

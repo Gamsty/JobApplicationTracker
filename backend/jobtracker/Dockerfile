@@ -32,7 +32,13 @@ COPY --from=build /tmp/applicationinsights-agent.jar /app/applicationinsights-ag
 # Attach the agent via JAVA_TOOL_OPTIONS — the JVM picks this up automatically.
 # The agent reads APPLICATIONINSIGHTS_CONNECTION_STRING at startup; if it's not set
 # (e.g. local dev), the agent logs a warning and stays passive instead of crashing.
-ENV JAVA_TOOL_OPTIONS="-javaagent:/app/applicationinsights-agent.jar"
+#
+# -XX:TieredStopAtLevel=1 skips C2 JIT compilation during boot. Combined with the
+# AppInsights agent's class-transformation overhead, full C2 was pushing Spring's
+# Tomcat-bind step past Render's port-scan window. This trades some peak runtime
+# throughput for ~15-30s faster cold start, which matters on free-tier instances
+# that get killed before they finish booting.
+ENV JAVA_TOOL_OPTIONS="-javaagent:/app/applicationinsights-agent.jar -XX:TieredStopAtLevel=1"
 
 # Render sets the PORT env var — Spring reads it via ${PORT:8080} in application.properties
 EXPOSE 8080
