@@ -1,3 +1,8 @@
+/* eslint-disable react-refresh/only-export-components --
+ * This file intentionally colocates the AuthProvider component with the useAuth hook.
+ * Splitting them would force every consumer (controllers, pages, components) to update
+ * its imports for no behavioral gain — Fast Refresh just loses HMR for this one file,
+ * which is acceptable given how rarely auth wiring changes during dev. */
 import { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';

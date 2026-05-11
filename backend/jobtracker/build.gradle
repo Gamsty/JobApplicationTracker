@@ -67,6 +67,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	// In-memory Postgres-compatible database for the contextLoads test.
+	// CI has no Postgres instance — H2 lets JPA bootstrap against a real JDBC connection
+	// so Hibernate can introspect its dialect without us mocking out the persistence layer.
+	testRuntimeOnly 'com.h2database:h2'
 }
 
 kotlin {

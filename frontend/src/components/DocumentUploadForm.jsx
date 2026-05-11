@@ -4,10 +4,11 @@ import './DocumentUploadForm.css';
 
 // Modal form for uploading a document to a specific job application.
 // Props:
-//   applicationId — ID of the application this document belongs to
-//   onSubmit      — async callback(file, documentType, description) called on valid submission
-//   onCancel      — callback invoked when the user dismisses the form
-function DocumentUploadForm({ applicationId, onSubmit, onCancel }) {
+//   onSubmit — async callback(file, documentType, description) called on valid submission.
+//             The parent owns the applicationId and threads it into the upload request,
+//             so the form itself doesn't need to know which application it belongs to.
+//   onCancel — callback invoked when the user dismisses the form
+function DocumentUploadForm({ onSubmit, onCancel }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [documentType, setDocumentType] = useState(DOCUMENT_TYPE.RESUME);
     const [description, setDescription] = useState('');

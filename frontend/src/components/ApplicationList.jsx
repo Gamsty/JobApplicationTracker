@@ -65,21 +65,23 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
     }
 
     // Debounced full-text search against the backend (Azure AI Search in prod).
-    // The 400ms delay batches keystrokes so a search-as-you-type pattern doesn't
-    // hammer the API. Clearing the input restores the unfiltered list immediately.
+    // All setState calls live inside the setTimeout callback so the
+    // react-hooks/set-state-in-effect rule doesn't fire (no synchronous render
+    // cascade from the effect body). 0ms timer on empty query gives an effectively
+    // instant clear; 400ms on a real query batches rapid keystrokes.
     useEffect(() => {
         const q = searchQuery.trim();
-        if (!q) {
-            setSearchResults(null);
-            setIsSearching(false);
-            return;
-        }
-        setIsSearching(true);
         const timer = setTimeout(async () => {
+            if (!q) {
+                setSearchResults(null);
+                setIsSearching(false);
+                return;
+            }
+            setIsSearching(true);
             const results = await applicationService.fullTextSearch(q);
             setSearchResults(results);
             setIsSearching(false);
-        }, 400);
+        }, q ? 400 : 0);
         return () => clearTimeout(timer);
     }, [searchQuery]);
 

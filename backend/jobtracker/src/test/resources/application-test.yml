@@ -1,0 +1,35 @@
+# Configuration loaded when @ActiveProfiles("test") is set on a test class.
+#
+# Goal: let the Spring context boot in CI without any external services. H2 stands in
+# for Postgres, Hibernate's PostgreSQL-compatibility mode means JPA queries that work
+# in prod also work here. Redis is left pointing at localhost where there's no server
+# listening, but Lettuce's lazy connection model means no error occurs unless something
+# actually issues a Redis command during the test — which contextLoads() never does.
+#
+# Azure services (Blob, AI Search) stay on their NoOp/Local implementations because
+# the test profile is "test", not "prod".
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:jobtrackertest;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULTS_TO_REGULAR=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        # Force Postgres dialect — H2's PostgreSQL mode handles our DDL, but Hibernate
+        # would otherwise auto-detect H2's own dialect and emit subtly different SQL.
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # No-op cache for tests so Spring Cache doesn't need a working Redis connection.
+  cache:
+    type: none
+
+# Plausible defaults for env-var-driven properties so @Value injection doesn't fail
+# bean creation in the test context.
+jwt:
+  secret: test-secret-only-used-for-the-context-loads-test-not-a-real-key

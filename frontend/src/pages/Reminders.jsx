@@ -17,11 +17,6 @@ function Reminders({ showToast }) {
     // Incrementing this key forces ReminderList to remount and re-fetch after any mutation
     const [refreshKey, setRefreshKey] = useState(0);
 
-    // Fetch the user's applications once so the form can offer an "Link to Application" dropdown
-    useEffect(() => {
-        loadApplications();
-    }, []);
-
     const loadApplications = async () => {
         try {
             const data = await applicationService.getApplications();
@@ -30,6 +25,12 @@ function Reminders({ showToast }) {
             console.error('Error loading applications:', err);
         }
     };
+
+    // Fetch the user's applications once so the form can offer an "Link to Application" dropdown.
+    // Declared after loadApplications so the function reference is hoisted before the effect reads it.
+    useEffect(() => {
+        loadApplications();
+    }, []);
 
     // Opens the form in create mode (no pre-filled reminder)
     const handleCreate = () => {
