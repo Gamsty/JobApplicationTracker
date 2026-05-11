@@ -35,6 +35,15 @@ Application Insights from production showing the multi-cloud split actually runn
 
 The `prod` profile activates the Azure-backed `AzureBlobStorageService`; any other profile (local dev) uses `LocalFileStorageService` against the filesystem. Both implement the same `FileStorageService` interface so the rest of the app is unaware of which backend is active.
 
+### Architectural Decision Records
+
+The non-obvious design choices are documented as ADRs in [docs/adr/](docs/adr/):
+
+- [ADR-001](docs/adr/001-multi-cloud-over-single-cloud.md) — Multi-cloud over single-cloud
+- [ADR-002](docs/adr/002-azure-blob-over-render-disk.md) — Azure Blob over Render disk for documents
+- [ADR-003](docs/adr/003-redis-cache-over-in-memory.md) — Redis distributed cache over in-memory cache
+- [ADR-004](docs/adr/004-ai-search-over-postgres-fts.md) — Azure AI Search over Postgres full-text search
+
 ---
 
 ## Screenshots
