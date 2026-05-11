@@ -64,7 +64,7 @@ class RateLimitFilter(
             }
 
             if (count > LIMIT) {
-                response.status = HttpServletResponse.SC_TOO_MANY_REQUESTS  // 429
+                response.status = 429  // Too Many Requests — Jakarta Servlet 6 dropped SC_TOO_MANY_REQUESTS
                 response.contentType = "application/json"
                 response.writer.write("""{"error":"Too many authentication attempts. Try again in 15 minutes."}""")
                 return
