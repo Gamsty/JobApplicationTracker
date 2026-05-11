@@ -1,0 +1,7 @@
+# Claude Code's workspace cache — agent state, worktrees, transcripts, etc.
+# Never check into the project repo.
+.claude/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
