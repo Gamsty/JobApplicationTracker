@@ -20,7 +20,8 @@ import java.time.LocalDateTime
 class ApplicationService(
     private val repository: ApplicationRepository,
     private val userRepository: UserRepository,
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val searchService: SearchService
 ) {
     // Resolve the full User entity for the currently authenticated principal.
     // Uses the ID from the JWT-backed UserDetailsImpl so the lookup always hits the primary-key index.
@@ -73,6 +74,7 @@ class ApplicationService(
         )
 
         val saved = repository.save(application) // Save the new application to the database
+        searchService.indexApplication(saved) // Best-effort index — failures logged, not propagated
         return ApplicationResponse.fromEntity(saved)
     }
 
@@ -98,6 +100,7 @@ class ApplicationService(
         application.updatedAt = LocalDateTime.now()
 
         val updated = repository.save(application) // Save the updated application to the database
+        searchService.indexApplication(updated) // Re-index with new field values
         return ApplicationResponse.fromEntity(updated)
     }
 
@@ -115,6 +118,7 @@ class ApplicationService(
         }
 
         repository.deleteById(id)
+        searchService.removeFromIndex(id) // Drop from index — failures logged, not propagated
     }
 
     // Search applications by company name (partial, case-insensitive) for current user
@@ -125,6 +129,13 @@ class ApplicationService(
 
         return repository.findByUserAndCompanyNameContainingIgnoreCase(user, companyName)
             .map { ApplicationResponse.fromEntity(it) }
+    }
+
+    // Full-text search across company name, position title, notes, and interview content
+    // using Azure AI Search. Filtered to the current user's applications.
+    fun fullTextSearch(query: String): List<SearchResult> {
+        val user = getCurrentUser()
+        return searchService.search(query, user.id!!)
     }
 
     // Get statistics for current user.

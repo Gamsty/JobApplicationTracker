@@ -106,6 +106,13 @@ azure:
   storage:
     connection-string: ${AZURE_STORAGE_CONNECTION_STRING:}
     container-name: ${AZURE_STORAGE_CONTAINER:documents}
+  # Azure AI Search — read by AzureSearchService (active only under the "prod" profile).
+  # Endpoint format: https://<service-name>.search.windows.net. Admin key is the primary
+  # admin API key from the Search service (allows both read and write). Treat as a secret.
+  search:
+    endpoint: ${AZURE_SEARCH_ENDPOINT:}
+    admin-key: ${AZURE_SEARCH_ADMIN_KEY:}
+    index-name: ${AZURE_SEARCH_INDEX:applications-index}
 
 # Application configuration
 app:

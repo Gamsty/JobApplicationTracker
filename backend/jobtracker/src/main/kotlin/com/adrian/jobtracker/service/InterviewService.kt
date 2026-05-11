@@ -19,7 +19,8 @@ import java.time.LocalDateTime
 class InterviewService(
     private val interviewRepository: InterviewRepository,
     private val applicationRepository: ApplicationRepository,
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val searchService: SearchService
 ) {
 
     // Resolves the JWT principal to a database user ID.
@@ -87,6 +88,9 @@ class InterviewService(
         )
 
         val saved = interviewRepository.save(interview)
+        // Interview notes/feedback are denormalized into the parent application's search doc,
+        // so changes here need to re-index the parent.
+        searchService.indexApplication(application)
         return InterviewResponse.fromEntity(saved)
     }
 
@@ -116,6 +120,7 @@ class InterviewService(
         interview.updatedAt = LocalDateTime.now()
 
         val updated = interviewRepository.save(interview)
+        searchService.indexApplication(interview.application) // Re-index parent with new interview content
         return InterviewResponse.fromEntity(updated)
     }
 
@@ -131,7 +136,9 @@ class InterviewService(
             throw UnauthorizedAccessException("You don't have access to this interview")
         }
 
+        val parent = interview.application
         interviewRepository.deleteById(id)
+        searchService.indexApplication(parent) // Re-index parent — its interview text just shrank
     }
 
     // Get upcoming interviews for current user

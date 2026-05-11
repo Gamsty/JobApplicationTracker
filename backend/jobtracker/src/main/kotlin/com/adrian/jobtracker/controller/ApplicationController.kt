@@ -4,6 +4,7 @@ import com.adrian.jobtracker.dto.ApplicationRequest
 import com.adrian.jobtracker.dto.ApplicationResponse
 import com.adrian.jobtracker.entity.ApplicationStatus
 import com.adrian.jobtracker.service.ApplicationService
+import com.adrian.jobtracker.service.SearchResult
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -68,6 +69,16 @@ class ApplicationController(
         @RequestParam company: String
     ): ResponseEntity<List<ApplicationResponse>> {
         val results = applicationService.searchApplicationsByCompanyName(company) // Search for applications by company name using the service layer, which will return a list of matching applications as ApplicationResponse objects
+        return ResponseEntity.ok(results)
+    }
+
+    // GET /api/applications/full-text-search?q= - Full-text search across company name, position,
+    // notes, and interview content via Azure AI Search. Multi-tenant filter is enforced at the
+    // search service so users only ever see their own data. Returns empty list in local dev
+    // (NoOpSearchService) — the existing /search endpoint still works there.
+    @GetMapping("/full-text-search")
+    fun fullTextSearch(@RequestParam q: String): ResponseEntity<List<SearchResult>> {
+        val results = applicationService.fullTextSearch(q)
         return ResponseEntity.ok(results)
     }
 

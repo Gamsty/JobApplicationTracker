@@ -46,6 +46,10 @@ dependencies {
 	// Azure Blob Storage — used by AzureBlobStorageService (active under prod profile)
 	implementation 'com.azure:azure-storage-blob:12.27.0'
 
+	// Azure AI Search — used by AzureSearchService for full-text search across applications,
+	// notes, and interview feedback (active under prod profile).
+	implementation 'com.azure:azure-search-documents:11.7.0'
+
 	// Redis — used for caching expensive read queries (statistics endpoints)
 	// and for IP-based rate limiting on auth endpoints. Backed by Azure Cache for Redis in prod.
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
