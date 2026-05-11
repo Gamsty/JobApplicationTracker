@@ -75,13 +75,14 @@ The non-obvious design choices are documented as ADRs in [docs/adr/](docs/adr/):
 - JWT-based stateless authentication
 - BCrypt password hashing
 - Automatic session restore from `localStorage`
+- **IP-based brute-force protection** — 5 attempts per 15 minutes per IP, enforced at a filter before BCrypt runs
 
 ### Applications Page
 - Create, read, update and delete job applications
-- Search by company name or position (partial, case-insensitive)
+- **Full-text search** via Azure AI Search across company name, position, notes, and interview content — with match highlights showing the snippet that matched
 - Filter by status (All, Applied, Interviewing, Offer Received, etc.)
 - Sort by any column (ascending / descending)
-- Stats summary bar showing total count and count per status
+- Stats summary bar showing total count and count per status (cached for 5 minutes, evicted on user writes)
 
 ### Interview Tracking
 - Add multiple interview rounds per application
@@ -137,10 +138,14 @@ The non-obvious design choices are documented as ADRs in [docs/adr/](docs/adr/):
 | **Database** | PostgreSQL |
 | **ORM** | Spring Data JPA / Hibernate |
 | **Security** | Spring Security + JWT (jjwt 0.12) |
+| **Cache** | Spring Cache backed by Azure Cache for Redis (Lettuce client) |
+| **Rate limiting** | Custom servlet filter using Redis INCR + EXPIRE |
 | **Email** | Spring Boot Mail (Gmail SMTP) |
 | **Scheduling** | Spring `@Scheduled` cron tasks |
 | **Validation** | Jakarta Bean Validation |
 | **File Storage** | Azure Blob Storage (prod) / Local filesystem (dev) |
+| **Search** | Azure AI Search (prod) — denormalised single-index, multi-tenant filter |
+| **Observability** | Application Insights Java agent (auto-instrumentation) |
 | **Build Tool** | Gradle |
 
 ### Frontend
@@ -151,6 +156,15 @@ The non-obvious design choices are documented as ADRs in [docs/adr/](docs/adr/):
 | **HTTP Client** | Axios |
 | **Charts** | Recharts 3 |
 | **Styling** | Plain CSS with CSS variables (light/dark theme) |
+
+### Infrastructure & DevOps
+| | |
+|---|---|
+| **IaC** | Bicep modules (Storage, Redis, Search, Log Analytics + App Insights) |
+| **CI/CD** | GitHub Actions — backend tests, frontend lint + build, Bicep validate, OIDC deploy |
+| **Backend hosting** | Render (Docker, free tier) |
+| **Frontend hosting** | Vercel (static CDN) |
+| **Container build** | Multi-stage Dockerfile, JDK 17 build → JRE-Alpine runtime |
 
 ---
 
@@ -460,8 +474,9 @@ See [docs/API.md](docs/API.md) for the full endpoint reference with request/resp
 | POST | `/api/applications` | Create application |
 | PUT | `/api/applications/{id}` | Update application |
 | DELETE | `/api/applications/{id}` | Delete application |
-| GET | `/api/applications/search?company=` | Search by company |
-| GET | `/api/applications/statistics` | Get statistics |
+| GET | `/api/applications/search?company=` | Substring match on company name (DB) |
+| GET | `/api/applications/full-text-search?q=` | Full-text search via Azure AI Search (notes + interview content) |
+| GET | `/api/applications/statistics` | Get statistics (cached) |
 
 ### Interviews (Requires JWT)
 | Method | Endpoint | Description |
