@@ -14,11 +14,12 @@
 name: Infra Deploy
 
 on:
+  # Manual trigger only. Auto-deploy on push to main is the right pattern for a
+  # production project, but it requires an Azure AD app registration with federated
+  # identity credentials trusting this repo — and Azure for Students subscriptions
+  # in shared Entra tenants (e.g. universities) block app-registration creation.
+  # Re-enable the push trigger below once OIDC is set up on the target subscription.
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'infra/**'
 
 concurrency:
   group: infra-deploy
