@@ -66,18 +66,20 @@ class AzureSearchService(
             indexClient.getIndex(indexName)
         } catch (ex: Exception) {
             log.info("Search index '$indexName' not found; creating from schema")
+            // Fields are retrievable (returned in search results) by default in the SDK;
+            // mark them as hidden only if they shouldn't be returned. None of ours need that.
             val fields = listOf(
                 SearchField("id", SearchFieldDataType.STRING).setKey(true).setFilterable(true),
-                // userId is filterable + retrievable but not searchable — it's an identity,
-                // not free text. The mandatory per-user filter uses this.
-                SearchField("userId", SearchFieldDataType.STRING).setFilterable(true).setRetrievable(true),
-                SearchField("companyName", SearchFieldDataType.STRING).setSearchable(true).setRetrievable(true),
-                SearchField("positionTitle", SearchFieldDataType.STRING).setSearchable(true).setRetrievable(true),
-                SearchField("notes", SearchFieldDataType.STRING).setSearchable(true).setRetrievable(true),
-                SearchField("interviewNotes", SearchFieldDataType.STRING).setSearchable(true).setRetrievable(true),
-                SearchField("interviewFeedback", SearchFieldDataType.STRING).setSearchable(true).setRetrievable(true),
-                SearchField("status", SearchFieldDataType.STRING).setFilterable(true).setFacetable(true).setRetrievable(true),
-                SearchField("applicationDate", SearchFieldDataType.DATE_TIME_OFFSET).setFilterable(true).setSortable(true).setRetrievable(true)
+                // userId is filterable but not searchable — it's an identity, not free text.
+                // The mandatory per-user filter uses this.
+                SearchField("userId", SearchFieldDataType.STRING).setFilterable(true),
+                SearchField("companyName", SearchFieldDataType.STRING).setSearchable(true),
+                SearchField("positionTitle", SearchFieldDataType.STRING).setSearchable(true),
+                SearchField("notes", SearchFieldDataType.STRING).setSearchable(true),
+                SearchField("interviewNotes", SearchFieldDataType.STRING).setSearchable(true),
+                SearchField("interviewFeedback", SearchFieldDataType.STRING).setSearchable(true),
+                SearchField("status", SearchFieldDataType.STRING).setFilterable(true).setFacetable(true),
+                SearchField("applicationDate", SearchFieldDataType.DATE_TIME_OFFSET).setFilterable(true).setSortable(true)
             )
             indexClient.createIndex(SearchIndex(indexName, fields))
         }
