@@ -6,6 +6,11 @@ spring:
     active: local
   application:
     name: jobtracker
+  # Defer bean construction until first request. Trades ~2-3s first-request latency for
+  # a much faster cold start, which matters because the App Insights agent already adds
+  # ~30s of class-transformation overhead and Render's free-tier port-scan window is tight.
+  main:
+    lazy-initialization: true
   datasource:
     # Database configuration — credentials must be set as environment variables in production
     # For local development, set these in application-local.yml
@@ -43,6 +48,11 @@ spring:
         enabled: ${REDIS_SSL:true}
       timeout: 3s
       connect-timeout: 3s
+      # We use Redis only for Spring Cache + a few INCR/EXPIRE keys in RateLimitFilter —
+      # no Spring Data Redis repositories. Disable repository scanning so JPA repos don't
+      # each trigger a "Could not safely identify store assignment" check at startup.
+      repositories:
+        enabled: false
 
   # Spring Cache — uses the Redis connection above. 5-min TTL is a balance between
   # freshness (per-user statistics) and offloading the DB on dashboard refreshes.
