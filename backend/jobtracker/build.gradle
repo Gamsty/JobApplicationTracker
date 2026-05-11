@@ -43,6 +43,9 @@ dependencies {
 	// File handling
 	implementation 'commons-io:commons-io:2.15.1'
 
+	// Azure Blob Storage — used by AzureBlobStorageService (active under prod profile)
+	implementation 'com.azure:azure-storage-blob:12.27.0'
+
 	//Email support
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	

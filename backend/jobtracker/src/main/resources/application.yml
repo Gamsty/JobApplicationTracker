@@ -62,8 +62,19 @@ jwt:
   expiration: 86400000 # 24 hours in milliseconds
 
 # File storage congiguration
+# Only used by LocalFileStorageService (active under any profile except "prod").
 file:
   upload-dir: ${FILE_UPLOAD_DIR:./uploads}
+
+# Azure Blob Storage — read by AzureBlobStorageService (active only under the "prod" profile).
+# Auth: storage-account connection string. Service-principal auth would be cleaner (RBAC, no
+# shared secret), but Azure for Students blocks app-registration creation in UiO's tenant —
+# connection-string auth is the practical fallback. Treat the connection string as a high-value
+# secret and set it as an env var on Render, never commit it.
+azure:
+  storage:
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING:}
+    container-name: ${AZURE_STORAGE_CONTAINER:documents}
 
 # Application configuration
 app:
