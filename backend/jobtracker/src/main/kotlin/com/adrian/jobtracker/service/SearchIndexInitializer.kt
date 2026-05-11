@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 // Runs once at application startup in prod and bulk-indexes every existing application.
 //
@@ -26,6 +27,11 @@ class SearchIndexInitializer(
 
     private val log = LoggerFactory.getLogger(SearchIndexInitializer::class.java)
 
+    // @Transactional(readOnly = true) keeps the JPA session open while we access lazy
+    // collections like Application.interviews. Without this we get
+    // "Cannot lazily initialize collection ... (no session)" because CommandLineRunner runs
+    // outside the request lifecycle and gets no implicit session.
+    @Transactional(readOnly = true)
     override fun run(vararg args: String) {
         try {
             val applications = applicationRepository.findAll()
