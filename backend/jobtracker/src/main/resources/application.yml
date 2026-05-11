@@ -31,6 +31,27 @@ spring:
       max-request-size: 10MB
       file-size-threshold: 1MB
 
+  # Redis — used by Spring Cache (statistics caching) and the RateLimitFilter (auth brute-force protection).
+  # In prod this points at Azure Cache for Redis (port 6380, TLS required, password from access keys).
+  # Locally Redis is optional — the cache and rate limiter both degrade gracefully if disabled.
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6380}
+      password: ${REDIS_PASSWORD:}
+      ssl:
+        enabled: ${REDIS_SSL:true}
+      timeout: 3s
+      connect-timeout: 3s
+
+  # Spring Cache — uses the Redis connection above. 5-min TTL is a balance between
+  # freshness (per-user statistics) and offloading the DB on dashboard refreshes.
+  cache:
+    type: redis
+    redis:
+      time-to-live: 300000  # 5 minutes in ms
+      cache-null-values: false
+
   # Email congiguration
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}

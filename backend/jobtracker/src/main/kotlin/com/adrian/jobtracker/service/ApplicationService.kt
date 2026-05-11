@@ -8,6 +8,8 @@ import com.adrian.jobtracker.entity.ApplicationStatus
 import com.adrian.jobtracker.entity.Application
 import com.adrian.jobtracker.repository.ApplicationRepository
 import com.adrian.jobtracker.repository.UserRepository
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -56,6 +58,7 @@ class ApplicationService(
     }
 
     // Create a new application for current user
+    @CacheEvict(value = ["statistics"], key = "@authService.getCurrentUser().getId()")
     fun createApplication(request: ApplicationRequest): ApplicationResponse {
         var user = getCurrentUser()
 
@@ -74,6 +77,7 @@ class ApplicationService(
     }
 
     // Update an existing application (verify ownership)
+    @CacheEvict(value = ["statistics"], key = "@authService.getCurrentUser().getId()")
     fun updateApplication(id: Long, request: ApplicationRequest): ApplicationResponse {
         var user = getCurrentUser()
         val application = repository.findById(id)
@@ -98,6 +102,7 @@ class ApplicationService(
     }
 
     // Delete an application by ID (verify ownership)
+    @CacheEvict(value = ["statistics"], key = "@authService.getCurrentUser().getId()")
     fun deleteApplication(id: Long) {
         var user = getCurrentUser()
 
@@ -122,7 +127,12 @@ class ApplicationService(
             .map { ApplicationResponse.fromEntity(it) }
     }
 
-    // Get statistics for current user
+    // Get statistics for current user.
+    // Cached because the dashboard hits this on every load and it runs N+1 queries
+    // (1 count + 7 per-status counts). TTL is 5 min, but writes (@CacheEvict above)
+    // invalidate the user's entry immediately so users never see stale counts after
+    // their own actions.
+    @Cacheable(value = ["statistics"], key = "@authService.getCurrentUser().getId()")
     fun getStatistics(): Map<String, Any> {
         val user = getCurrentUser()
 

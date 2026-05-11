@@ -12,6 +12,8 @@ import com.adrian.jobtracker.entity.Document
 import com.adrian.jobtracker.entity.DocumentType
 import com.adrian.jobtracker.repository.ApplicationRepository
 import com.adrian.jobtracker.repository.DocumentRepository
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -33,6 +35,7 @@ class DocumentService(
 
     // Validates the file, verifies the user owns the application, stores the file on disk,
     // and persists a Document entity. Returns the saved document as a response DTO.
+    @CacheEvict(value = ["documentSummary"], key = "@authService.getCurrentUser().getId()")
     fun uploadDocument(
         file: MultipartFile,
         request: DocumentUploadRequest
@@ -131,6 +134,7 @@ class DocumentService(
     // Deletes the physical file from disk first, then removes the DB record.
     // Order matters: if DB deletion fails, the file is already gone but the record remains visible
     // (safer than deleting the record first and leaving an orphaned file).
+    @CacheEvict(value = ["documentSummary"], key = "@authService.getCurrentUser().getId()")
     fun deleteDocument(id: Long) {
         val userId = getCurrentUserId()
 
@@ -174,6 +178,8 @@ class DocumentService(
 
     // Builds a summary of the user's document library: total count, storage used,
     // per-type breakdown, and the 5 most recently uploaded documents.
+    // Cached because the dashboard requests this on every load.
+    @Cacheable(value = ["documentSummary"], key = "@authService.getCurrentUser().getId()")
     fun getDocumentSummary(): DocumentSummary {
         val userId = getCurrentUserId()
 

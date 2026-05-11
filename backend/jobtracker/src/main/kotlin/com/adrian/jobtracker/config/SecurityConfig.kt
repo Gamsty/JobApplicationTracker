@@ -1,6 +1,7 @@
 package com.adrian.jobtracker.config
 
 import com.adrian.jobtracker.security.JwtAuthenticationFilter
+import com.adrian.jobtracker.security.RateLimitFilter
 import com.adrian.jobtracker.security.UserDetailsServiceImpl
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,6 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfig(
     private val userDetailsService: UserDetailsServiceImpl,  // Loads users from the database by email
     private val jwtAuthenticationFilter: JwtAuthenticationFilter, // Validates the JWT on every request
+    private val rateLimitFilter: RateLimitFilter, // Caps auth attempts per IP to prevent brute force
 ) {
 
     // Registers BCrypt as the password hashing algorithm.
@@ -78,7 +80,9 @@ class SecurityConfig(
                     .anyRequest().authenticated()
             }
             .authenticationProvider(authenticationProvider())
-            // Run the JWT filter before Spring's default username/password filter
+            // Order matters: rate limiter runs first so we reject before wasting CPU on BCrypt,
+            // then JWT validation, then Spring's default username/password machinery.
+            .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter::class.java)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()

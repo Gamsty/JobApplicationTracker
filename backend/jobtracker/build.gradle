@@ -46,6 +46,11 @@ dependencies {
 	// Azure Blob Storage — used by AzureBlobStorageService (active under prod profile)
 	implementation 'com.azure:azure-storage-blob:12.27.0'
 
+	// Redis — used for caching expensive read queries (statistics endpoints)
+	// and for IP-based rate limiting on auth endpoints. Backed by Azure Cache for Redis in prod.
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+
 	//Email support
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	

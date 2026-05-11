@@ -12,6 +12,8 @@ import com.adrian.jobtracker.repository.ApplicationRepository
 import com.adrian.jobtracker.repository.InterviewRepository
 import com.adrian.jobtracker.repository.ReminderRepository
 import com.adrian.jobtracker.repository.UserRepository
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -34,6 +36,7 @@ class ReminderService(
         .orElseThrow { RuntimeException("User not found") }
 
     // Creates a new reminder, optionally linked to an application and/or interview
+    @CacheEvict(value = ["reminderSummary"], key = "@authService.getCurrentUser().getId()")
     fun createReminder(request: ReminderRequest): ReminderResponse {
         val user = getCurrentUser()
 
@@ -104,6 +107,7 @@ class ReminderService(
     }
 
     // Updates a reminder's fields — only allowed if the reminder has not been sent yet
+    @CacheEvict(value = ["reminderSummary"], key = "@authService.getCurrentUser().getId()")
     fun updateReminder(id: Long, request: ReminderRequest): ReminderResponse {
         val userId = getCurrentUserId()
 
@@ -143,6 +147,7 @@ class ReminderService(
     }
 
     // Deletes a reminder — only allowed if owned by the current user
+    @CacheEvict(value = ["reminderSummary"], key = "@authService.getCurrentUser().getId()")
     fun deleteReminder(id: Long) {
         val userId = getCurrentUserId()
 
@@ -157,6 +162,7 @@ class ReminderService(
     }
 
     // Toggles a reminder between enabled and disabled — only allowed if not yet sent
+    @CacheEvict(value = ["reminderSummary"], key = "@authService.getCurrentUser().getId()")
     fun toggleReminder(id: Long): ReminderResponse {
         val userId = getCurrentUserId()
 
@@ -178,7 +184,9 @@ class ReminderService(
         return ReminderResponse.fromEntity(updated)                
     }
 
-    // Returns aggregated reminder stats — used for dashboard badges and summary views
+    // Returns aggregated reminder stats — used for dashboard badges and summary views.
+    // Cached because the dashboard requests this on every load.
+    @Cacheable(value = ["reminderSummary"], key = "@authService.getCurrentUser().getId()")
     fun getReminderSummary(): ReminderSummary {
         val user = getCurrentUser()                                
         val now = LocalDateTime.now()
