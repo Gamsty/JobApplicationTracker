@@ -1,7 +1,11 @@
 package com.adrian.jobtracker.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.slf4j.LoggerFactory
+import org.springframework.cache.Cache
+import org.springframework.cache.annotation.CachingConfigurer
 import org.springframework.cache.annotation.EnableCaching
+import org.springframework.cache.interceptor.CacheErrorHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.cache.RedisCacheConfiguration
@@ -21,7 +25,29 @@ import java.time.Duration
 // CRUD methods. The keys include the current user's ID so each user's cache is isolated.
 @Configuration
 @EnableCaching
-class RedisConfig {
+class RedisConfig : CachingConfigurer {
+
+    private val log = LoggerFactory.getLogger(RedisConfig::class.java)
+
+    // The cache is an optimisation, not a hard dependency. If Redis is unreachable or returns
+    // an error, log it and let the actual method run against the DB — better than turning every
+    // Redis hiccup into a 500 response. Application Insights will surface the underlying Redis
+    // failures separately as dependency errors, so we don't lose visibility.
+    override fun errorHandler(): CacheErrorHandler = object : CacheErrorHandler {
+        override fun handleCacheGetError(ex: RuntimeException, cache: Cache, key: Any) {
+            log.warn("Cache get failed for ${cache.name}/$key: ${ex.message}")
+        }
+        override fun handleCachePutError(ex: RuntimeException, cache: Cache, key: Any, value: Any?) {
+            log.warn("Cache put failed for ${cache.name}/$key: ${ex.message}")
+        }
+        override fun handleCacheEvictError(ex: RuntimeException, cache: Cache, key: Any) {
+            log.warn("Cache evict failed for ${cache.name}/$key: ${ex.message}")
+        }
+        override fun handleCacheClearError(ex: RuntimeException, cache: Cache) {
+            log.warn("Cache clear failed for ${cache.name}: ${ex.message}")
+        }
+    }
+
 
     @Bean
     fun cacheConfiguration(): RedisCacheConfiguration {
