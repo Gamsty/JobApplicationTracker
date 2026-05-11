@@ -6,6 +6,29 @@ A full-stack web application to manage and track job applications throughout the
 
 ---
 
+## Architecture
+
+The system is deployed across three providers — a deliberate multi-cloud split that uses each provider for what it does best:
+
+```
+   Vercel (Frontend)  ───HTTPS──►  Render (Spring Boot API)
+                                          │
+                                          ├─►  Render PostgreSQL  (users, applications, metadata)
+                                          │
+                                          └─►  Azure Blob Storage (uploaded documents)
+```
+
+| Concern | Provider | Why |
+|---|---|---|
+| Frontend (React/Vite) | Vercel | Free CDN-backed static hosting, zero-config deploys from git |
+| Backend (Spring Boot) | Render | Always-on managed container, good for a stateful JWT API |
+| Relational data | Render PostgreSQL | Same region as backend → low latency, free internal networking |
+| File uploads | Azure Blob Storage | Render's filesystem is **ephemeral** — files disappear on every redeploy. Blob storage is durable and decouples file lifecycle from compute. |
+
+The `prod` profile activates the Azure-backed `AzureBlobStorageService`; any other profile (local dev) uses `LocalFileStorageService` against the filesystem. Both implement the same `FileStorageService` interface so the rest of the app is unaware of which backend is active.
+
+---
+
 ## Screenshots
 
 ### Login
@@ -52,7 +75,7 @@ A full-stack web application to manage and track job applications throughout the
 
 ### Document Management
 - Upload resumes, cover letters, portfolios, certificates, transcripts, references
-- Files stored on the server filesystem with UUID-based naming
+- Files stored in Azure Blob Storage in production; local filesystem in dev (UUID-based naming on both)
 - Download documents with the original filename
 - Track file type, size, and upload date
 - Document summary with total storage usage and per-type breakdown
@@ -100,6 +123,7 @@ A full-stack web application to manage and track job applications throughout the
 | **Email** | Spring Boot Mail (Gmail SMTP) |
 | **Scheduling** | Spring `@Scheduled` cron tasks |
 | **Validation** | Jakarta Bean Validation |
+| **File Storage** | Azure Blob Storage (prod) / Local filesystem (dev) |
 | **Build Tool** | Gradle |
 
 ### Frontend
@@ -161,7 +185,9 @@ JobApplicationTracker/
 │           ├── AuthService.kt             # Register, login, get current user
 │           ├── DocumentService.kt         # Upload, download, delete, summary
 │           ├── EmailService.kt            # HTML email builder + sender
-│           ├── FileStorageService.kt      # Filesystem file operations
+│           ├── FileStorageService.kt      # Interface + FileStorageResult data class
+│           ├── LocalFileStorageService.kt # Filesystem impl (profile != "prod")
+│           ├── AzureBlobStorageService.kt # Azure Blob impl (profile == "prod")
 │           ├── InterviewService.kt        # Interview CRUD + upcoming/past
 │           ├── ReminderSchedulerService.kt # @Scheduled cron task for email delivery
 │           └── ReminderService.kt         # Reminder CRUD + toggle + summary
@@ -338,35 +364,77 @@ See [docs/API.md](docs/API.md) for the full endpoint reference with request/resp
 
 ## Deployment
 
-### Backend — Render.com (Docker)
+The production stack spans three providers. Provision them in this order so each step has what the next needs.
 
-1. Sign up at [render.com](https://render.com) and create a new **Web Service**
+### 1. Document Storage — Azure Blob Storage
+
+Documents live in an Azure Storage Account separate from the rest of the stack. Without this, files uploaded on Render would vanish on every redeploy.
+
+1. Sign up for [Azure for Students](https://azure.microsoft.com/free/students/) (no credit card required)
+2. Provision the storage account, container, and harden TLS:
+   ```powershell
+   az login
+
+   az group create --name rg-jobtracker-prod --location swedencentral
+
+   $STORAGE = "stjobtrackeradrian"   # must be globally unique, 3-24 lowercase chars
+   az storage account create `
+     --name $STORAGE `
+     --resource-group rg-jobtracker-prod `
+     --location swedencentral `
+     --sku Standard_LRS `
+     --kind StorageV2 `
+     --allow-blob-public-access false `
+     --min-tls-version TLS1_2
+
+   az storage container create `
+     --account-name $STORAGE `
+     --name documents `
+     --auth-mode key `
+     --public-access off
+   ```
+3. Pipe the connection string straight to the clipboard — never print it to the terminal:
+   ```powershell
+   az storage account show-connection-string `
+     --name $STORAGE `
+     --resource-group rg-jobtracker-prod `
+     --query connectionString -o tsv | Set-Clipboard
+   ```
+4. Paste it into Render as `AZURE_STORAGE_CONNECTION_STRING` (next section)
+
+> **Auth note:** Service-principal auth with RBAC would be cleaner than connection-string auth, but Azure for Students blocks app-registration creation in shared Entra tenants (e.g. universities). Connection strings are the practical fallback. Treat the connection string as a high-value secret and rotate the account key (`az storage account keys renew`) if it is ever exposed.
+
+### 2. Production Database — Render PostgreSQL
+
+1. Render Dashboard → **+ New** → **PostgreSQL**, region **Frankfurt** (or whichever region matches your web service)
+2. Once status is **Available**, open the database and copy the **Hostname**, **Database**, **Username**, **Password** fields from the Connections panel
+3. These become the `DATABASE_*` env vars in the next step — note that JDBC requires a `jdbc:postgresql://host:5432/dbname` URL with credentials separated, not Render's `postgresql://user:pass@host/db` form
+4. Hibernate creates the schema automatically on first boot (`DDL_AUTO=update`)
+
+### 3. Backend — Render.com (Docker)
+
+1. Render Dashboard → **+ New** → **Web Service**
 2. Connect your GitHub repository, set the root directory to `backend/jobtracker`
 3. Select **Docker** as the environment (the `Dockerfile` handles the build)
-4. Add these environment variables in the Render dashboard:
+4. Add these environment variables:
 
-   | Variable | Value |
-   |----------|-------|
-   | `DATABASE_URL` | `jdbc:postgresql://<host>/<dbname>` |
-   | `DATABASE_USERNAME` | Your DB username |
-   | `DATABASE_PASSWORD` | Your DB password |
-   | `DDL_AUTO` | `update` |
-   | `SPRING_PROFILES_ACTIVE` | `prod` |
-   | `JWT_SECRET` | A secure 256-bit secret key |
-   | `MAIL_USERNAME` | Your Gmail address |
-   | `MAIL_PASSWORD` | Your Gmail App Password |
-   | `FRONTEND_URL` | Your Vercel frontend URL |
+   | Variable | Value | Notes |
+   |----------|-------|-------|
+   | `SPRING_PROFILES_ACTIVE` | `prod` | Activates `AzureBlobStorageService` |
+   | `DATABASE_URL` | `jdbc:postgresql://<Hostname>:5432/<Database>` | Use Render's Internal hostname, not External |
+   | `DATABASE_USERNAME` | Username from step 2 | |
+   | `DATABASE_PASSWORD` | Password from step 2 | |
+   | `DDL_AUTO` | `update` | |
+   | `JWT_SECRET` | A secure 256-bit secret key | |
+   | `MAIL_USERNAME` | Your Gmail address | |
+   | `MAIL_PASSWORD` | Your Gmail App Password | |
+   | `FRONTEND_URL` | Your Vercel frontend URL | |
+   | `AZURE_STORAGE_CONNECTION_STRING` | Connection string from step 1.3 | Paste from clipboard, do not print first |
+   | `AZURE_STORAGE_CONTAINER` | `documents` | |
 
 5. Note your service URL (e.g. `https://your-service.onrender.com`)
 
-### Production Database — Render PostgreSQL
-
-1. In Render, create a new **PostgreSQL** instance
-2. From the database dashboard, copy the **Internal Database URL**
-3. Split it into the three env vars above: `DATABASE_URL` (host + dbname only, prefixed with `jdbc:postgresql://`), `DATABASE_USERNAME`, and `DATABASE_PASSWORD`
-4. Hibernate creates the schema automatically on first boot (`DDL_AUTO=update`)
-
-### Frontend — Vercel
+### 4. Frontend — Vercel
 
 1. Sign up at [vercel.com](https://vercel.com) and create a new project
 2. Import your GitHub repository and configure:
