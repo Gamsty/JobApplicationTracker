@@ -19,6 +19,10 @@ spring:
       ddl-auto: ${DDL_AUTO:update}
     # show-sql and verbose logging are disabled in production to reduce noise
     show-sql: ${SHOW_SQL:true}
+    # Explicit dialect avoids Hibernate trying to auto-detect it via a live JDBC connection
+    # at startup — that fails with a confusing "Unable to determine Dialect" error if the
+    # DB is briefly unreachable. Postgres is the only supported backend regardless.
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         "[format_sql": true
