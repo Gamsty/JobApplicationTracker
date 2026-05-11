@@ -1,0 +1,50 @@
+# Backend CI — runs Gradle build + tests against the Spring Boot service on every PR
+# touching backend/ and on every push to main. Branch protection on main should require
+# this job to be green before merging.
+#
+# Why no Docker push: Render builds its own image from the Dockerfile on push, so building
+# again in CI just to push to a registry would be duplicate work + cost. The point of this
+# workflow is "does the code compile and pass tests" before merge, not deploy.
+
+name: Backend CI
+
+on:
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+
+# Cancel an in-flight run if a new commit lands on the same ref — saves runner minutes
+# on rapid push cycles.
+concurrency:
+  group: backend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend/jobtracker
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle (caches dependencies + build output between runs)
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Compile + run tests + build jar
+        run: ./gradlew build

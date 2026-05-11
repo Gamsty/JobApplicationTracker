@@ -293,6 +293,77 @@ Outside the Azure resource group, so deliberately excluded:
 
 ---
 
+## CI/CD (GitHub Actions)
+
+Four workflows under `.github/workflows/`:
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `backend-ci.yml` | PR + push to main (paths: `backend/**`) | Gradle build + JUnit tests on the Spring Boot service |
+| `frontend-ci.yml` | PR + push to main (paths: `frontend/**`) | `npm ci`, ESLint, production Vite build |
+| `infra-validate.yml` | PR (paths: `infra/**`) | `bicep build` + `az deployment group what-if` posted as a PR comment |
+| `infra-deploy.yml` | Push to main (paths: `infra/**`) or manual dispatch | `az deployment group create` against the production RG |
+
+Both infra workflows authenticate with Azure via **OIDC federated credentials** — no long-lived secrets in the repo. The runner mints a short-lived OIDC token, Azure validates it against the configured trust relationship, and grants an access token scoped to the role assignment.
+
+### One-time Azure setup for the infra workflows
+
+```powershell
+# 1. App registration that GitHub Actions will impersonate.
+#    NOTE: Azure for Students subscriptions tied to a shared Entra tenant (e.g. UiO)
+#    block app-registration creation. If this command fails with "Insufficient
+#    privileges to complete the operation", the OIDC workflow can't be used — keep
+#    the workflows in the repo as documentation and run `az deployment group create`
+#    manually from your laptop after merge instead.
+$app = az ad app create --display-name "github-jobtracker-deploy" | ConvertFrom-Json
+$sp  = az ad sp create --id $app.appId | ConvertFrom-Json
+
+# 2. Grant Contributor on the resource group (minimum role needed for Bicep deploys).
+$SUB = az account show --query id -o tsv
+az role assignment create `
+  --assignee $sp.id `
+  --role Contributor `
+  --scope "/subscriptions/$SUB/resourceGroups/rg-jobtracker-prod"
+
+# 3. Federated credential — trust the GitHub repo's main branch.
+$REPO = "Gamsty/JobApplicationTracker"  # adjust if you forked
+az ad app federated-credential create `
+  --id $app.appId `
+  --parameters @"
+{
+  "name": "github-main",
+  "issuer": "https://token.actions.githubusercontent.com",
+  "subject": "repo:$REPO:ref:refs/heads/main",
+  "audiences": ["api://AzureADTokenExchange"]
+}
+"@
+
+# 4. Add a second federated credential for PRs (the validate workflow runs on PRs)
+az ad app federated-credential create `
+  --id $app.appId `
+  --parameters @"
+{
+  "name": "github-pull-request",
+  "issuer": "https://token.actions.githubusercontent.com",
+  "subject": "repo:$REPO:pull_request",
+  "audiences": ["api://AzureADTokenExchange"]
+}
+"@
+
+# 5. Print the three values to set as GitHub Actions secrets
+Write-Host "AZURE_CLIENT_ID       = $($app.appId)"
+Write-Host "AZURE_TENANT_ID       = $(az account show --query tenantId -o tsv)"
+Write-Host "AZURE_SUBSCRIPTION_ID = $SUB"
+```
+
+### GitHub repo setup
+
+1. **Secrets**: GitHub → Settings → Secrets and variables → Actions → New repository secret. Add `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID` from step 5 above.
+2. **Environment**: GitHub → Settings → Environments → New environment named `production`. Optionally add a required reviewer to gate deploys behind manual approval.
+3. **Branch protection** on `main`: Settings → Branches → Add rule → require `Backend CI` and `Frontend CI` status checks to pass before merging.
+
+---
+
 ## Prerequisites
 
 - JDK 17+

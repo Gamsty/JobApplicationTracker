@@ -1,0 +1,56 @@
+# Bicep deployment — applies the infra/ templates to Azure.
+#
+# Triggers:
+#   - workflow_dispatch (manual button in GitHub UI). Always available.
+#   - push to main when infra/ changes. Auto-deploys merged infra edits.
+#
+# Auth: OIDC federated credential, no long-lived secrets in the repo. The Azure-side
+# setup (app registration + federated identity credential + role assignment) is
+# documented in README under "GitHub Actions setup".
+#
+# Failure mode: az deployment group create is idempotent, so re-running this workflow
+# is always safe — it converges the RG to whatever Bicep currently describes.
+
+name: Infra Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'infra/**'
+      - '.github/workflows/infra-deploy.yml'
+
+concurrency:
+  group: infra-deploy
+  cancel-in-progress: false   # deploys must complete; don't interrupt mid-apply
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production    # GitHub environment — gates apply behind manual approval if configured
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Sign in to Azure via OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy Bicep to rg-jobtracker-prod
+        uses: azure/arm-deploy@v2
+        with:
+          scope: resourcegroup
+          resourceGroupName: rg-jobtracker-prod
+          template: infra/main.bicep
+          parameters: infra/main.bicepparam
+          failOnStdErr: false
