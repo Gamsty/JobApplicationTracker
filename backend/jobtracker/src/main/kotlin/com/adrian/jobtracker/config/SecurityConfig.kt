@@ -80,9 +80,12 @@ class SecurityConfig(
                     .anyRequest().authenticated()
             }
             .authenticationProvider(authenticationProvider())
-            // Order matters: rate limiter runs first so we reject before wasting CPU on BCrypt,
-            // then JWT validation, then Spring's default username/password machinery.
-            .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter::class.java)
+            // Both custom filters are anchored against UsernamePasswordAuthenticationFilter,
+            // which is a Spring Security built-in. Spring Security 7 rejects anchoring against
+            // custom filters that lack a registered order. The first addFilterBefore call lands
+            // earlier in the chain, so RateLimitFilter runs before JwtAuthenticationFilter and
+            // we reject brute-force attempts before wasting BCrypt cycles on them.
+            .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter::class.java)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
