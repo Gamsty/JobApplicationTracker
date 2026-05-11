@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { interviewService } from '../services/interviewService';
 import {
     INTERVIEW_FORMAT_LABELS,
@@ -18,14 +18,9 @@ function InterviewList({ applicationId, onEdit, onAdd }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Re-fetch whenever the parent swaps to a different application
-    useEffect(() => {
-        if (applicationId) {
-            loadInterviews();
-        }
-    }, [applicationId]);
-
-    const loadInterviews = async () => {
+    // useCallback gives loadInterviews a stable reference keyed on applicationId so
+    // the useEffect below can declare it as a dependency without retriggering on every render.
+    const loadInterviews = useCallback(async () => {
         try {
             setLoading(true);
             const data = await interviewService.getInterviewsByApplication(applicationId);
@@ -38,7 +33,14 @@ function InterviewList({ applicationId, onEdit, onAdd }) {
             // Always clear the loading spinner, even if the request failed
             setLoading(false);
         }
-    };
+    }, [applicationId]);
+
+    // Re-fetch whenever the parent swaps to a different application
+    useEffect(() => {
+        if (applicationId) {
+            loadInterviews();
+        }
+    }, [applicationId, loadInterviews]);
 
     // Ask for confirmation before deleting — destructive actions shouldn't be one-click
     const handleDelete = async (id) => {

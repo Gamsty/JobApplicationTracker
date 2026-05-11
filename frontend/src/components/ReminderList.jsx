@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { reminderService } from "../services/reminderService";
 import {
     REMINDER_TYPE_LABELS,
@@ -15,14 +15,11 @@ function ReminderList({ onEdit, onCreate }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Reload the list whenever the filter changes
-    useEffect(() => {
-        loadReminders();
-    }, [filter]);
-
     // Fetches reminders from the backend based on the active filter tab.
     // PENDING uses the dedicated /pending endpoint; SENT filters client-side from the full list.
-    const loadReminders = async () => {
+    // useCallback gives loadReminders a stable reference keyed on filter so the useEffect
+    // below can list it as a dependency.
+    const loadReminders = useCallback(async () => {
         try {
             setLoading(true);
             let data;
@@ -45,7 +42,12 @@ function ReminderList({ onEdit, onCreate }) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filter]);
+
+    // Reload the list whenever the filter changes
+    useEffect(() => {
+        loadReminders();
+    }, [filter, loadReminders]);
 
     // Flips the enabled/disabled state of a reminder and refreshes the list
     const handleToggle = async (id) => {

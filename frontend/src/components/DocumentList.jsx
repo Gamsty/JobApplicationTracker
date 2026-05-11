@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { documentService } from "../services/documentService";
 import { DOCUMENT_TYPE_LABELS, getFileIcon } from '../utils/constants';
 import './DocumentList.css';
@@ -12,15 +12,10 @@ function DocumentList({ applicationId, onUpload }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Re-fetch documents whenever the viewed application changes
-    useEffect(() => {
-        if (applicationId) {
-            loadDocuments();
-        }
-    }, [applicationId]);
-
-    // Fetches documents for the current application from the backend
-    const loadDocuments = async () => {
+    // Fetches documents for the current application. useCallback gives the function a
+    // stable reference keyed on applicationId so the useEffect below can list it as a
+    // dependency without re-firing every render.
+    const loadDocuments = useCallback(async () => {
         try {
             setLoading(true);
             const data = await documentService.getDocumentByApplication(applicationId);
@@ -32,7 +27,14 @@ function DocumentList({ applicationId, onUpload }) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [applicationId]);
+
+    // Re-fetch documents whenever the viewed application changes
+    useEffect(() => {
+        if (applicationId) {
+            loadDocuments();
+        }
+    }, [applicationId, loadDocuments]);
 
     // Triggers a browser file download for the given document
     const handleDownload = async (doc) => {
