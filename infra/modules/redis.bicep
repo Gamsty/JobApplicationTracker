@@ -30,10 +30,15 @@ resource redis 'Microsoft.Cache/Redis@2023-08-01' = {
     enableNonSslPort: false
     minimumTlsVersion: '1.2'
     publicNetworkAccess: 'Enabled'
-    redisConfiguration: {
-      // Defaults are fine for this workload. Setting an explicit empty object here would
-      // override the service-default eviction policy, so we leave it omitted.
-    }
+    // Pin the engine version + update cadence so deployments are reproducible.
+    redisVersion: '6.0'
+    updateChannel: 'Stable'
+    // NOTE: Azure also auto-populates redisConfiguration.maxmemory-reserved /
+    // maxmemory-delta / maxfragmentationmemory-reserved based on the SKU capacity.
+    // what-if reports those as "to be removed" on every deployment, but they are
+    // service-managed defaults that ARM PATCH preserves — not actually deleted.
+    // We deliberately don't pin them: any value we set would be a manual override
+    // of what Azure computes for the C0 tier.
   }
 }
 

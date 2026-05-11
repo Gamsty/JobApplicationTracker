@@ -24,8 +24,17 @@ resource search 'Microsoft.Search/searchServices@2024-03-01-preview' = {
     partitionCount: 1
     hostingMode: 'default'
     publicNetworkAccess: 'enabled'
-    // Free tier does not support encryption-with-customer-key or private endpoints,
-    // so we accept the default (Microsoft-managed key, public endpoint with admin-key auth).
+    // The four properties below are Azure defaults that what-if otherwise reports as
+    // "removed" on each deployment. Setting them explicitly silences that noise and
+    // documents the security posture (admin-key auth, no CMK, all client IPs allowed).
+    disableLocalAuth: false
+    semanticSearch: 'free'
+    encryptionWithCmk: {
+      enforcement: 'Unspecified'
+    }
+    networkRuleSet: {
+      bypass: 'None'
+    }
   }
 }
 

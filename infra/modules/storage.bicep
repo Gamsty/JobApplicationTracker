@@ -71,6 +71,10 @@ resource documentsContainer 'Microsoft.Storage/storageAccounts/blobServices/cont
   name: containerName
   properties: {
     publicAccess: 'None'
+    // Azure-default encryption scope. Set explicitly so what-if doesn't report it as
+    // "being removed" on each run — every container created via portal/CLI has these.
+    defaultEncryptionScope: '$account-encryption-key'
+    denyEncryptionScopeOverride: false
   }
 }
 
