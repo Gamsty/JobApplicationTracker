@@ -25,6 +25,14 @@ The system is deployed across three providers — a deliberate multi-cloud split
 | Relational data | Render PostgreSQL | Same region as backend → low latency, free internal networking |
 | File uploads | Azure Blob Storage | Render's filesystem is **ephemeral** — files disappear on every redeploy. Blob storage is durable and decouples file lifecycle from compute. |
 
+### Live production topology
+
+![Multi-cloud topology in Application Insights](docs/screenshots/multi-cloud-history.png)
+
+Application Insights from production showing the multi-cloud split actually running — the Spring Boot backend handling traffic, with downstream calls to Azure Blob Storage and Render PostgreSQL, plus end-to-end latency and error rate per dependency. Real telemetry, not a static diagram.
+
+### Implementation note
+
 The `prod` profile activates the Azure-backed `AzureBlobStorageService`; any other profile (local dev) uses `LocalFileStorageService` against the filesystem. Both implement the same `FileStorageService` interface so the rest of the app is unaware of which backend is active.
 
 ---
