@@ -254,6 +254,43 @@
     color: var(--text-primary);
 }
 
+/* "Searching…" indicator shown while a full-text search request is in flight.
+   Sits to the right of the input next to (but not overlapping) the clear button. */
+.search-status {
+    position: absolute;
+    right: 44px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Snippet shown below the company name when a search result matched on a non-company
+   field (notes, interview feedback, etc.). Compact and dimmer than the row content
+   so it explains the hit without competing with the primary data. */
+.search-snippet {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.search-snippet-field {
+    text-transform: capitalize;
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.search-snippet-text em {
+    background-color: rgba(255, 235, 59, 0.35);
+    font-style: normal;
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
 /* ========== Responsive Adjustments ========== */
 /* On mobile: stack controls vertically, reduce table padding, hide notes column */
 @media (max-width: 768px) {

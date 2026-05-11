@@ -116,6 +116,22 @@ export const applicationService = {
         }
     },
 
+    // Full-text search across company name, position, notes, and interview content
+    // via Azure AI Search. Returns [{applicationId, companyName, positionTitle, status,
+    // score, highlights}]. Highlights map field name to snippets like
+    // "...the project used <em>Kotlin</em> and Spring..." so the UI can show why a match
+    // was returned.
+    fullTextSearch: async (query) => {
+        try {
+            const response = await api.get('/full-text-search', { params: { q: query } });
+            return response.data;
+        } catch (error) {
+            console.error('Full-text search failed:', error);
+            // Don't blow up the UI on a search failure — return empty list.
+            return [];
+        }
+    },
+
     // Get application statistics
     getStatistics: async () => {
         try {

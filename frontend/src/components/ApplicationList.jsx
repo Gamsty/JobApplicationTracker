@@ -5,7 +5,8 @@
 //   onEdit - callback to open the edit form with a selected application
 //   onDelete - callback to delete an application (receives id and companyName)
 //   onStatusFilter - callback to re-fetch applications filtered by status from the backend
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { applicationService } from "../services/applicationService";
 import { APPLICATION_STATUS, STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
 import './ApplicationList.css';
 
@@ -13,7 +14,9 @@ import './ApplicationList.css';
 function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onViewDetails }) {
     const [statusFilter, setStatusFilter] = useState('ALL'); // Tracks the selected filter dropdown value
     const [sortOrder, setSortOrder] = useState('Newest'); // Tracks sort direction: 'Newest' (descending) or 'Oldest' (ascending)
-    const [searchQuery, setSearchQuery] = useState(''); // Tracks the current search input text for client-side filtering
+    const [searchQuery, setSearchQuery] = useState(''); // Search input text
+    const [searchResults, setSearchResults] = useState(null); // null when no active search, array of SearchResult otherwise
+    const [isSearching, setIsSearching] = useState(false);    // Shows "Searching..." while the request is in flight
 
     // Handle status filter dropdown change
     // Updates local state and calls parent callback to re-fetch filtered data from the backend
@@ -61,26 +64,55 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
         setSearchQuery(e.target.value);
     }
 
-    // Client-side filter: narrows down the sorted list to only show applications
-    // where the company name or position title contains the search query (case-insensitive)
-    // This runs after sorting, so results maintain the selected sort order
-    const filteredApplications = sortedApplications.filter(app =>
-        app.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        app.positionTitle.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // Debounced full-text search against the backend (Azure AI Search in prod).
+    // The 400ms delay batches keystrokes so a search-as-you-type pattern doesn't
+    // hammer the API. Clearing the input restores the unfiltered list immediately.
+    useEffect(() => {
+        const q = searchQuery.trim();
+        if (!q) {
+            setSearchResults(null);
+            setIsSearching(false);
+            return;
+        }
+        setIsSearching(true);
+        const timer = setTimeout(async () => {
+            const results = await applicationService.fullTextSearch(q);
+            setSearchResults(results);
+            setIsSearching(false);
+        }, 400);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    // Build lookup structures from the search response so we can filter the already-loaded
+    // applications array by matching ID and render highlights inline with each row.
+    const searchResultIds = searchResults
+        ? new Set(searchResults.map(r => r.applicationId))
+        : null;
+    const highlightsByAppId = searchResults
+        ? Object.fromEntries(searchResults.map(r => [r.applicationId, r.highlights]))
+        : {};
+
+    // When there's no search, show the whole sorted list. When there is, intersect with
+    // the IDs Azure Search returned — preserves the current sort order on top of the match set.
+    const filteredApplications = searchResultIds
+        ? sortedApplications.filter(app => searchResultIds.has(app.id))
+        : sortedApplications;
 
     return (
         <div className="application-list">
-            {/* Search box — filters applications client-side by company name or position title */}
-            {/* The clear button (×) only appears when there is text in the search input */}
+            {/* Search box — debounced full-text search via Azure AI Search.
+                Covers company name, position, notes, and interview content (not just company
+                name like the old client-side filter). The clear button (×) only appears when
+                there is text in the search input. */}
             <div className="search-box">
                 <input
                     type="text"
-                    placeholder="Search by company or position..."
+                    placeholder="Search applications, notes, interview feedback..."
                     value={searchQuery}
                     onChange={handleSearch}
                     className="search-input"
                 />
+                {isSearching && <span className="search-status">Searching…</span>}
                 {/* Clear button resets search query, showing all applications again */}
                 {searchQuery && (
                     <button onClick={() => setSearchQuery('')} className="clear-search">×</button>
@@ -144,7 +176,10 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
                         <tbody>
                             {filteredApplications.map(app => (
                                 <tr key={app.id}>
-                                    {/* Company cell — shows name and optional job posting link */}
+                                    {/* Company cell — shows name and optional job posting link.
+                                        In search mode, also shows the matching snippet from whichever
+                                        field hit (notes, interview feedback, etc.) so the user sees
+                                        WHY a result matched, not just THAT it did. */}
                                     <td className="company-cell">
                                         <strong>{app.companyName}</strong>
                                         {/* Only render job link if a URL was provided */}
@@ -159,6 +194,22 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
                                                 🔗 View Job
                                             </a>
                                             )}
+                                        {/* Highlight snippets from Azure AI Search.
+                                            Server controls the index and only emits <em> tags around
+                                            matched terms, so dangerouslySetInnerHTML is safe here.
+                                            Only render the first matching field — keeps the row compact. */}
+                                        {highlightsByAppId[app.id] && Object.entries(highlightsByAppId[app.id])
+                                            .filter(([, snippets]) => snippets && snippets.length > 0)
+                                            .slice(0, 1)
+                                            .map(([field, snippets]) => (
+                                                <div key={field} className="search-snippet">
+                                                    <span className="search-snippet-field">{field}:</span>
+                                                    <span
+                                                        className="search-snippet-text"
+                                                        dangerouslySetInnerHTML={{ __html: snippets[0] }}
+                                                    />
+                                                </div>
+                                            ))}
                                         </td>
                                         <td>{app.positionTitle}</td>
                                         <td>{formatDate(app.applicationDate)}</td>
