@@ -32,7 +32,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    environment: production    # GitHub environment — gates apply behind manual approval if configured
+    # Distinct environment name so this deploy doesn't share status with Vercel's frontend
+    # "Production" environment in GitHub's deployments dashboard. They are different concerns —
+    # one deploys React to a CDN, the other deploys Azure infrastructure — and conflating their
+    # statuses on the same widget is misleading.
+    environment: azure-prod
 
     steps:
       - name: Check out source
