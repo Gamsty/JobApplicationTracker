@@ -2,6 +2,13 @@
 
 A full-stack web application to manage and track job applications throughout the hiring process. Features user authentication, interview tracking, document uploads, email reminders, and an interactive analytics dashboard.
 
+![Kotlin](https://img.shields.io/badge/Kotlin-2.2-7F52FF?logo=kotlin&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0-6DB33F?logo=springboot&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![Azure](https://img.shields.io/badge/Multi--cloud-Render%20%2B%20Azure-0078D4?logo=microsoftazure)
+![IaC](https://img.shields.io/badge/IaC-Bicep-blue)
+![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions%20%2B%20OIDC-2088FF?logo=githubactions)
+
 **Live Demo:** [job-application-tracker-ivory.vercel.app](https://job-application-tracker-ivory.vercel.app)
 
 ---
@@ -608,11 +615,17 @@ Documents live in an Azure Storage Account separate from the rest of the stack. 
 
 ---
 
+## Author
+
+**Adrian Klo Gamst** — Recent UiO informatics graduate, based in Oslo.
+
+- 🌐 [adrianklogamst.no](https://adrianklogamst.no) (portfolio)
+- 💼 [LinkedIn](https://linkedin.com/in/adrian-klo-gamst)
+- 🐙 [@Gamsty](https://github.com/Gamsty)
+- ✉️ gamsten55@outlook.com
+
+Open to graduate, junior, and internship engineering roles starting 2026.
+
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
-
-## Author
-
-**Adrian**
-- GitHub: [@Gamsty](https://github.com/Gamsty)
