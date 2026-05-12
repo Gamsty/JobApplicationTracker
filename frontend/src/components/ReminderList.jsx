@@ -124,7 +124,7 @@ function ReminderList({ onEdit, onCreate }) {
                     onClick={onCreate}
                     className="create-button-reminder"
                 >
-                    + Create Reminder
+                    + New reminder
                 </button>
             </div>
 
@@ -161,7 +161,7 @@ function ReminderList({ onEdit, onCreate }) {
                             onClick={onCreate}
                             className="create-button-first"
                         >
-                            Create Your First Reminder
+                            Create one
                         </button>
                     )}
                 </div>

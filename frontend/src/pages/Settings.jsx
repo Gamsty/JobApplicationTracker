@@ -38,9 +38,8 @@ function Settings({ showToast }) {
         <div className='settings-page'>
             <h2>Settings</h2>
 
-            {/* ── Email Notifications section ─────────────────────────────── */}
             <div className='settings-section'>
-                <h3>Email Notifications</h3>
+                <h3>Email notifications</h3>
                 <p className='section-description'>
                    Manage how you receive reminder notifications
                 </p>
@@ -48,8 +47,8 @@ function Settings({ showToast }) {
                 {/* Toggle — visually changes but does not yet persist to the backend (see TODO above) */}
                 <div className='setting-item'>
                     <div className='setting-info'>
-                        <strong>Email Reminders</strong>
-                        <p>Receive email notifications for your reminders</p>
+                        <strong>Email reminders</strong>
+                        <p>Receive an email when a scheduled reminder is due.</p>
                     </div>
                     <label className='toggle-switch'>
                         <input
@@ -61,25 +60,23 @@ function Settings({ showToast }) {
                     </label>
                 </div>
 
-                {/* Test email — useful for verifying Gmail SMTP credentials are correct */}
                 <div className='setting-item'>
                     <div className='setting-info'>
-                        <strong>Test Email Configuration</strong>
-                        <p>Send a test email to verify your settings</p>
+                        <strong>Test the mail setup</strong>
+                        <p>Sends a dummy email so you can verify it lands in your inbox.</p>
                     </div>
                     <button
                         onClick={handleTestEmail}
                         disabled={sendingTest}
                         className='test-button-email'
                     >
-                        {sendingTest ? 'Sending...' : 'Send Test Email'}
+                        {sendingTest ? 'Sending…' : 'Send test email'}
                     </button>
                 </div>
             </div>
 
-            {/* ── Email Settings info box ──────────────────────────────────── */}
             <div className='settings-section'>
-                <h3>Email Settings</h3>
+                <h3>How it works</h3>
                 <div className='email-info-box'>
                     <p>Reminders are sent to the email address on your account.</p>
                     <p>The scheduler checks every 5 minutes and dispatches anything due.</p>

@@ -24,14 +24,12 @@ function Toast({ message, type = 'success', onClose }) {
         <div className={`toast toast-${type}`}>
             {/* Icon changes based on toast type: checkmark for success, X for error, info symbol for info */}
             <span className="toast-icon">
-                {type === 'success' ? '✓' : type === 'error' ? 'x': 'ℹ'}
+                {type === 'success' ? '✓' : type === 'error' ? '!' : 'i'}
             </span>
-            {/* The notification message text */}
             <span className="toast-message">
                 {message}
             </span>
-            {/* Manual close button — allows dismissing the toast before the 3-second auto-dismiss */}
-            <button className="toast-close" onClick={onClose}>x</button>
+            <button className="toast-close" onClick={onClose} aria-label="Dismiss">&times;</button>
         </div>
     );
 }

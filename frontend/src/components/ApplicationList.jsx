@@ -49,14 +49,8 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
         });
     };
 
-    // Generate inline styles for status badge pill — colored background based on status
-    const getStatusBadgeColor = (status) => ({
-        backgroundColor: STATUS_COLORS[status],
-        color: 'white',
-        padding: '4px 12px',
-        borderRadius: '12px',
-        fontSize: '12px',
-        fontWeight: 'bold',
+    const getStatusStyle = (status) => ({
+        color: STATUS_COLORS[status],
     });
 
     // Update search query state as the user types in the search input
@@ -124,7 +118,7 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
             {/* Controls bar — status filter dropdown and sort toggle button */}
             <div className="list-controls">
                 <div className="filter-group">
-                    <label htmlFor="statusFilter">Filter by Status:</label>
+                    <label htmlFor="statusFilter">Status</label>
                     {/* Dropdown populated from APPLICATION_STATUS constants with an "All" option */}
                     <select
                         id="statusFilter"
@@ -132,7 +126,7 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
                         onChange={handleStatusFilterChange}
                         className="filter-select"
                     >
-                        <option value="ALL">All Statuses</option>
+                        <option value="ALL">All statuses</option>
                         {Object.keys(APPLICATION_STATUS).map(status => (
                             <option key={status} value={status}>
                                 {STATUS_LABELS[status]}
@@ -143,7 +137,7 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
 
                 {/* Sort button toggles between newest and oldest first, with arrow indicator */}
                 <button onClick={handleSortToggle} className="sort-button">
-                    Sort by date: {sortOrder === 'Newest' ? '↓ Newest First' : '↑ Oldest First'}
+                    {sortOrder === 'Newest' ? 'Newest first ↓' : 'Oldest first ↑'}
                 </button>
             </div>
 
@@ -155,12 +149,8 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
             {/* Conditional rendering: empty state message or the applications table */}
             {filteredApplications.length === 0 ? (
                 <div className="empty-state">
-                    <p>
-                        No applications found. Try adjusting your filters or add a new application.
-                    </p>
-                    <p>
-                        Click the "Add Application" button to get started!
-                    </p>
+                    <p>No applications match the current filter.</p>
+                    <p>Add a new one above, or clear the filter to see everything.</p>
                 </div>
             ) : (
                 <div className="table-container">
@@ -169,10 +159,10 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
                             <tr>
                                 <th>Company</th>
                                 <th>Position</th>
-                                <th>Date Applied</th>
+                                <th>Applied</th>
                                 <th>Status</th>
                                 <th>Notes</th>
-                                <th>Actions</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -193,7 +183,7 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
                                                 className="job-link"
                                                 onClick={(e) => e.stopPropagation()} // Prevent row click events from firing
                                             >
-                                                🔗 View Job
+                                                View posting
                                             </a>
                                             )}
                                         {/* Highlight snippets from Azure AI Search.
@@ -215,9 +205,12 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
                                         </td>
                                         <td>{app.positionTitle}</td>
                                         <td>{formatDate(app.applicationDate)}</td>
-                                        {/* Status badge — colored pill with human-readable label */}
                                         <td>
-                                            <span style={getStatusBadgeColor(app.status)}>
+                                            <span className="status-tag" style={getStatusStyle(app.status)}>
+                                                <span
+                                                    className="status-tag-dot"
+                                                    style={{ backgroundColor: STATUS_COLORS[app.status] }}
+                                                />
                                                 {STATUS_LABELS[app.status]}
                                             </span>
                                         </td>

@@ -154,8 +154,8 @@ function InterviewForm({ interview, applicationId, onSubmit, onCancel }) {
             <div className="form-container interview-form-container">
                 <div className="form-header">
                     {/* Title changes based on whether we're creating or editing */}
-                    <h2>{interview ? 'Edit Interview' : 'Schedule Interview'}</h2>
-                    <button className="close-button" onClick={onCancel}>x</button>
+                    <h2>{interview ? 'Edit interview' : 'Schedule interview'}</h2>
+                    <button className="close-button" onClick={onCancel} aria-label="Close">&times;</button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="application-form">
@@ -361,7 +361,7 @@ function InterviewForm({ interview, applicationId, onSubmit, onCancel }) {
                             className="submit-button"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? 'Saving...' : (interview ? 'Update Interview' : 'Schedule Interview')}
+                            {isSubmitting ? 'Saving…' : (interview ? 'Save changes' : 'Schedule')}
                         </button>
                     </div>
                 </form>

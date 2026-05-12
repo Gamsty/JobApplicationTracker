@@ -175,11 +175,13 @@ function ApplicationForm({ application, onSubmit, onCancel}) {
                 {/* Modal header with dynamic title and close button */}
                 <div className='form-header'>
                     <h2>
-                        {application ? 'Edit Application' : 'Add New Application'}
+                        {application ? 'Edit application' : 'Add new application'}
                     </h2>
                     <button
-                        className='close-button' onClick={onCancel}>x
-                    </button>
+                        className='close-button'
+                        onClick={onCancel}
+                        aria-label="Close"
+                    >&times;</button>
                 </div>
                 {/* Form element — onSubmit triggers validation then API call */}
                 <form onSubmit={handleSubmit} className='application-form'>

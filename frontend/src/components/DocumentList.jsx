@@ -82,22 +82,18 @@ function DocumentList({ applicationId, onUpload }) {
         <div className="document-list-container">
             {/* Header row with document count and upload button */}
             <div className="document-list-header">
-                <h3>
-                    Documents ({documents.length})
-                </h3>
+                <h3>Documents ({documents.length})</h3>
                 <button onClick={onUpload} className="upload-button-document">
-                    + Upload document
+                    + Upload
                 </button>
             </div>
 
             {documents.length === 0 ? (
                 /* Empty state — shown when no documents have been uploaded yet */
                 <div className="no-documents">
-                    <p>
-                        No documents uploaded yet.
-                    </p>
+                    <p>No documents uploaded yet.</p>
                     <button onClick={onUpload} className="upload-button-first">
-                        Upload Your First Document
+                        Upload one
                     </button>
                 </div>
             ) : (

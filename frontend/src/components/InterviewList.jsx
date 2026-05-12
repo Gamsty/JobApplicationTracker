@@ -84,18 +84,18 @@ function InterviewList({ applicationId, onEdit, onAdd }) {
     return (
         <div className="interview-list-container">
             <div className="interview-list-header">
-                <h3>Interview Schedule ({interviews.length})</h3>
+                <h3>Interviews ({interviews.length})</h3>
                 <button onClick={onAdd} className="add-button-interview">
-                    + Schedule Interview
+                    + Schedule
                 </button>
             </div>
 
             {interviews.length === 0 ? (
                 // Empty state — shown before any interviews have been added
                 <div className="no-interviews">
-                   <p>No interviews scheduled yet.</p>
+                   <p>No interviews scheduled.</p>
                    <button onClick={onAdd} className="add-button-first">
-                        Schedule Your First Interview
+                        Schedule one
                    </button>
                 </div>
             ) : (

@@ -247,7 +247,7 @@ function App() {
                       <StatsSummary />
                       <div className="header-actions">
                         <button className="primary-button" onClick={handleOpenForm}>
-                          + Add New Application
+                          + Add application
                         </button>
                       </div>
                       {/* Application list with edit, delete, and filter callbacks */}

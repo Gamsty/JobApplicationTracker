@@ -120,14 +120,13 @@ function ReminderForm({ reminder, applications, onSubmit, onCancel }) {
         <div className="form-overlay">
             <div className="form-container reminder-form-container">
                 <div className="form-header">
-                    <h2>
-                        {reminder ? 'Edit Reminder' : 'Create Reminder'}
-                    </h2>
+                    <h2>{reminder ? 'Edit reminder' : 'New reminder'}</h2>
                     <button
                         className="close-button"
                         onClick={onCancel}
+                        aria-label="Close"
                     >
-                        ×
+                        &times;
                     </button>
                 </div>
 
@@ -280,7 +279,7 @@ function ReminderForm({ reminder, applications, onSubmit, onCancel }) {
                             className="submit-button"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? 'Saving...' : (reminder ? 'Update Reminder' : 'Create Reminder')}
+                            {isSubmitting ? 'Saving…' : (reminder ? 'Save changes' : 'Create reminder')}
                         </button>
                     </div>
                 </form>

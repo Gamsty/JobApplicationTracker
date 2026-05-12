@@ -115,8 +115,8 @@ function ApplicationDetails({ application, onClose, onUpdate, showToast }) {
         <div className="form-overlay">
             <div className="application-details-container">
                 <div className="form-header">
-                    <h2>Application Details</h2>
-                    <button className="close-button" onClick={onClose}>x</button>
+                    <h2>Application details</h2>
+                    <button className="close-button" onClick={onClose} aria-label="Close">&times;</button>
                 </div>
 
                 <div className="details-content">
@@ -171,7 +171,7 @@ function ApplicationDetails({ application, onClose, onUpdate, showToast }) {
                                     onClick={() => onUpdate(application)}
                                     className="edit-button-app"
                                 >
-                                    Edit Application
+                                    Edit application
                                 </button>
                             </div>
                         </div>
