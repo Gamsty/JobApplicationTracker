@@ -34,6 +34,14 @@ select:-webkit-autofill {
   transition: background-color 9999s ease-in-out 0s;
 }
 
+/* iOS Safari aggressively zooms when an input's font-size is below 16px.
+   Force 16px on touch breakpoints so tapping a field doesn't shift the viewport. */
+@media (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
 :root {
   --bg-primary: #f6f3ec;
   --bg-secondary: #ffffff;

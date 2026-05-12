@@ -24,8 +24,11 @@ function App() {
   const [editingApplication, setEditingApplication] = useState(null);
   const [toast, setToast] = useState(null);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const [viewingApplication, setViewingApplication] = useState(null);
+
+  const closeMobileNav = () => setMobileNavOpen(false);
 
   // Skip the fetch while logged out to avoid a wasted 401 round-trip.
   useEffect(() => {
@@ -152,33 +155,44 @@ function App() {
     <>
       <NetworkStatus />
       <div className="app">
-        <header className="app-header">
+        <header className={`app-header ${mobileNavOpen ? 'mobile-open' : ''}`}>
           <div className='header-content'>
-            <div>
+            <div className='header-title'>
               <h1>Job Application Tracker</h1>
               <p className='user-greeting'>Signed in as {user?.fullName}</p>
             </div>
 
+            <button
+              className='hamburger'
+              onClick={() => setMobileNavOpen(v => !v)}
+              aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileNavOpen}
+            >
+              <span className={`hamburger-icon ${mobileNavOpen ? 'open' : ''}`} />
+            </button>
+
             <nav className='header-nav'>
               {/* `end` stops "/" from matching every nested route as a prefix */}
-              <NavLink to='/' end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              <NavLink to='/' end onClick={closeMobileNav} className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
                 Applications
               </NavLink>
-              <NavLink to='/dashboard' className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              <NavLink to='/dashboard' onClick={closeMobileNav} className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
                 Dashboard
               </NavLink>
-              <NavLink to='/reminders' className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              <NavLink to='/reminders' onClick={closeMobileNav} className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
                 Reminders
               </NavLink>
-              <NavLink to='/settings' className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              <NavLink to='/settings' onClick={closeMobileNav} className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
                 Settings
               </NavLink>
             </nav>
 
-            <button onClick={logout} className='logout-button'>Logout</button>
-            <button className='theme-toggle' onClick={() => setDarkMode(prev => !prev)}>
-              {darkMode ? 'Light' : 'Dark'}
-            </button>
+            <div className='header-actions-group'>
+              <button onClick={() => { logout(); closeMobileNav(); }} className='logout-button'>Logout</button>
+              <button className='theme-toggle' onClick={() => setDarkMode(prev => !prev)}>
+                {darkMode ? 'Light' : 'Dark'}
+              </button>
+            </div>
           </div>
         </header>
 

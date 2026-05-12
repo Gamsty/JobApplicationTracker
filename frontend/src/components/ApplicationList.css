@@ -300,16 +300,125 @@
         align-items: stretch;
     }
 
+    .applications-count {
+        font-size: 11px;
+    }
+
+    /* Transform the desktop table into a stack of cards on small screens.
+       Each row becomes a CSS grid with company + status on the first row,
+       position and date stacked below, and the action buttons full-width
+       below a divider. The semantic <table> stays — only the visual layout changes. */
+    .table-container {
+        background-color: transparent;
+        border: none;
+        overflow-x: visible;
+        border-radius: 0;
+    }
+
     .applications-table {
-        font-size: 12px;
+        display: block;
+        font-size: 13.5px;
     }
 
-    .applications-table th,
-    .applications-table td {
-        padding: 8px 10px;
-    }
-
-    .notes-cell {
+    .applications-table thead {
         display: none;
+    }
+
+    .applications-table tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        background-color: var(--border-color);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .applications-table tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        column-gap: 12px;
+        row-gap: 3px;
+        padding: 14px 14px 12px;
+        background-color: var(--bg-secondary);
+    }
+
+    .applications-table tr:hover {
+        background-color: var(--bg-hover);
+    }
+
+    .applications-table td {
+        padding: 0;
+        border: none;
+    }
+
+    .applications-table td.company-cell {
+        grid-column: 1;
+        grid-row: 1;
+        min-width: 0;
+    }
+
+    .applications-table td.company-cell strong {
+        font-size: 14.5px;
+    }
+
+    /* Position title — spans full width below the company */
+    .applications-table td:nth-child(2) {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        color: var(--text-secondary);
+        font-size: 13px;
+    }
+
+    /* Application date — third row with an "Applied" label prefix */
+    .applications-table td:nth-child(3) {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        color: var(--text-muted);
+        font-size: 12px;
+        margin-top: 2px;
+    }
+
+    .applications-table td:nth-child(3)::before {
+        content: 'Applied ';
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        color: var(--text-muted);
+        margin-right: 4px;
+        font-size: 10.5px;
+    }
+
+    /* Status tag — top right corner */
+    .applications-table td:nth-child(4) {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: start;
+        text-align: right;
+    }
+
+    .applications-table td.notes-cell {
+        display: none;
+    }
+
+    /* Action buttons — full width below a hairline divider */
+    .applications-table td.actions-cell {
+        grid-column: 1 / -1;
+        grid-row: 4;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-color);
+        text-align: right;
+    }
+
+    .view-button,
+    .edit-button,
+    .delete-button {
+        padding: 7px 12px;
+        font-size: 13px;
+    }
+
+    .search-input {
+        font-size: 16px; /* prevents iOS Safari from zooming on focus */
     }
 }
