@@ -1,6 +1,8 @@
 package com.adrian.jobtracker.config
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator
 import org.slf4j.LoggerFactory
 import org.springframework.cache.Cache
 import org.springframework.cache.annotation.CachingConfigurer
@@ -51,9 +53,19 @@ class RedisConfig : CachingConfigurer {
 
     @Bean
     fun cacheConfiguration(): RedisCacheConfiguration {
-        // Reuse Spring's default ObjectMapper so Kotlin types and JavaTime (LocalDateTime in DTOs)
-        // serialize consistently with the rest of the app's HTTP responses.
-        val serializer = GenericJackson2JsonRedisSerializer(ObjectMapper().findAndRegisterModules())
+        // Default typing embeds a @class marker in the cached JSON so the value round-trips
+        // back into its original Kotlin type. Without it the deserializer returns LinkedHashMap
+        // and the @Cacheable method's return-type cast crashes with ClassCastException on the
+        // first cache hit. The PolymorphicTypeValidator is permissive because cache content is
+        // only ever written by our own code — there is no untrusted JSON entering this serializer.
+        val mapper = ObjectMapper()
+            .findAndRegisterModules()
+            .activateDefaultTyping(
+                BasicPolymorphicTypeValidator.builder().allowIfBaseType(Any::class.java).build(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY
+            )
+        val serializer = GenericJackson2JsonRedisSerializer(mapper)
 
         return RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(Duration.ofMinutes(5))
