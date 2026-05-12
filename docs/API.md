@@ -21,6 +21,7 @@ All endpoints except `/api/auth/**` require a valid JWT in the `Authorization: B
   - [PUT /api/applications/{id}](#put-apiapplicationsid)
   - [DELETE /api/applications/{id}](#delete-apiapplicationsid)
   - [GET /api/applications/search](#get-apiapplicationssearch)
+  - [GET /api/applications/full-text-search](#get-apiapplicationsfull-text-search)
   - [GET /api/applications/statistics](#get-apiapplicationsstatistics)
 - [Interviews](#interviews)
   - [GET /api/interviews/application/{applicationId}](#get-apiinterviewsapplicationapplicationid)
@@ -332,6 +333,50 @@ GET /api/applications/search?company=google
 ```
 
 **Response — 200 OK** — Array of matching applications.
+
+---
+
+### GET /api/applications/full-text-search
+
+Full-text search across company name, position, application notes, and interview content
+(notes + feedback) via Azure AI Search. Multi-tenant filter enforced at the search engine
+so users only ever see their own data.
+
+Returns an empty list in local dev (where the prod-only `AzureSearchService` isn't
+active) — use `/api/applications/search` for substring-on-company in non-prod.
+
+**Query Parameters**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `q` | string | Yes | Free-text query; matches across multiple fields |
+
+**Example Request**
+
+```http
+GET /api/applications/full-text-search?q=kotlin
+```
+
+**Response — 200 OK**
+
+```json
+[
+  {
+    "applicationId": 12,
+    "companyName": "Acme",
+    "positionTitle": "Backend Engineer",
+    "status": "INTERVIEWING",
+    "score": 1.83,
+    "highlights": {
+      "notes": ["the stack uses <em>Kotlin</em> and Spring Boot"],
+      "interviewFeedback": ["asked about <em>Kotlin</em> coroutines"]
+    }
+  }
+]
+```
+
+`highlights` maps each matched field to the snippet where the query hit, with `<em>` tags
+around the matched terms — ready for the frontend to render with custom styling.
 
 ---
 
