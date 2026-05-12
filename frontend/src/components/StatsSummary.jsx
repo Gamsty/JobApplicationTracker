@@ -1,16 +1,15 @@
-// Statistics summary component displayed above the application list on the home page
-// Shows a total applications count card followed by one card per status with count and percentage
-// Fetches its own data independently from the backend statistics endpoint
 import { useEffect, useState } from "react";
 import { applicationService } from "../services/applicationService";
 import { STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
 import './StatsSummary.css';
 
+// Status-count cards shown above the application list. Fetches independently so it
+// stays in sync with the cached /statistics endpoint even when the parent's list
+// reload is filtered.
 function StatsSummary() {
-    const [stats, setStats] = useState(null); // Statistics object: { totalApplications, statusCounts }
-    const [loading, setLoading] = useState(true); // Loading state while fetching statistics
+    const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // Fetch statistics from the backend when the component mounts
     useEffect(() => {
         loadStats();
     }, []);
@@ -26,13 +25,11 @@ function StatsSummary() {
         }
     };
 
-    // Render nothing while loading or if stats failed to load
-    // This prevents the component from taking up space before data is ready
+    // Render nothing — better than a placeholder skeleton above the (much larger) table.
     if (loading || !stats) {
         return null;
     }
 
-    // Convert statusCounts object into [status, count] pairs for iteration
     const statusEntries = Object.entries(stats.statusCounts);
     const total = stats.totalApplications;
 

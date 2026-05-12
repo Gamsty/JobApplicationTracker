@@ -1,5 +1,3 @@
-// Dashboard page component that displays analytics, charts, and recent activity
-// Uses recharts library for pie chart (status distribution) and bar chart (applications over time)
 import { useEffect, useState } from "react";
 import { applicationService } from "../services/applicationService";
 import { interviewService } from "../services/interviewService";
@@ -11,22 +9,21 @@ import { STATUS_COLORS, STATUS_LABELS, getFileExtension } from "../utils/constan
 import './Dashboard.css';
 
 function Dashboard() {
-    const [applications, setApplications] = useState([]); // Full list of applications for charts and recent activity — default to [] so .reduce/.slice never crash
-    const [stats, setStats] = useState(null); // Statistics object from backend (totalApplications, statusCounts)
-    const [loading, setLoading] = useState(true); // Loading state while fetching data
-    const [error, setError] = useState(false); // True if either API call failed on mount
+    // Default lists to [] so .reduce/.slice never crash before the first fetch lands.
+    const [applications, setApplications] = useState([]);
+    const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
     const [upcomingInterviews, setUpcomingInterviews] = useState([]);
     const [documentSummary, setDocumentSummary] = useState(null);
     const [reminderSummary, setReminderSummary] = useState(null);
 
-    // Fetch both applications and statistics in parallel when component mounts
     useEffect(() => {
         loadData();
     }, []);
 
     const loadData = async () => {
         try {
-            // Fetch applications and statistics simultaneously for faster page load
             const [appsData, statsData, interviewsData, docSummary, remSummary] = await Promise.all([
                 applicationService.getApplications(),
                 applicationService.getStatistics(),
@@ -41,22 +38,22 @@ function Dashboard() {
             setReminderSummary(remSummary);
         } catch (err) {
             console.error('Error loading dashboard data:', err);
-            setError(true); // Signal that the data fetch failed so the error UI is shown
+            setError(true);
         } finally {
             setLoading(false);
         }
     };
 
-    // Show loading indicator while data is being fetched
     if (loading) {
         return (
             <div className="loading">
-                Loading dashboard...
+                Loading dashboard…
             </div>
         );
     }
 
-    // Show error state if either API call failed — avoids crashing on stats.statusCounts or applications.reduce
+    // Guard against partial failures — without this the renders below would NPE on
+    // stats.statusCounts when the fetch fails mid-flight.
     if (error || !stats) {
         return (
             <div className="error-container">
@@ -67,23 +64,18 @@ function Dashboard() {
         );
     }
 
-    // Transform statusCounts into array format required by recharts PieChart
-    // Each entry gets a human-readable name, count value, and color from constants
     const pieData = Object.entries(stats.statusCounts).map(([status, count]) => ({
         name: STATUS_LABELS[status],
         value: count,
         color: STATUS_COLORS[status]
     }));
 
-    // Calculate key metrics from statistics data
     const totalApps = stats.totalApplications;
     const interviews = stats.statusCounts.INTERVIEWING || 0;
     const offers = stats.statusCounts.OFFER_RECEIVED || 0;
-    // Response rate = percentage of applications that received an interview or offer
+    // Response rate counts both interview and offer states as "got a response"
     const responseRate = totalApps > 0 ? ((interviews + offers) / totalApps * 100).toFixed(1) : 0;
 
-    // Group applications by month for the bar chart
-    // Uses reduce to count applications per month-year string (e.g., "Feb 2026")
     const applicationsByMonth = applications.reduce((acc, app) => {
         const date = new Date(app.applicationDate);
         const monthYear = date.toLocaleDateString('en-US', {year: 'numeric', month: 'short'});
@@ -91,7 +83,6 @@ function Dashboard() {
         return acc;
     }, {});
 
-    // Convert grouped data to array and sort chronologically for the bar chart
     const barData = Object.entries(applicationsByMonth)
     .map(([month, count]) => ({month, count}))
     .sort((a, b) => new Date(a.month) - new Date(b.month));
@@ -162,11 +153,9 @@ function Dashboard() {
                 </div>
             </div>
 
-            {/* Charts Section - Pie chart for status breakdown, bar chart for timeline */}
             <div className="charts-grid">
-                {/* Status Distribution Pie Chart - each slice colored by status */}
                 <div className="chart-card">
-                    <h3>Applications by Status</h3>
+                    <h3>Applications by status</h3>
                     <ResponsiveContainer width='100%' height={350}>
                         <PieChart>
                             <Pie
@@ -179,7 +168,6 @@ function Dashboard() {
                                 fill="#8884d8"
                                 dataKey='value'
                             >
-                                {/* Apply a unique color to each pie slice based on status */}
                                 {pieData.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={entry.color} />
                                 ))}
@@ -190,9 +178,8 @@ function Dashboard() {
                     </ResponsiveContainer>
                 </div>
 
-                {/* Applications Over Time Bar Chart - grouped by month */}
                 <div className="chart-card">
-                    <h3>Applications Over Time</h3>
+                    <h3>Applications over time</h3>
                     <ResponsiveContainer width='100%' height={300}>
                         <BarChart data={barData}>
                             <CartesianGrid strokeDasharray='3 3' />
@@ -206,25 +193,22 @@ function Dashboard() {
                 </div>
             </div>
 
-            {/* Recent Activity - shows the 5 most recent applications with status icons */}
             <div className="recent-activity">
-                <h3>Recent Applications</h3>
+                <h3>Recent applications</h3>
                 <div className="activity-list">
                     {applications.slice(0, 5).map(app => (
                         <div key={app.id} className="activity-item">
-                            {/* Colored circle with first letter of the status label */}
                             <div className="activity-icon" style={{ backgroundColor: STATUS_COLORS[app.status] }}>
                                 {STATUS_LABELS[app.status][0]}
                             </div>
                             <div className="activity-content">
                                 <div className="activity-title">
-                                    <strong>{app.companyName}</strong> - {app.positionTitle}
+                                    <strong>{app.companyName}</strong> &mdash; {app.positionTitle}
                                 </div>
                                 <div className="activity-date">
                                     {new Date(app.applicationDate).toLocaleDateString()}
                                 </div>
                             </div>
-                            {/* Status text colored to match the status icon */}
                             <div className="activity-status" style={{ color: STATUS_COLORS[app.status] }}>
                                 {STATUS_LABELS[app.status]}
                             </div>
@@ -233,7 +217,6 @@ function Dashboard() {
                 </div>
             </div>
 
-            {/* Recent Documents — only rendered when the summary exists and has at least one document */}
             {documentSummary && documentSummary.recentDocuments.length > 0 && (
                 <div className="recent-documents-section">
                     <h3>Recent documents</h3>
@@ -247,11 +230,9 @@ function Dashboard() {
                                     {getFileExtension(doc.originalFileName)}
                                 </div>
                                 <div className="doc-info">
-                                    {/* Original file name as uploaded by the user */}
                                     <div className="doc-filename">
                                         {doc.originalFileName}
                                     </div>
-                                    {/* Company the document belongs to and its formatted size */}
                                     <div className="doc-meta">
                                         {doc.applicationCompany} • {doc.fileSizeFormatted}
                                     </div>
@@ -262,23 +243,19 @@ function Dashboard() {
                 </div>
             )}
 
-            {/* Upcoming Reminders — only rendered when the summary has at least one pending reminder */}
             {reminderSummary && reminderSummary.upcomingReminders.length > 0 && (
                 <div className="upcoming-reminders-section">
                     <h3>Upcoming reminders</h3>
                     <div className="upcoming-reminders-list">
                         {reminderSummary.upcomingReminders.map(reminder => (
                             <div key={reminder.id} className="upcoming-reminder-card">
-                                {/* Formatted scheduled time shown as the primary badge */}
                                 <div className="reminder-time-badge">
                                     {formatDateTime(reminder.scheduledFor)}
                                 </div>
                                 <div className="reminder-details">
-                                    {/* Reminder title (required field) */}
                                     <div className="reminder-title-dash">
                                         {reminder.title}
                                     </div>
-                                    {/* Linked application company — only shown if reminder is tied to one */}
                                     {reminder.applicationCompany && (
                                         <div className="reminder-app">
                                             {reminder.applicationCompany}
@@ -291,32 +268,25 @@ function Dashboard() {
                 </div>
             )}
 
-            {/* Upcoming Interviews — only rendered when at least one scheduled interview exists */}
             {upcomingInterviews.length > 0 && (
                 <div className="upcoming-interviews-section">
                     <h3>Upcoming interviews</h3>
                     <div className="upcoming-interviews-list">
-                        {/* Parentheses give an implicit return so each card is actually rendered */}
                         {upcomingInterviews.map(interview => (
                             <div key={interview.id} className="upcoming-interview-card">
-                                {/* "Today" / "Tomorrow" / "In N days" badge */}
                                 <div className="interview-badge">
                                     {daysUntil(interview.scheduledDate)}
                                 </div>
                                 <div className="interview-info">
-                                    {/* Company name comes from the parent application */}
                                     <div className="interview-company">
                                         {interview.applicationCompany}
                                     </div>
-                                    {/* Round label e.g. "Phone Screen", "Technical" */}
                                     <div className="interview-round">
                                         {interview.round}
                                     </div>
-                                    {/* Formatted local date and time */}
                                     <div className="interview-time">
                                         {formatDateTime(interview.scheduledDate)}
                                     </div>
-                                    {/* Location is optional — only shown if present */}
                                     {interview.location && (
                                         <div className="interview-location">
                                             {interview.location}

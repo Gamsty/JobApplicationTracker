@@ -140,7 +140,7 @@ export const AuthProvider = ({ children }) => {
         return (
             <div className="loading-container">
                 <div className="spinner"></div>
-                <p>Loading...</p>
+                <p>Loading…</p>
             </div>
         );
     }

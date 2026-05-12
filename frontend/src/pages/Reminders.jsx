@@ -55,7 +55,7 @@ function Reminders({ showToast }) {
             await reminderService.createReminder(formData);
             setRefreshKey(prev => prev + 1); // triggers ReminderList remount → fresh fetch
             handleCloseForm();
-            showToast('Reminder created successfully!', 'success');
+            showToast('Reminder created', 'success');
         } catch (err) {
             console.error('Error creating reminder', err);
             showToast('Failed to create reminder', 'error');
@@ -69,7 +69,7 @@ function Reminders({ showToast }) {
             await reminderService.updateReminder(editingReminder.id, formData);
             setRefreshKey(prev => prev + 1);
             handleCloseForm();
-            showToast('Reminder updated successfully!', 'success');
+            showToast('Reminder updated', 'success');
         } catch (err) {
             console.error('Error updating reminder', err);
             showToast('Failed to update reminder', 'error');

@@ -134,10 +134,9 @@ function ReminderForm({ reminder, applications, onSubmit, onCancel }) {
                     onSubmit={handleSubmit}
                     className="application-form"
                 >
-                    {/* Reminder Type */}
                     <div className="form-group">
                         <label htmlFor="reminderType">
-                            Reminder Type
+                            Reminder type
                             <span className="required">*</span>
                         </label>
                         <select
@@ -178,7 +177,7 @@ function ReminderForm({ reminder, applications, onSubmit, onCancel }) {
                     {/* Message (optional) */}
                     <div className="form-group">
                         <label htmlFor="message">
-                            Message (Optional)
+                            Message (optional)
                         </label>
                         <textarea
                             id="message"
@@ -233,7 +232,7 @@ function ReminderForm({ reminder, applications, onSubmit, onCancel }) {
                     {applications && applications.length > 0 && (
                         <div className="form-group">
                             <label htmlFor="applicationId">
-                                Link to Application (Optional)
+                                Link to application (optional)
                             </label>
                             <select
                                 id="applicationId"

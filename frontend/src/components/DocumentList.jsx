@@ -68,12 +68,10 @@ function DocumentList({ applicationId, onUpload }) {
         });
     };
 
-    // Show a loading placeholder while documents are being fetched
     if (loading) {
-        return <div className="documents-loading">Loading documents...</div>;
+        return <div className="documents-loading">Loading documents…</div>;
     }
 
-    // Show an error message if the fetch failed
     if (error) {
         return <div className="documents-error">{error}</div>;
     }

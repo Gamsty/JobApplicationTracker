@@ -74,7 +74,7 @@ function Login() {
 
                     {/* Button is disabled while the login request is pending to prevent duplicate submissions */}
                     <button type="submit" className="auth-button" disabled={loading}>
-                        {loading ? 'Signing in...' : 'Sign in'}
+                        {loading ? 'Signing in…' : 'Sign in'}
                     </button>
                 </form>
 

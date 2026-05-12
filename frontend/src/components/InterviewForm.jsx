@@ -159,10 +159,9 @@ function InterviewForm({ interview, applicationId, onSubmit, onCancel }) {
                 </div>
 
                 <form onSubmit={handleSubmit} className="application-form">
-                    {/* Interview Round ── required */}
                     <div className="form-group">
                         <label htmlFor="round">
-                            Interview Round
+                            Round
                             <span className="required">*</span>
                         </label>
                         <input
@@ -172,7 +171,7 @@ function InterviewForm({ interview, applicationId, onSubmit, onCancel }) {
                             value={formData.round}
                             onChange={handleChange}
                             className={errors.round ? 'input-error' : ''}
-                            placeholder="e.g., Phone Screen, Technical Round, Final Interview"
+                            placeholder="e.g. Phone screen, Technical, Final"
                         />
                         {errors.round && (
                             <span className="error-message">{errors.round}</span>
@@ -246,7 +245,7 @@ function InterviewForm({ interview, applicationId, onSubmit, onCancel }) {
                                 value={formData.format}
                                 onChange={handleChange}
                             >
-                                <option value="">Select format...</option>
+                                <option value="">Select format…</option>
                                 {Object.keys(INTERVIEW_FORMAT).map(format => (
                                     <option key={format} value={format}>
                                         {INTERVIEW_FORMAT_LABELS[format]}
@@ -259,26 +258,26 @@ function InterviewForm({ interview, applicationId, onSubmit, onCancel }) {
                     {/* Interviewer details - both optional */}
                     <div className="form-row">
                         <div className="form-group">
-                            <label htmlFor="interviewerName">Interviewer Name</label>
+                            <label htmlFor="interviewerName">Interviewer name</label>
                             <input
                                 type="text"
                                 id="interviewerName"
                                 name="interviewerName"
                                 value={formData.interviewerName}
                                 onChange={handleChange}
-                                placeholder="e.g., John Doe"
+                                placeholder="e.g. Jane Doe"
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="interviewerRole">Interviewer Role</label>
+                            <label htmlFor="interviewerRole">Interviewer role</label>
                             <input
                                 type="text"
                                 id="interviewerRole"
                                 name="interviewerRole"
                                 value={formData.interviewerRole}
                                 onChange={handleChange}
-                                placeholder="e.g., Senior Engineer, Consultant"
+                                placeholder="e.g. Senior Engineer"
                             />
                         </div>
                     </div>
@@ -298,13 +297,13 @@ function InterviewForm({ interview, applicationId, onSubmit, onCancel }) {
 
                     {/* Preparation notes - textarea for multi-line input */}
                     <div className="form-group">
-                        <label htmlFor="notes">Preparation Notes</label>
+                        <label htmlFor="notes">Preparation notes</label>
                         <textarea
                             id="notes"
                             name="notes"
                             value={formData.notes}
                             onChange={handleChange}
-                            placeholder="Things to prepare, topics to review, questions to ask..."
+                            placeholder="Things to prepare, topics to review, questions to ask…"
                         />
                     </div>
 
@@ -312,7 +311,7 @@ function InterviewForm({ interview, applicationId, onSubmit, onCancel }) {
                     {formData.status === INTERVIEW_STATUS.COMPLETED && (
                         <>
                             <div className="form-group">
-                                <label htmlFor="feedback">Interview Feedback</label>
+                                <label htmlFor="feedback">Feedback</label>
                                 <textarea
                                     id="feedback"
                                     name="feedback"
@@ -324,7 +323,7 @@ function InterviewForm({ interview, applicationId, onSubmit, onCancel }) {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="rating">Your Rating (1-5)</label>
+                                <label htmlFor="rating">Rating (1&ndash;5)</label>
                                 <input
                                     type="number"
                                     id="rating"

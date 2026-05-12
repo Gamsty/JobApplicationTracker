@@ -215,14 +215,14 @@ function DocumentUploadForm({ onSubmit, onCancel }) {
                     {/* Optional free-text description (max 500 characters) */}
                     <div className="form-group">
                         <label htmlFor="description">
-                            Description (Optional)
+                            Description (optional)
                         </label>
                         <textarea
                             id="description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             rows="3"
-                            placeholder="Add notes about this document..."
+                            placeholder="Add notes about this document…"
                             maxLength="500"
                         />
                         {/* Live character counter */}

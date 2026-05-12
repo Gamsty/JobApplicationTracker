@@ -53,7 +53,7 @@ function ApplicationDetails({ application, onClose, onUpdate, showToast }) {
             await interviewService.createInterview(formData);
             setRefreshKey(prev => prev + 1);
             handleCloseInterviewForm();
-            showToast('Interview scheduled successfully!', 'success');
+            showToast('Interview scheduled', 'success');
         } catch (err) {
             console.error('Error creating interview:', err);
             showToast('Failed to schedule interview', 'error');
@@ -68,7 +68,7 @@ function ApplicationDetails({ application, onClose, onUpdate, showToast }) {
             await interviewService.updateInterview(editingInterview.id, formData);
             setRefreshKey(prev => prev + 1);
             handleCloseInterviewForm();
-            showToast('Interview updated successfully!', 'success');
+            showToast('Interview updated', 'success');
         } catch (err) {
             console.error('Error updating interview:', err);
             showToast('Failed to update interview', 'error');
@@ -103,7 +103,7 @@ function ApplicationDetails({ application, onClose, onUpdate, showToast }) {
             await documentService.uploadDocument(file, application.id, documentType, description);
             setDocumentRefreshKey(prev => prev + 1);
             handleCloseDocumentUpload();
-            showToast('Document uploaded successfully!', 'success');
+            showToast('Document uploaded', 'success');
         } catch (err) {
             console.error('Error uploading document:', err);
             showToast('Failed to upload document', 'error');

@@ -7,7 +7,7 @@ function Register() {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [comfirmPassword, setComfirmPassword] = useState(''); // Held separately so it can be compared against password client-side
+    const [confirmPassword, setConfirmPassword] = useState(''); // Held separately so it can be compared against password client-side
     const [error, setError] = useState('');      // Holds the error message shown above the form on failed registration
     const [loading, setLoading] = useState(false); // Disables the button and shows "Creating account..." while the request is in flight
     const { register } = useAuth(); // register() is defined in AuthContext — calls the backend and stores the JWT
@@ -20,13 +20,13 @@ function Register() {
         setError('');        // Clear any previous error before retrying
 
         // Client-side validation — catches obvious errors before sending a request to the backend
-        if (password !== comfirmPassword) {
+        if (password !== confirmPassword) {
             setError('Passwords do not match');
             return; // Stop here — do not call the backend
         }
 
         if (password.length < 6) {
-            setError('Password must be atleast 6 characters');
+            setError('Password must be at least 6 characters');
             return; // Stop here — do not call the backend
         }
 
@@ -60,7 +60,7 @@ function Register() {
                     )}
 
                     <div className="form-group">
-                        <label htmlFor="fullName">Full Name</label>
+                        <label htmlFor="fullName">Full name</label>
                         <input
                             type="text"
                             id="fullName"
@@ -100,12 +100,12 @@ function Register() {
 
                     {/* Confirm password is only used for client-side comparison — not sent to the backend */}
                     <div className="form-group">
-                        <label htmlFor="comfirmPassword">Comfirm Password</label>
+                        <label htmlFor="confirmPassword">Confirm password</label>
                         <input
                             type="password"
-                            id="comfirmPassword"
-                            value={comfirmPassword}
-                            onChange={(e) => setComfirmPassword(e.target.value)}
+                            id="confirmPassword"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                             placeholder="Re-enter your password"
                             required
                             autoComplete="new-password"
@@ -114,7 +114,7 @@ function Register() {
 
                     {/* Button is disabled while the registration request is pending to prevent duplicate submissions */}
                     <button type="submit" className="auth-button" disabled={loading}>
-                        {loading ? 'Creating account...' : 'Create Account'}
+                        {loading ? 'Creating account…' : 'Create account'}
                     </button>
                 </form>
 

@@ -239,7 +239,7 @@ JobApplicationTracker/
 │   │   ├── DocumentUploadForm.jsx         # File upload form with type selection
 │   │   ├── ErrorBoundary.jsx              # Catches React rendering errors
 │   │   ├── InterviewForm.jsx              # Modal form for create/edit interview
-│   │   ├── Interviewlist.jsx              # Interview timeline with status badges
+│   │   ├── InterviewList.jsx              # Interview timeline with status badges
 │   │   ├── NetworkStatus.jsx              # Offline detection banner
 │   │   ├── ProtectedRoute.jsx             # Redirects to login if unauthenticated
 │   │   ├── ReminderForm.jsx               # Modal form for create/edit reminder
@@ -256,11 +256,11 @@ JobApplicationTracker/
 │   │   └── Settings.jsx                   # Email notification preferences
 │   ├── services/
 │   │   ├── documentService.js             # Document API calls
-│   │   ├── frontApplicationService.js     # Application API calls + axios interceptors
+│   │   ├── applicationService.js          # Application API calls + axios interceptors
 │   │   ├── interviewService.js            # Interview API calls
 │   │   └── reminderService.js             # Reminder API calls
 │   ├── utils/
-│   │   └── constants.js                   # Status labels, colors, icons
+│   │   └── constants.js                   # Status labels, colors, file-extension helper
 │   ├── App.jsx                            # Root component, routing, global state
 │   └── main.jsx                           # React entry point
 │

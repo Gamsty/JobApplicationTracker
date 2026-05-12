@@ -1,21 +1,17 @@
 import axios from 'axios';
 
-// VITE_API_URL points to the backend root (e.g. http://localhost:8080 or https://your-app.onrender.com).
-// Each service appends its own path segment so all services share the same env var.
+// VITE_API_URL points to the backend root — each service appends its own path
 const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api/applications';
 
-// Create axios instance with default configuration
 const api = axios.create({
-  baseURL: API_BASE_URL, // Base URL for all API requests
+    baseURL: API_BASE_URL,
     headers: {
-    'Content-Type': 'application/json', // Set default content type for requests
+        'Content-Type': 'application/json',
     },
 });
 
-// Request interceptor — runs before every outgoing API call.
-// Reads the JWT from localStorage and attaches it as a Bearer token in the
-// Authorization header so the backend can identify the logged-in user.
-// If no token is stored (e.g. user is not logged in), the header is simply omitted.
+// Attach the JWT from localStorage to every outgoing request as a Bearer token.
+// Missing token means an anonymous request — the backend will respond with 401.
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
@@ -24,15 +20,11 @@ api.interceptors.request.use(
         }
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
-// Response interceptor — runs after every incoming API response.
-// If the backend returns 401 Unauthorized (token expired, invalid, or missing),
-// the stored token and user data are cleared from localStorage and the user is
-// redirected to the login page. All other errors are passed through unchanged.
+// On a 401 the JWT is expired or invalid — clear local auth state and bounce to login
+// so the user doesn't get stuck in a half-authenticated state.
 api.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -45,14 +37,13 @@ api.interceptors.response.use(
     }
 );
 
-// API functions
 export const applicationService = {
 
-    // Get all applications with optional filters
-    getApplications: async (status = null) => { // Optional status filter (e.g., "Applied", "Interviewing", "Offered", "Rejected")
+    // GET /api/applications?status= — list applications, optionally filtered by status
+    getApplications: async (status = null) => {
         try {
-            const params = status ? { status } : {}; // If status is provided, include it as a query parameter; otherwise, use an empty object
-            const response = await api.get('', { params }); // Make GET request to fetch applications with optional status filter
+            const params = status ? { status } : {};
+            const response = await api.get('', { params });
             return response.data;
         } catch (error) {
             console.error('Error fetching applications:', error);
@@ -60,21 +51,21 @@ export const applicationService = {
         }
     },
 
-    // Get application by ID
+    // GET /api/applications/{id}
     getApplicationById: async (id) => {
         try {
-            const response = await api.get(`/${id}`); // Make GET request to fetch application by ID
+            const response = await api.get(`/${id}`);
             return response.data;
         } catch (error) {
-            console.error(`Error fetching application with ID ${id}:`, error);
+            console.error(`Error fetching application ${id}:`, error);
             throw error;
         }
     },
 
-    // Create new application
+    // POST /api/applications
     createApplication: async (applicationData) => {
         try {
-            const response = await api.post('', applicationData); // Make POST request to create new application
+            const response = await api.post('', applicationData);
             return response.data;
         } catch (error) {
             console.error('Error creating application:', error);
@@ -82,33 +73,31 @@ export const applicationService = {
         }
     },
 
-    // Update existing application by ID
+    // PUT /api/applications/{id}
     updateApplication: async (id, applicationData) => {
         try {
-            const response = await api.put(`/${id}`, applicationData); // Make PUT request to update application by ID
+            const response = await api.put(`/${id}`, applicationData);
             return response.data;
         } catch (error) {
-            console.error(`Error updating application with ID ${id}:`, error);
-            throw error;
-        }   
-    },
-
-    // Delete application by ID
-    deleteApplication: async (id) => {
-        try {
-            await api.delete(`/${id}`); // Make DELETE request to delete application by ID
-        } catch (error) {
-            console.error(`Error deleting application with ID ${id}:`, error);
+            console.error(`Error updating application ${id}:`, error);
             throw error;
         }
     },
 
-    // Search applications by company name (partial, case-insensitive match via backend)
-    // Calls GET /api/applications/search?company={company}
-    // The backend uses ContainingIgnoreCase so "goo" will match "Google"
+    // DELETE /api/applications/{id}
+    deleteApplication: async (id) => {
+        try {
+            await api.delete(`/${id}`);
+        } catch (error) {
+            console.error(`Error deleting application ${id}:`, error);
+            throw error;
+        }
+    },
+
+    // GET /api/applications/search?company= — substring match on company name (DB ILIKE)
     searchApplications: async (company) => {
         try {
-            const response = await api.get('/search', { params: { company } }); // Pass company as a query parameter
+            const response = await api.get('/search', { params: { company } });
             return response.data;
         } catch (error) {
             console.error('Error searching applications:', error);
@@ -116,26 +105,25 @@ export const applicationService = {
         }
     },
 
-    // Full-text search across company name, position, notes, and interview content
-    // via Azure AI Search. Returns [{applicationId, companyName, positionTitle, status,
-    // score, highlights}]. Highlights map field name to snippets like
-    // "...the project used <em>Kotlin</em> and Spring..." so the UI can show why a match
-    // was returned.
+    // GET /api/applications/full-text-search?q= — Azure AI Search across company, position,
+    // notes, and interview content. Each result includes a `highlights` map that maps the
+    // matched field to snippets like "...used <em>Kotlin</em> and Spring...", which the UI
+    // renders inline to show why a match was returned. Fails soft to [] so a search
+    // service hiccup doesn't blank the whole list.
     fullTextSearch: async (query) => {
         try {
             const response = await api.get('/full-text-search', { params: { q: query } });
             return response.data;
         } catch (error) {
             console.error('Full-text search failed:', error);
-            // Don't blow up the UI on a search failure — return empty list.
             return [];
         }
     },
 
-    // Get application statistics
+    // GET /api/applications/statistics — cached for 5 min, evicted on writes
     getStatistics: async () => {
         try {
-            const response = await api.get('/statistics'); // Make GET request to fetch application statistics
+            const response = await api.get('/statistics');
             return response.data;
         } catch (error) {
             console.error('Error fetching application statistics:', error);

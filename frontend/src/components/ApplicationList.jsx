@@ -1,10 +1,3 @@
-// Application list component that displays all applications in a table format
-// Provides status filtering (server-side via API) and date sorting (client-side)
-// Props:
-//   applications - array of application objects to display
-//   onEdit - callback to open the edit form with a selected application
-//   onDelete - callback to delete an application (receives id and companyName)
-//   onStatusFilter - callback to re-fetch applications filtered by status from the backend
 import { useEffect, useState } from "react";
 import { applicationService } from "../services/applicationService";
 import { APPLICATION_STATUS, STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
@@ -12,34 +5,28 @@ import './ApplicationList.css';
 
 
 function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onViewDetails }) {
-    const [statusFilter, setStatusFilter] = useState('ALL'); // Tracks the selected filter dropdown value
-    const [sortOrder, setSortOrder] = useState('Newest'); // Tracks sort direction: 'Newest' (descending) or 'Oldest' (ascending)
-    const [searchQuery, setSearchQuery] = useState(''); // Search input text
-    const [searchResults, setSearchResults] = useState(null); // null when no active search, array of SearchResult otherwise
-    const [isSearching, setIsSearching] = useState(false);    // Shows "Searching..." while the request is in flight
+    const [statusFilter, setStatusFilter] = useState('ALL');
+    const [sortOrder, setSortOrder] = useState('Newest');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState(null);
+    const [isSearching, setIsSearching] = useState(false);
 
-    // Handle status filter dropdown change
-    // Updates local state and calls parent callback to re-fetch filtered data from the backend
     const handleStatusFilterChange = (e) => {
         const newFilter = e.target.value;
         setStatusFilter(newFilter);
-        onStatusFilter(newFilter === 'ALL' ? null: newFilter); // Pass null for "All" so backend returns all applications
+        onStatusFilter(newFilter === 'ALL' ? null : newFilter);
     };
 
-    // Toggle sort order between newest-first and oldest-first
     const handleSortToggle = () => {
         setSortOrder(prev => prev === 'Newest' ? 'Oldest' : 'Newest');
     };
 
-    // Create a sorted copy of applications array (does not mutate the original)
-    // Sorting is done client-side since all filtered results are already loaded
     const sortedApplications = [...applications].sort((a, b) => {
         const dateA = new Date(a.applicationDate);
         const dateB = new Date(b.applicationDate);
         return sortOrder === 'Newest' ? dateB - dateA : dateA - dateB;
     });
 
-    // Format a date string (e.g., "2026-02-18") into a human-readable format (e.g., "Feb 18, 2026")
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
@@ -53,7 +40,6 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
         color: STATUS_COLORS[status],
     });
 
-    // Update search query state as the user types in the search input
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
     }
@@ -79,8 +65,8 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
-    // Build lookup structures from the search response so we can filter the already-loaded
-    // applications array by matching ID and render highlights inline with each row.
+    // Search returns just IDs + highlight snippets. Intersect with the already-loaded
+    // applications array so we keep the current sort order on top of the match set.
     const searchResultIds = searchResults
         ? new Set(searchResults.map(r => r.applicationId))
         : null;
@@ -88,38 +74,29 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
         ? Object.fromEntries(searchResults.map(r => [r.applicationId, r.highlights]))
         : {};
 
-    // When there's no search, show the whole sorted list. When there is, intersect with
-    // the IDs Azure Search returned — preserves the current sort order on top of the match set.
     const filteredApplications = searchResultIds
         ? sortedApplications.filter(app => searchResultIds.has(app.id))
         : sortedApplications;
 
     return (
         <div className="application-list">
-            {/* Search box — debounced full-text search via Azure AI Search.
-                Covers company name, position, notes, and interview content (not just company
-                name like the old client-side filter). The clear button (×) only appears when
-                there is text in the search input. */}
             <div className="search-box">
                 <input
                     type="text"
-                    placeholder="Search applications, notes, interview feedback..."
+                    placeholder="Search applications, notes, interview feedback…"
                     value={searchQuery}
                     onChange={handleSearch}
                     className="search-input"
                 />
                 {isSearching && <span className="search-status">Searching…</span>}
-                {/* Clear button resets search query, showing all applications again */}
                 {searchQuery && (
                     <button onClick={() => setSearchQuery('')} className="clear-search">×</button>
                 )}
             </div>
 
-            {/* Controls bar — status filter dropdown and sort toggle button */}
             <div className="list-controls">
                 <div className="filter-group">
                     <label htmlFor="statusFilter">Status</label>
-                    {/* Dropdown populated from APPLICATION_STATUS constants with an "All" option */}
                     <select
                         id="statusFilter"
                         value={statusFilter}
@@ -135,18 +112,15 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
                     </select>
                 </div>
 
-                {/* Sort button toggles between newest and oldest first, with arrow indicator */}
                 <button onClick={handleSortToggle} className="sort-button">
                     {sortOrder === 'Newest' ? 'Newest first ↓' : 'Oldest first ↑'}
                 </button>
             </div>
 
-            {/* Application count with pluralization (e.g., "1 application" vs "3 applications") */}
             <div className="applications-count">
                 Showing {filteredApplications.length} application{filteredApplications.length !== 1 ? 's' : ''}
             </div>
 
-            {/* Conditional rendering: empty state message or the applications table */}
             {filteredApplications.length === 0 ? (
                 <div className="empty-state">
                     <p>No applications match the current filter.</p>
@@ -168,28 +142,21 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
                         <tbody>
                             {filteredApplications.map(app => (
                                 <tr key={app.id}>
-                                    {/* Company cell — shows name and optional job posting link.
-                                        In search mode, also shows the matching snippet from whichever
-                                        field hit (notes, interview feedback, etc.) so the user sees
-                                        WHY a result matched, not just THAT it did. */}
                                     <td className="company-cell">
                                         <strong>{app.companyName}</strong>
-                                        {/* Only render job link if a URL was provided */}
                                         {app.jobUrl && (
                                             <a
                                                 href={app.jobUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="job-link"
-                                                onClick={(e) => e.stopPropagation()} // Prevent row click events from firing
+                                                onClick={(e) => e.stopPropagation()}
                                             >
                                                 View posting
                                             </a>
                                             )}
-                                        {/* Highlight snippets from Azure AI Search.
-                                            Server controls the index and only emits <em> tags around
-                                            matched terms, so dangerouslySetInnerHTML is safe here.
-                                            Only render the first matching field — keeps the row compact. */}
+                                        {/* Server-controlled <em> tags around the matched term;
+                                            dangerouslySetInnerHTML is fine because the index isn't user-writeable. */}
                                         {highlightsByAppId[app.id] && Object.entries(highlightsByAppId[app.id])
                                             .filter(([, snippets]) => snippets && snippets.length > 0)
                                             .slice(0, 1)
@@ -214,25 +181,23 @@ function ApplicationList({ applications, onEdit, onDelete, onStatusFilter, onVie
                                                 {STATUS_LABELS[app.status]}
                                             </span>
                                         </td>
-                                        {/* Notes cell — truncated to 50 chars with full text in tooltip */}
                                         <td className="notes-cell">
                                             {app.notes ? (
                                                 <span title={app.notes}>
                                                     {app.notes.length > 50
-                                                    ? `${app.notes.substring(0, 50)}...`
+                                                    ? `${app.notes.substring(0, 50)}…`
                                                     : app.notes}
                                                 </span>
                                             ) : (
                                                 <span className="no-notes">No notes</span>
                                             )}
                                         </td>
-                                        {/* Action buttons — view opens the details panel, edit opens the form modal, delete shows confirmation dialog */}
                                         <td className="actions-cell">
                                             <button
                                                 onClick={() => onViewDetails(app)}
                                                 className="view-button"
                                             >
-                                                View Details
+                                                View
                                             </button>
                                             <button
                                                 onClick={() => onEdit(app)}

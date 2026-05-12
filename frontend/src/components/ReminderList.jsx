@@ -109,7 +109,7 @@ function ReminderList({ onEdit, onCreate }) {
     };
 
     if (loading) {
-        return <div className="reminders-loading">Loading reminders...</div>
+        return <div className="reminders-loading">Loading reminders…</div>
     }
 
     if (error) {
