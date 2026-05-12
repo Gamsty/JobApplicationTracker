@@ -1,9 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { reminderService } from "../services/reminderService";
-import {
-    REMINDER_TYPE_LABELS,
-    REMINDER_TYPE_ICONS
-} from '../utils/constants';
+import { REMINDER_TYPE_LABELS } from '../utils/constants';
 import './ReminderList.css';
 
 // Displays all reminders for the current user with filter tabs (Pending / All / Sent).
@@ -179,11 +176,6 @@ function ReminderList({ onEdit, onCreate }) {
                                         ${isPastDue(reminder.scheduledFor)
                                             && !reminder.sent ? 'overdue' : ''}`}
                         >
-                            {/* Left icon column — emoji based on reminder type */}
-                            <div className="reminder-icon">
-                                {REMINDER_TYPE_ICONS[reminder.reminderType]}
-                            </div>
-
                             <div className="reminder-content">
                                 <div className="reminder-header">
                                     <h3 className="reminder-title">
@@ -221,17 +213,15 @@ function ReminderList({ onEdit, onCreate }) {
                                     </div>
                                 )}
 
-                                {/* Linked application company — only shown if reminder is tied to an application */}
                                 {reminder.applicationCompany && (
                                     <div className="reminder-application">
-                                        📋 {reminder.applicationCompany}
+                                        {reminder.applicationCompany}
                                     </div>
                                 )}
 
-                                {/* Linked interview round — only shown if reminder is tied to an interview */}
                                 {reminder.interviewRound && (
                                     <div className="reminder-interview">
-                                       📅 {reminder.interviewRound}
+                                       {reminder.interviewRound}
                                     </div>
                                 )}
 
@@ -262,25 +252,22 @@ function ReminderList({ onEdit, onCreate }) {
                                         <button
                                             onClick={() => handleToggle(reminder.id)}
                                             className="toggle-button"
-                                            title={reminder.enabled ? 'Disable' : 'Enable'}
                                         >
-                                            {reminder.enabled ? '🔔' : '🔕'}
+                                            {reminder.enabled ? 'On' : 'Off'}
                                         </button>
                                         <button
                                             onClick={() => onEdit(reminder)}
                                             className="edit-button-reminder"
-                                            title="Edit"
                                         >
-                                            ✏️
+                                            Edit
                                         </button>
                                     </>
                                 )}
                                 <button
                                     onClick={() => handleDelete(reminder.id)}
                                     className="delete-button-reminder"
-                                    title="Delete"
                                 >
-                                    🗑️
+                                    Delete
                                 </button>
                             </div>
                         </div>

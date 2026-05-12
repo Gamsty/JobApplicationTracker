@@ -340,7 +340,7 @@ function InterviewForm({ interview, applicationId, onSubmit, onCancel }) {
                                     <span className="error-message">{errors.rating}</span>
                                 )}
                                 <span className="char-count">
-                                    ⭐ Rate from 1 (poor) to 5 (excellent)
+                                    Rate from 1 (poor) to 5 (excellent)
                                 </span>
                             </div>
                         </>

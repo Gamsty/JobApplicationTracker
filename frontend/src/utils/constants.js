@@ -1,4 +1,3 @@
-// Raw status values sent to / received from the backend (must match ApplicationStatus enum)
 export const APPLICATION_STATUS = {
     APPLIED: 'APPLIED',
     INTERVIEWING: 'INTERVIEWING',
@@ -8,27 +7,24 @@ export const APPLICATION_STATUS = {
     HIRED: 'HIRED'
 };
 
-// CSS colour names used to style application status badges
 export const STATUS_COLORS = {
-    APPLIED: 'blue',
-    INTERVIEWING: 'orange',
-    OFFER_RECEIVED: 'green',
-    REJECTED: 'red',
-    WITHDRAWN: 'gray',
-    HIRED: 'purple'
+    APPLIED: '#4a6b8a',
+    INTERVIEWING: '#b8763a',
+    OFFER_RECEIVED: '#2f5d44',
+    REJECTED: '#a8362d',
+    WITHDRAWN: '#787268',
+    HIRED: '#5a4a6b'
 };
 
-// Human-readable labels displayed in the UI for each application status
 export const STATUS_LABELS = {
     APPLIED: 'Applied',
     INTERVIEWING: 'Interviewing',
-    OFFER_RECEIVED: 'Offer Received',
+    OFFER_RECEIVED: 'Offer received',
     REJECTED: 'Rejected',
     WITHDRAWN: 'Withdrawn',
     HIRED: 'Hired'
 };
 
-// Raw status values sent to / received from the backend (must match InterviewStatus enum)
 export const INTERVIEW_STATUS = {
     SCHEDULED: 'SCHEDULED',
     COMPLETED: 'COMPLETED',
@@ -36,23 +32,20 @@ export const INTERVIEW_STATUS = {
     NO_SHOW: 'NO_SHOW'
 };
 
-// CSS colour names used to style interview status badges
 export const INTERVIEW_STATUS_COLORS = {
-    SCHEDULED: 'blue', 
-    COMPLETED: 'green',   
-    CANCELLED: 'red',  
-    NO_SHOW: 'orange'    
+    SCHEDULED: '#4a6b8a',
+    COMPLETED: '#2f5d44',
+    CANCELLED: '#a8362d',
+    NO_SHOW: '#b8763a'
 };
 
-// Human-readable labels displayed in the UI for each interview status
 export const INTERVIEW_STATUS_LABELS = {
     SCHEDULED: 'Scheduled',
     COMPLETED: 'Completed',
     CANCELLED: 'Cancelled',
-    NO_SHOW: 'No Show'
+    NO_SHOW: 'No show'
 };
 
-// Raw format values sent to / received from the backend (must match InterviewFormat enum)
 export const INTERVIEW_FORMAT = {
     IN_PERSON: 'IN_PERSON',
     VIDEO_CALL: 'VIDEO_CALL',
@@ -60,15 +53,13 @@ export const INTERVIEW_FORMAT = {
     ASSESSMENT: 'ASSESSMENT'
 };
 
-// Human-readable labels displayed in the UI for each interview format
 export const INTERVIEW_FORMAT_LABELS = {
-    IN_PERSON: 'In Person',
-    VIDEO_CALL: 'Video Call',
-    PHONE_CALL: 'Phone Call',
+    IN_PERSON: 'In person',
+    VIDEO_CALL: 'Video call',
+    PHONE_CALL: 'Phone call',
     ASSESSMENT: 'Assessment'
 };
 
-// Raw type values sent to / received from the backend (must match DocumentType enum)
 export const DOCUMENT_TYPE = {
     RESUME: 'RESUME',
     COVER_LETTER: 'COVER_LETTER',
@@ -79,10 +70,9 @@ export const DOCUMENT_TYPE = {
     OTHER: 'OTHER'
 };
 
-// Human-readable labels displayed in the UI for each document type
 export const DOCUMENT_TYPE_LABELS = {
     RESUME: 'Resume',
-    COVER_LETTER: 'Cover Letter',
+    COVER_LETTER: 'Cover letter',
     PORTFOLIO: 'Portfolio',
     CERTIFICATE: 'Certificate',
     TRANSCRIPT: 'Transcript',
@@ -90,17 +80,15 @@ export const DOCUMENT_TYPE_LABELS = {
     OTHER: 'Other'
 };
 
-// Maps a file's MIME type to a representative emoji icon.
-// Used in DocumentList and Dashboard wherever a file-format icon is shown.
-export const getFileIcon = (fileType) => {
-    if (fileType.includes('pdf')) return '📕';
-    if (fileType.includes('word') || fileType.includes('document')) return '📘';
-    if (fileType.includes('image')) return '🖼️';
-    if (fileType.includes('text')) return '📄';
-    return '📎';
+// Pulls the extension from a filename and uppercases it (e.g. "PDF", "DOCX").
+// Falls back to "FILE" when the extension is missing.
+export const getFileExtension = (filename) => {
+    if (!filename) return 'FILE';
+    const dot = filename.lastIndexOf('.');
+    if (dot === -1 || dot === filename.length - 1) return 'FILE';
+    return filename.slice(dot + 1).toUpperCase().slice(0, 4);
 };
 
-// Raw type values sent to / received from the backend (must match ReminderType enum)
 export const REMINDER_TYPE = {
     FOLLOW_UP: 'FOLLOW_UP',
     INTERVIEW_UPCOMING: 'INTERVIEW_UPCOMING',
@@ -108,18 +96,9 @@ export const REMINDER_TYPE = {
     CUSTOM: 'CUSTOM'
 };
 
-// Human-readable labels displayed in the UI for each reminder type
 export const REMINDER_TYPE_LABELS = {
-    FOLLOW_UP: 'Follow Up',
-    INTERVIEW_UPCOMING: 'Interview Reminder',
-    APPLICATION_DEADLINE: 'Application Deadline',
-    CUSTOM: 'Custom Reminder'
-};
-
-// Emoji icons used alongside reminder type labels in lists and badges
-export const REMINDER_TYPE_ICONS = {
-  FOLLOW_UP: '📞',
-  INTERVIEW_UPCOMING: '📅',
-  APPLICATION_DEADLINE: '⏰',
-  CUSTOM: '🔔'
+    FOLLOW_UP: 'Follow up',
+    INTERVIEW_UPCOMING: 'Interview reminder',
+    APPLICATION_DEADLINE: 'Application deadline',
+    CUSTOM: 'Custom reminder'
 };

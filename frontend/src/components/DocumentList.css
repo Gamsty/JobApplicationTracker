@@ -1,216 +1,191 @@
-/* Outer wrapper for the entire document section */
 .document-list-container {
-    margin-top: 30px;
+    margin-top: 28px;
 }
 
-/* Header row: title on the left, upload button on the right */
 .document-list-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-}
-
-.document-list-header h3 {
-    font-size: 20px;
-    color: var(--text-primary);
-    margin: 0;
-}
-
-/* Orange upload button shown in the header when documents already exist */
-.upload-button-document {
-    background-color: #FCAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.upload-button-document:hover {
-    background-color: #e09940;
-    transform: translateY(-2px);
-}
-
-/* Empty-state container shown when no documents have been uploaded yet */
-.no-documents {
-    text-align: center;
-    padding: 40px 20px;
-    background-color: var(--bg-primary);
-    border-radius: 8px;
-    border: 2px dashed var(--border-color);
-}
-
-/* Muted prompt text inside the empty state */
-.no-documents p {
-    color: var(--text-secondary);
     margin-bottom: 16px;
 }
 
-/* Green call-to-action button shown only in the empty state */
-.upload-button-first {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 24px;
-    border: none;
-    border-radius: 6px;
+.document-list-header h3 {
+    font-size: 16px;
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-family: "Inter", sans-serif;
+}
+
+.upload-button-document {
+    background-color: transparent;
+    color: var(--text-primary);
+    padding: 7px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
-    font-size: 14px;
+    transition: border-color 0.15s, color 0.15s;
+    font-family: inherit;
 }
 
-/* Darker green on hover to match the base green button color */
+.upload-button-document:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.no-documents {
+    text-align: center;
+    padding: 36px 20px;
+    background-color: var(--bg-primary);
+    border-radius: 3px;
+    border: 1px dashed var(--border-color);
+}
+
+.no-documents p {
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    font-size: 13.5px;
+}
+
+.upload-button-first {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 9px 18px;
+    border: 1px solid var(--accent-color);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-family: inherit;
+}
+
 .upload-button-first:hover {
-    background-color: #45a049;
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
 }
 
-/* Responsive grid — each card is at least 300px wide */
 .documents-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background-color: var(--border-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-/* Individual document card */
 .document-card {
     background-color: var(--bg-secondary);
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 2px 8px var(--shadow);
+    padding: 16px 18px;
     display: flex;
-    gap: 12px;
-    transition: all 0.3s;
-    border: 2px solid transparent;
+    gap: 14px;
+    transition: background-color 0.15s;
+    align-items: flex-start;
 }
 
-/* Card lifts and gains an accent border on hover */
 .document-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px var(--shadow);
-    border-color: var(--accent-color);
+    background-color: var(--bg-hover);
 }
 
-/* Large emoji icon representing the document category */
 .document-icon {
-    font-size: 40px;
+    font-family: "JetBrains Mono", "SF Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent-color);
+    background-color: var(--accent-soft);
+    padding: 6px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
     flex-shrink: 0;
+    min-width: 44px;
+    text-align: center;
 }
 
-/* Text content section — fills remaining width, clips long names */
 .document-info {
     flex: 1;
     min-width: 0;
 }
 
-/* Small blue pill showing the document type (e.g. RESUME, CERTIFICATE) */
 .document-type-badge {
     display: inline-block;
-    padding: 2px 8px;
-    background-color: #e3f2fd;
-    color: #1976d2;
-    border-radius: 4px;
+    padding: 1px 0;
+    color: var(--text-muted);
     font-size: 11px;
-    font-weight: bolder;
+    font-weight: 600;
     text-transform: uppercase;
-    margin-bottom: 6px;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
 }
 
-/* In dark mode use a deeper blue so the badge stays legible */
-[data-theme='dark'] .document-type-badge {
-    background-color: #1a3a5c;
-    color: #90caf9;
-}
-
-/* Original file name — wraps on long names to avoid overflow */
 .document-filename {
-    font-weight: bold;
+    font-weight: 500;
     color: var(--text-primary);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     word-break: break-word;
-    font-size: 14px;
+    font-size: 13.5px;
 }
 
-/* Row showing file size and upload date */
 .document-meta {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 12px;
     color: var(--text-muted);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
-/* Bullet separator between metadata items */
 .seperator {
-    color: var(--border-color);
+    color: var(--text-muted);
 }
 
-/* Optional description below the metadata row — left border distinguishes it without a background box */
 .document-description {
     font-size: 13px;
     color: var(--text-secondary);
-    margin-top: 8px;
-    padding: 8px;
-    line-height: 1.4;
+    margin-top: 6px;
+    line-height: 1.45;
 }
 
-/* Vertical stack of action buttons on the right side of each card */
 .document-actions {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     flex-shrink: 0;
 }
 
-/* Shared style for the download and delete icon buttons */
 .download-button,
 .delete-button-doc {
-    width: 36px;
-    height: 36px;
-    border: none;
-    border-radius: 6px;
+    padding: 5px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 18px;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Blue download button */
-.download-button {
-    background-color: #2196f3;
+    font-size: 12px;
+    font-weight: 500;
+    transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-family: inherit;
 }
 
 .download-button:hover {
-    background-color: #1967d2;
-    transform: scale(1.1);
-}
-
-/* Red delete button — uses the theme variable so it softens slightly in dark mode */
-.delete-button-doc {
-    background-color: var(--error-color);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
 }
 
 .delete-button-doc:hover {
-    background-color: #d32f2f;
-    transform: scale(1.1);
+    border-color: var(--error-color);
+    color: var(--error-color);
 }
 
-/* Loading and error states — centered muted text */
 .documents-loading,
 .documents-error {
     text-align: center;
     padding: 20px;
-    color: var(--text-secondary);
+    color: var(--text-muted);
 }
 
-/* On small screens stack cards into a single column and wrap the header */
 @media (max-width: 768px) {
     .documents-grid {
         grid-template-columns: 1fr;
@@ -218,7 +193,7 @@
 
     .document-list-header {
         flex-direction: column;
-        align-items: center;
-        gap: 12px;
+        align-items: flex-start;
+        gap: 10px;
     }
 }

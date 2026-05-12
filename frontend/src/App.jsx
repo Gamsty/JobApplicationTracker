@@ -193,8 +193,8 @@ function App() {
         <header className="app-header">
           <div className='header-content'>
             <div>
-              <h1>📋 Job Application Tracker</h1>
-              <p className='user-greeting'>Welcome back, {user?.fullName}!</p>
+              <h1>Job Application Tracker</h1>
+              <p className='user-greeting'>Signed in as {user?.fullName}</p>
             </div>
 
             {/* Navigation links — NavLink automatically adds an "active" class
@@ -219,7 +219,7 @@ function App() {
             <button onClick={logout} className='logout-button'>Logout</button>
             {/* Toggle button to switch between light and dark mode */}
             <button className='theme-toggle' onClick={() => setDarkMode(prev => !prev)}>
-              {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+              {darkMode ? 'Light' : 'Dark'}
             </button>
           </div>
         </header>
@@ -238,7 +238,7 @@ function App() {
                     </div>
                   ) : error ? (
                     <div className="error-container">
-                      <h2>⚠️ Error</h2>
+                      <h2>Something went wrong</h2>
                       <p>{error}</p>
                       <button onClick={() => loadApplications()}>Retry</button>
                     </div>

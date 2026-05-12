@@ -109,7 +109,6 @@ function InterviewList({ applicationId, onEdit, onAdd }) {
                             {/* Header: round name on the left, status badge on the right */}
                             <div className="interview-card-header">
                                 <div className="interview-round">
-                                    <span className="round-icon">📅</span>
                                     <h4>{interview.round}</h4>
                                 </div>
                                 {/* Background colour is driven by INTERVIEW_STATUS_COLORS lookup */}
@@ -122,47 +121,39 @@ function InterviewList({ applicationId, onEdit, onAdd }) {
                             </div>
 
                             <div className="interview-details">
-                                {/* Scheduled date and time */}
                                 <div className="interview-details-row">
-                                    <span className="detail-icon">🕒</span>
+                                    <span className="detail-key">When</span>
                                     <span className="detail-text">
                                         {formatDateTime(interview.scheduledDate)}
                                     </span>
                                 </div>
 
-                                {/* Interview format (optional) — icon changes per format type */}
                                 {interview.format && (
                                     <div className="interview-details-row">
-                                        <span className="detail-icon">
-                                            {interview.format === 'VIDEO_CALL' ? '📹':
-                                            interview.format === 'PHONE_CALL' ? '📞':
-                                            interview.format === 'IN_PERSON' ? '🏢': '📝'}
-                                        </span>
+                                        <span className="detail-key">Format</span>
                                         <span className="detail-text">
                                             {INTERVIEW_FORMAT_LABELS[interview.format]}
                                         </span>
                                     </div>
                                 )}
 
-                                {/* Interviewer name and role (optional) */}
                                 {interview.interviewerName && (
                                     <div className="interview-details-row">
-                                        <span className="detail-icon">👤</span>
+                                        <span className="detail-key">Interviewer</span>
                                         <span className="detail-text">
                                             {interview.interviewerName}
-                                            {interview.interviewRole && ` - ${interview.interviewRole}`}
+                                            {interview.interviewRole && ` — ${interview.interviewRole}`}
                                         </span>
                                     </div>
                                 )}
 
-                                {/* Location (optional) — rendered as a link if it's a URL */}
                                 {interview.location && (
                                     <div className="interview-details-row">
-                                        <span className="detail-icon">📍</span>
+                                        <span className="detail-key">Where</span>
                                         <span className="detail-text location-text">
                                             {interview.location.startsWith('http') ? (
                                                 <a href={interview.location} target="_blank" rel="noopener noreferrer">
-                                                    Join Meeting
+                                                    Join meeting
                                                 </a>
                                             ) : (
                                                 interview.location
@@ -187,11 +178,10 @@ function InterviewList({ applicationId, onEdit, onAdd }) {
                                     </div>
                                 )}
 
-                                {/* Star rating (optional) — repeats the ⭐ emoji rating times */}
                                 {interview.rating && (
                                     <div className="interview-rating">
                                         <strong>Rating:</strong>
-                                        {'⭐'.repeat(interview.rating)}
+                                        {interview.rating} / 5
                                     </div>
                                 )}
                             </div>

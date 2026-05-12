@@ -38,14 +38,9 @@ function StatsSummary() {
 
     return (
         <div className="stats-summary">
-            {/* Total applications card — styled differently with the "total" class */}
             <div className="stat-card total">
-                <div className="stat-value">
-                    {total}
-                </div>
-                <div className="stat-label">
-                    Total Applications
-                </div>
+                <div className="stat-value">{total}</div>
+                <div className="stat-label">Total applications</div>
             </div>
 
             {/* One card per status — each shows count, label, and percentage of total */}
@@ -54,20 +49,13 @@ function StatsSummary() {
                 // Returns 0 if there are no applications to avoid division by zero
                 const percentage = total > 0 ? ((count / total) * 100).toFixed(0) : 0;
                 return (
-                    <div
-                        key={status}
-                        className="stat-card"
-                        style={{ borderLeftColor: STATUS_COLORS[status] }} // Colored left border matches status color
-                    >
-                        <div className="stat-value">
-                            {count}
-                        </div>
+                    <div key={status} className="stat-card">
+                        <div className="stat-value">{count}</div>
                         <div className="stat-label">
+                            <span className="stat-dot" style={{ backgroundColor: STATUS_COLORS[status] }}></span>
                             {STATUS_LABELS[status]}
                         </div>
-                        <div className="stat-percentage">
-                            {percentage}%
-                        </div>
+                        <div className="stat-percentage">{percentage}%</div>
                     </div>
                 );
             })}

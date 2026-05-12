@@ -1,22 +1,18 @@
-/* ========== Application List Container ========== */
 .application-list {
     margin-top: 20px;
 }
 
-/* ========== Controls Bar ========== */
-/* Horizontal bar containing the status filter dropdown and sort toggle button */
 .list-controls {
     display: flex;
-    justify-content: space-between; /* Filter on the left, sort button on the right */
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 15px;
+    margin-bottom: 16px;
+    padding: 12px 14px;
     background-color: var(--bg-secondary);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
 }
 
-/* Filter label + dropdown grouped together horizontally */
 .filter-group {
     display: flex;
     align-items: center;
@@ -24,279 +20,266 @@
 }
 
 .filter-group label {
-    font-weight: bold;
-    color: var(--text-primary);
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
-/* Status filter dropdown — styled to match the app theme */
 .filter-select {
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 14px;
+    padding: 6px 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 3px;
+    font-size: 13.5px;
     cursor: pointer;
     background-color: var(--bg-secondary);
     color: var(--text-primary);
+    font-family: inherit;
 }
 
 .filter-select:hover {
     border-color: var(--accent-color);
 }
 
-/* Sort toggle button — switches between "Newest First" and "Oldest First" */
 .sort-button {
-    padding: 8px 16px;
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 14px;
+    padding: 6px 12px;
+    background-color: transparent;
+    border: 1px solid var(--input-border);
+    border-radius: 3px;
+    font-size: 13px;
     cursor: pointer;
-    transition: all 0.3s;
-    color: var(--text-primary);
+    transition: border-color 0.15s, color 0.15s;
+    color: var(--text-secondary);
+    font-family: inherit;
 }
 
 .sort-button:hover {
-    background-color: var(--bg-hover);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
 }
 
-/* ========== Applications Count ========== */
-/* Shows "Showing X application(s)" above the table */
 .applications-count {
-    margin-bottom: 15px;
-    font-size: 14px;
-    color: var(--text-secondary);
+    margin-bottom: 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
-/* ========== Table ========== */
-/* Scrollable container to handle table overflow on narrow screens */
 .table-container {
     overflow-x: auto;
     background-color: var(--bg-secondary);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
 }
 
-/* Full-width table with collapsed borders for a clean look */
 .applications-table {
     width: 100%;
     border-collapse: collapse;
     color: var(--text-primary);
+    font-size: 13.5px;
+}
+
+.applications-table thead th {
+    text-align: left;
+    padding: 12px 14px;
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 
 .applications-table td {
-    padding: 12px;
+    padding: 12px 14px;
     border-bottom: 1px solid var(--border-color);
+    vertical-align: top;
 }
 
-/* Highlight row on hover for better readability */
+.applications-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
 .applications-table tbody tr:hover {
     background-color: var(--bg-hover);
 }
 
-/* ========== Company Cell ========== */
-/* Company name with an optional job posting link below it */
 .company-cell {
     min-width: 150px;
 }
 
-/* Company name displayed as a block element so the job link sits on the next line */
 .company-cell strong {
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
-/* Small clickable link to the job posting URL */
 .job-link {
     font-size: 12px;
     color: var(--accent-color);
     text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
 }
 
 .job-link:hover {
-    text-decoration: underline;
+    border-bottom-color: var(--accent-color);
 }
 
-/* ========== Notes Cell ========== */
-/* Truncated notes column — full text shown in a browser tooltip on hover */
 .notes-cell {
-    max-width: 200px;
+    max-width: 220px;
     font-size: 13px;
     color: var(--text-secondary);
 }
 
-/* Italic placeholder text when no notes are provided */
 .no-notes {
     color: var(--text-muted);
     font-style: italic;
 }
 
-/* ========== Action Buttons ========== */
-/* Prevents Edit and Delete buttons from wrapping to separate lines */
 .actions-cell {
     white-space: nowrap;
+    text-align: right;
 }
 
-.view-button {
-    padding: 6px 12px;
-    margin-right: 8px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 13px;
-    transition: all 0.3s;
-    background-color: var(--accent-color);
-    color: white;
-}
-
-.view-button:hover {
-    background-color: var(--accent-hover);
-}
-
-/* Shared base styles for Edit and Delete buttons */
-.edit-button, .delete-button {
-    padding: 6px 12px;
-    border: none;
-    margin-right: 8px;
-    border-radius: 4px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-/* Edit button — accent color (blue/purple) */
-.edit-button {
-    background-color: var(--accent-color);
-    color: white;
-}
-
-.edit-button:hover {
-    background-color: var(--accent-hover);
-}
-
-/* Delete button — red/error color to indicate a destructive action */
+.view-button,
+.edit-button,
 .delete-button {
-    background-color: var(--error-color);
-    color: white;
+    padding: 5px 10px;
+    margin-left: 4px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    transition: border-color 0.15s, color 0.15s;
+    font-family: inherit;
+}
+
+.view-button:hover,
+.edit-button:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
 }
 
 .delete-button:hover {
-    opacity: 0.85;
+    border-color: var(--error-color);
+    color: var(--error-color);
 }
 
-/* ========== Empty State ========== */
-/* Displayed when no applications match the current filters/search */
 .empty-state {
     text-align: center;
-    padding: 60px 20px;
+    padding: 50px 20px;
     background-color: var(--bg-secondary);
-    border-radius: 8px;
-    box-shadow: 0px 2px 4px var(--shadow);
+    border: 1px dashed var(--border-color);
+    border-radius: 4px;
 }
 
 .empty-state p:first-child {
-    font-size: 18px;
-    color: var(--text-secondary);
-    margin-bottom: 10px;
-    font-weight: bold;
+    font-size: 15px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    font-weight: 500;
 }
 
 .empty-state p:last-child {
     color: var(--text-muted);
+    font-size: 13.5px;
 }
 
-/* ========== Search Box ========== */
-/* Container uses relative positioning so the clear button can be absolutely positioned inside */
 .search-box {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
-/* Full-width search input with extra right padding to make room for the clear (x) button */
 .search-input {
     width: 100%;
-    padding: 12px 40px 12px 16px; /* Right padding prevents text from overlapping the clear button */
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    padding: 10px 40px 10px 14px;
+    border: 1px solid var(--input-border);
+    border-radius: 3px;
     font-size: 14px;
     background-color: var(--bg-secondary);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+    font-family: inherit;
 }
 
-/* Focus state — accent-colored border with a subtle glow ring */
 .search-input:focus {
     outline: none;
     border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .search-input::placeholder {
     color: var(--text-muted);
 }
 
-/* Clear (x) button — positioned inside the search input on the right side */
-/* Vertically centered using absolute positioning + translateY(-50%) */
 .clear-search {
     position: absolute;
-    right: 12px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 20px;
     color: var(--text-muted);
     cursor: pointer;
     padding: 0;
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
+    line-height: 1;
 }
 
 .clear-search:hover {
     color: var(--text-primary);
 }
 
-/* "Searching…" indicator shown while a full-text search request is in flight.
-   Sits to the right of the input next to (but not overlapping) the clear button. */
 .search-status {
     position: absolute;
-    right: 44px;
+    right: 38px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 12px;
+    font-size: 11.5px;
     color: var(--text-muted);
-    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
-/* Snippet shown below the company name when a search result matched on a non-company
-   field (notes, interview feedback, etc.). Compact and dimmer than the row content
-   so it explains the hit without competing with the primary data. */
 .search-snippet {
     display: block;
-    margin-top: 4px;
+    margin-top: 3px;
     font-size: 12px;
     color: var(--text-muted);
     line-height: 1.4;
 }
 
 .search-snippet-field {
-    text-transform: capitalize;
+    text-transform: uppercase;
     font-weight: 600;
     margin-right: 6px;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
 }
 
 .search-snippet-text em {
-    background-color: rgba(255, 235, 59, 0.35);
+    background-color: var(--accent-soft);
+    color: var(--accent-color);
     font-style: normal;
     font-weight: 600;
     padding: 0 2px;
     border-radius: 2px;
 }
 
-/* ========== Responsive Adjustments ========== */
-/* On mobile: stack controls vertically, reduce table padding, hide notes column */
 @media (max-width: 768px) {
     .list-controls {
-        flex-direction: column; /* Stack filter and sort button vertically */
-        gap: 15px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
     }
 
     .applications-table {
@@ -305,10 +288,10 @@
 
     .applications-table th,
     .applications-table td {
-        padding: 8px;
+        padding: 8px 10px;
     }
 
     .notes-cell {
-        display: none; /* Hide notes on smaller screens for cleaner layout */
+        display: none;
     }
 }

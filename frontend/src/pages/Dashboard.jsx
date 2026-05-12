@@ -7,7 +7,7 @@ import { documentService } from "../services/documentService";
 import { reminderService } from "../services/reminderService";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis,
         CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { STATUS_COLORS, STATUS_LABELS, getFileIcon } from "../utils/constants";
+import { STATUS_COLORS, STATUS_LABELS, getFileExtension } from "../utils/constants";
 import './Dashboard.css';
 
 function Dashboard() {
@@ -60,7 +60,7 @@ function Dashboard() {
     if (error || !stats) {
         return (
             <div className="error-container">
-                <h2>⚠️ Failed to load dashboard</h2>
+                <h2>Failed to load dashboard</h2>
                 <p>Could not fetch data from the server. Make sure the backend is running.</p>
                 <button onClick={loadData}>Retry</button>
             </div>
@@ -122,89 +122,42 @@ function Dashboard() {
 
     return (
         <div className="dashboard">
-            <h2>
-                Dashboard & Analytics
-            </h2>
+            <h2>Dashboard</h2>
 
-            {/* Key Metrics - 4 cards showing total apps, response rate, offers, and avg response time */}
             <div className="metrics-grid">
                 <div className="metric-card">
-                    <div className="metric-icon">📊</div>
-                    <div className="metric-content">
-                        <div className="metric-value">
-                            {totalApps}
-                        </div>
-                        <div className="metric-label">
-                            Total Applications
-                        </div>
+                    <div className="metric-label">Total applications</div>
+                    <div className="metric-value">{totalApps}</div>
+                </div>
+
+                <div className="metric-card">
+                    <div className="metric-label">Response rate</div>
+                    <div className="metric-value">{responseRate}<span className="metric-unit">%</span></div>
+                </div>
+
+                <div className="metric-card">
+                    <div className="metric-label">Offers received</div>
+                    <div className="metric-value">{offers}</div>
+                </div>
+
+                <div className="metric-card">
+                    <div className="metric-label">Avg. time to response</div>
+                    <div className="metric-value">{avgDaysToResponse}</div>
+                </div>
+
+                <div className="metric-card">
+                    <div className="metric-label">Documents</div>
+                    <div className="metric-value">{documentSummary?.totalDocuments || 0}</div>
+                    <div className="metric-sublabel">
+                        {documentSummary?.totalStorageFormatted || '0 B'} stored
                     </div>
                 </div>
 
                 <div className="metric-card">
-                    <div className="metric-icon">📈</div>
-                    <div className="metric-content">
-                        <div className="metric-value">
-                            {responseRate}%
-                        </div>
-                        <div className="metric-label">
-                            Response Rate
-                        </div>
-                    </div>
-                </div>
-
-                <div className="metric-card">
-                    <div className="metric-icon">🎯</div>
-                    <div className="metric-content">
-                        <div className="metric-value">
-                            {offers}
-                        </div>
-                        <div className="metric-label">
-                            Offers Received
-                        </div>
-                    </div>
-                </div>
-
-                <div className="metric-card">
-                    <div className="metric-icon">⏱️</div>
-                    <div className="metric-content">
-                        <div className="metric-value">
-                            {avgDaysToResponse}
-                        </div>
-                        <div className="metric-label">
-                            Avg. Time to Response
-                        </div>
-                    </div>
-                </div>
-
-                {/* Documents metric card — shows total file count and total storage used */}
-                <div className="metric-card">
-                    <div className="metric-icon">📎</div>
-                    <div className="metric-content">
-                        {/* Total number of documents uploaded across all applications */}
-                        <div className="metric-value">
-                            {documentSummary?.totalDocuments || 0}
-                        </div>
-                        <div className="metric-label">
-                            Documents
-                        </div>
-                        {/* Human-readable total storage (e.g. "1.2 MB used") — falls back to "0 B" */}
-                        <div className="metric-sublabel">
-                            {documentSummary?.totalStorageFormatted || '0 B'} used
-                        </div>
-                    </div>
-                </div>
-
-                {/* Reminder metric card */}
-                <div className="metric-card">
-                    <div className="metric-icon">🔔</div>
-                    <div className="metric-content">
-                        <div className="metric-value">
-                            {reminderSummary?.pendingReminders || 0}
-                        </div>
-                        <div className="metric-label">Pending Reminders</div>
-                        <div className="metric-sublabel">
-                            {reminderSummary?.totalReminders || 0}
-                        </div>
+                    <div className="metric-label">Pending reminders</div>
+                    <div className="metric-value">{reminderSummary?.pendingReminders || 0}</div>
+                    <div className="metric-sublabel">
+                        of {reminderSummary?.totalReminders || 0} total
                     </div>
                 </div>
             </div>
@@ -247,7 +200,7 @@ function Dashboard() {
                             <YAxis />
                             <Tooltip />
                             <Legend />
-                            <Bar dataKey='count' fill='#667eea' name='Applications' />
+                            <Bar dataKey='count' fill='#2f5d44' name='Applications' />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
@@ -283,18 +236,15 @@ function Dashboard() {
             {/* Recent Documents — only rendered when the summary exists and has at least one document */}
             {documentSummary && documentSummary.recentDocuments.length > 0 && (
                 <div className="recent-documents-section">
-                    <h3>
-                        Recent Documents 📎
-                    </h3>
+                    <h3>Recent documents</h3>
                     <div className="recent-documents-list">
                         {documentSummary.recentDocuments.map(doc => (
                             <div
                                 key={doc.id}
                                 className="recent-document-item"
                             >
-                                {/* Emoji icon chosen based on the file's MIME type */}
                                 <div className="doc-icon">
-                                    {getFileIcon(doc.fileType)}
+                                    {getFileExtension(doc.originalFileName)}
                                 </div>
                                 <div className="doc-info">
                                     {/* Original file name as uploaded by the user */}
@@ -315,7 +265,7 @@ function Dashboard() {
             {/* Upcoming Reminders — only rendered when the summary has at least one pending reminder */}
             {reminderSummary && reminderSummary.upcomingReminders.length > 0 && (
                 <div className="upcoming-reminders-section">
-                    <h3>Upcoming Reminders 🔔</h3>
+                    <h3>Upcoming reminders</h3>
                     <div className="upcoming-reminders-list">
                         {reminderSummary.upcomingReminders.map(reminder => (
                             <div key={reminder.id} className="upcoming-reminder-card">
@@ -331,7 +281,7 @@ function Dashboard() {
                                     {/* Linked application company — only shown if reminder is tied to one */}
                                     {reminder.applicationCompany && (
                                         <div className="reminder-app">
-                                            📋 {reminder.applicationCompany}
+                                            {reminder.applicationCompany}
                                         </div>
                                     )}
                                 </div>
@@ -344,7 +294,7 @@ function Dashboard() {
             {/* Upcoming Interviews — only rendered when at least one scheduled interview exists */}
             {upcomingInterviews.length > 0 && (
                 <div className="upcoming-interviews-section">
-                    <h3>Upcoming Interviews 📅</h3>
+                    <h3>Upcoming interviews</h3>
                     <div className="upcoming-interviews-list">
                         {/* Parentheses give an implicit return so each card is actually rendered */}
                         {upcomingInterviews.map(interview => (
@@ -369,7 +319,7 @@ function Dashboard() {
                                     {/* Location is optional — only shown if present */}
                                     {interview.location && (
                                         <div className="interview-location">
-                                            📍 {interview.location}
+                                            {interview.location}
                                         </div>
                                     )}
                                 </div>

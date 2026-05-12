@@ -32,9 +32,9 @@ function Login() {
         <div className="auth-container">
             <div className="auth-card">
                 <div className="auth-header">
-                    <h1>📋 Job Tracker</h1>
-                    <h2>Welcome back</h2>
-                    <p>Sign in to continue tracking your applications</p>
+                    <h1>Job Tracker</h1>
+                    <h2>Sign in</h2>
+                    <p>Welcome back &mdash; let's keep going.</p>
                 </div>
 
                 {/* Controlled form — each input is bound to state via value + onChange */}

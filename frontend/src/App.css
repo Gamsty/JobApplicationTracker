@@ -1,111 +1,96 @@
-/* ========== App Root ========== */
-/* Full-height container that fills the viewport with the theme background color */
 .app {
     min-height: 100vh;
     background-color: var(--bg-primary);
 }
 
-/* ========== App Header ========== */
-/* Gradient banner at the top of every page — always uses white text on the colored background */
-/* Colors here are intentionally hardcoded (not themed) since the gradient provides its own contrast */
 .app-header {
-    background: linear-gradient(135deg, var(--accent-color) 0%, #764ba2 100%);
-    padding: 40px 20px;
-    color: white;
-    text-align: center;
-    box-shadow: 0 2px 8px var(--shadow);
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 22px 24px;
+    color: var(--text-primary);
 }
 
 .app-header h1 {
-    font-size: 32px;
-    margin-bottom: 10px;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--text-primary);
 }
 
 .app-header p {
-    font-size: 16px;
-    opacity: 0.9;
+    font-size: 13px;
+    color: var(--text-muted);
 }
 
-/* ========== Dark Mode Toggle ========== */
-/* Pill-shaped button in the header — semi-transparent white on the gradient background */
-/* Toggles between light and dark mode, persisted in localStorage */
 .theme-toggle {
-    margin-top: 12px;
-    padding: 8px 16px;
-    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent to blend with the gradient */
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 20px; /* Pill shape */
-    font-size: 14px;
+    margin-left: 4px;
+    padding: 7px 12px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: 13px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: border-color 0.2s, color 0.2s;
 }
 
 .theme-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.3);
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
-/* ========== Main Content Area ========== */
 .app-main {
-    padding: 30px 20px;
+    padding: 36px 24px 64px;
 }
 
-/* Centered content container with a max-width for readability on wide screens */
 .container {
-    max-width: 1200px;
+    max-width: 1160px;
     margin: 0 auto;
 }
 
-/* ========== Header Actions ========== */
-/* Row containing the "Add New Application" button above the application list */
 .header-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
-/* Primary action button — accent color with a hover lift effect */
 .primary-button {
     background-color: var(--accent-color);
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
+    color: #fff;
+    padding: 10px 18px;
+    border: 1px solid var(--accent-color);
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 2px 4px var(--shadow);
+    transition: background-color 0.15s, border-color 0.15s;
+    font-family: inherit;
 }
 
 .primary-button:hover {
     background-color: var(--accent-hover);
-    box-shadow: 0 4px 8px var(--shadow);
-    transform: translateY(-2px); /* Subtle lift on hover */
+    border-color: var(--accent-hover);
 }
 
-/* ========== Loading & Error States ========== */
-/* Centered full-page containers shown while data is loading or when an API error occurs */
 .loading-container, .error-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    min-height: 60vh;
     padding: 20px;
 }
 
-/* Spinning circle animation for the loading state */
-/* Uses a colored top border to create the spinning effect */
 .spinner {
-    border: 4px solid var(--border-color); /* Light gray circle */
-    border-top: 4px solid var(--accent-color); /* Colored arc that spins */
+    border: 2px solid var(--border-color);
+    border-top: 2px solid var(--accent-color);
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20px;
+    width: 28px;
+    height: 28px;
+    animation: spin 0.9s linear infinite;
+    margin-bottom: 14px;
 }
 
 @keyframes spin {
@@ -113,61 +98,55 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Error state heading and retry button */
 .error-container h2 {
     color: var(--error-color);
     margin-bottom: 10px;
 }
 
 .error-container button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: var(--accent-color);
-    color: white;
-    border: none;
-    border-radius: 4px;
+    margin-top: 18px;
+    padding: 9px 18px;
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
     cursor: pointer;
+    font-family: inherit;
 }
 
 .error-container button:hover {
-    background-color: var(--accent-hover);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
 }
 
-/* ========== Navigation ========== */
-/* Inline nav container sitting between the title block and the action buttons */
-/* Bug fix: was two conflicting .nav-link blocks — first was a dead flex-container rule from
-   an older layout where .nav-link was a wrapper div; NavLink renders as <a>, not a container */
 .header-nav {
     display: flex;
-    gap: 8px;
+    gap: 2px;
 }
 
-/* Individual nav link — ghost pill style to blend with the gradient header */
 .nav-link {
-    color: white;
+    color: var(--text-secondary);
     text-decoration: none;
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: 7px 12px;
+    border-radius: 3px;
     font-size: 14px;
-    font-weight: 600;
-    transition: background-color 0.2s;
+    font-weight: 500;
+    transition: color 0.15s, background-color 0.15s;
+    position: relative;
 }
 
 .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    background-color: var(--bg-hover);
 }
 
-/* Solid white fill + accent text when the link matches the current URL */
 .nav-link.active {
-    background-color: white;
-    color: var(--accent-color); /* was #667eea — hardcoded, use variable to stay in sync */
+    color: var(--accent-color);
+    background-color: var(--accent-soft);
 }
 
-/* ========== Header Layout ========== */
-/* Inner flex row inside the header — constrains content to 1200px and spreads
-   the title/greeting block, nav, logout button, and theme toggle across the full width */
 .header-content {
-    max-width: 1200px;
+    max-width: 1160px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
@@ -175,63 +154,55 @@
     gap: 20px;
 }
 
-/* "Welcome back, John!" subtitle beneath the page title.
-   Slightly faded (opacity 0.9) so it doesn't compete with the h1 */
 .user-greeting {
-    font-size: 14px;
-    opacity: 0.9;
-    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    letter-spacing: 0;
 }
 
-/* Ghost-style logout button — semi-transparent white fill keeps it visible
-   against the purple header gradient without being too prominent */
 .logout-button {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 2px solid white;
-    padding: 8px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: bold;
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    padding: 7px 14px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: border-color 0.15s, color 0.15s;
+    font-family: inherit;
 }
 
-/* On hover the button inverts: solid white fill with accent text,
-   giving clear visual feedback that it is clickable */
 .logout-button:hover {
-    background-color: white;
-    color: var(--accent-color); /* was #667eea — hardcoded, use variable to stay in sync */
+    border-color: var(--error-color);
+    color: var(--error-color);
 }
 
-/* ========== Responsive Design ========== */
-/* On mobile: smaller header text, stacked header layout, full-width nav links */
 @media (max-width: 768px) {
-    .app-header h1 {
-        font-size: 24px;
+    .app-header {
+        padding: 16px 18px;
     }
 
-    /* Stack title, nav, and buttons vertically on small screens */
+    .app-header h1 {
+        font-size: 19px;
+    }
+
     .header-content {
         flex-direction: column;
         align-items: flex-start;
+        gap: 12px;
     }
 
-    /* Allow nav links to wrap onto a second line if there are too many to fit */
     .header-nav {
         flex-wrap: wrap;
     }
 
-    /* Each nav link takes full width so they stack in a list */
     .nav-link {
-        width: 100%;
-    }
-
-    .app-header p {
-        font-size: 14px;
+        padding: 6px 10px;
     }
 
     .container {
-        padding: 0px 10px;
+        padding: 0 8px;
     }
 }

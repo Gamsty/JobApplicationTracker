@@ -1,68 +1,66 @@
-/* ========== Stats Summary Grid ========== */
-/* Responsive grid of stat cards — auto-fits as many 200px+ cards per row as space allows */
-/* Displayed above the application list on the home page */
 .stats-summary {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    margin-bottom: 32px;
+    background-color: var(--border-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-/* ========== Stat Card ========== */
-/* Individual card for each status count (e.g., "Applied: 5") */
-/* Left border provides a colored accent stripe */
 .stat-card {
     background-color: var(--bg-secondary);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow);
-    border-left: 4px solid var(--accent-color);
-    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 18px 20px;
     color: var(--text-primary);
+    transition: background-color 0.15s;
 }
 
-/* Lift effect on hover for interactive feel */
 .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px var(--shadow);
+    background-color: var(--bg-hover);
 }
 
-/* Special "Total Applications" card — gradient background to stand out from status cards */
 .stat-card.total {
-    border-left-color: var(--accent-color);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white; /* White text on gradient background */
+    background-color: var(--accent-soft);
 }
 
-/* ========== Card Content ========== */
-/* Large number displayed prominently (e.g., "12") */
 .stat-value {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-/* Status name label below the number (e.g., "Applied") */
-.stat-label {
-    font-size: 14px;
-    opacity: 0.8;
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--text-primary);
     margin-bottom: 4px;
+    letter-spacing: -0.02em;
 }
 
-/* Percentage of total shown below the label (e.g., "25%") */
+.stat-card.total .stat-value {
+    color: var(--accent-color);
+}
+
+.stat-label {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.stat-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
 .stat-percentage {
     font-size: 12px;
-    opacity: 0.6;
+    color: var(--text-muted);
 }
 
-/* Increase opacity of label and percentage text on the gradient "total" card for readability */
-.stat-card.total .stat-label,
-.stat-card.total .stat-percentage {
-    opacity: 0.9;
-}
-
-/* ========== Responsive Design ========== */
-/* On mobile: 2 cards per row instead of auto-fit */
 @media (max-width: 768px) {
     .stats-summary {
         grid-template-columns: 1fr 1fr;

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DOCUMENT_TYPE, DOCUMENT_TYPE_LABELS } from "../utils/constants";
+import { DOCUMENT_TYPE, DOCUMENT_TYPE_LABELS, getFileExtension } from "../utils/constants";
 import './DocumentUploadForm.css';
 
 // Modal form for uploading a document to a specific job application.
@@ -112,11 +112,12 @@ function DocumentUploadForm({ onSubmit, onCancel }) {
         <div className="form-overlay">
             <div className="form-container document-upload-form">
                 <div className="form-header">
-                    <h2>Upload Document</h2>
+                    <h2>Upload document</h2>
                     <button
                         className="close-button"
                         onClick={onCancel}
-                    >x</button>
+                        aria-label="Close"
+                    >&times;</button>
                 </div>
 
                 <form
@@ -139,9 +140,8 @@ function DocumentUploadForm({ onSubmit, onCancel }) {
                         onDrop={handleDrop}
                     >
                         {selectedFile ? (
-                            /* Selected file preview — shows name, size, and a remove button */
                             <div className="selected-file-info">
-                                <div className="file-icon">📎</div>
+                                <div className="file-icon">{getFileExtension(selectedFile.name)}</div>
                                 <div className="file-details">
                                     <div className="file-name">
                                         {selectedFile.name}
@@ -155,18 +155,17 @@ function DocumentUploadForm({ onSubmit, onCancel }) {
                                     onClick={() => setSelectedFile(null)}
                                     className="remove-button-file"
                                 >
-                                    x
+                                    Remove
                                 </button>
                             </div>
                         ) : (
-                            /* Empty drop-zone prompt with a hidden file input */
                             <>
-                                <div className="upload-icon">📤</div>
+                                <div className="upload-icon">Attach a file</div>
                                 <p className="upload-text">
                                     <strong>Click to upload</strong> or drag and drop
                                 </p>
                                 <p className="upload-hint">
-                                    PDF, Word, Image, or Text (Max 10MB)
+                                    PDF, Word, image, or text. Max 10 MB.
                                 </p>
                                 <input
                                     type="file"
@@ -179,7 +178,7 @@ function DocumentUploadForm({ onSubmit, onCancel }) {
                                     htmlFor="file-input"
                                     className="select-button-file"
                                 >
-                                    Select File
+                                    Select file
                                 </label>
                             </>
                         )}
@@ -195,7 +194,7 @@ function DocumentUploadForm({ onSubmit, onCancel }) {
                     {/* Document type selector — maps to the backend DocumentType enum */}
                     <div className="form-group">
                         <label htmlFor="documentType">
-                            Document Type <span className="required">*</span>
+                            Document type <span className="required">*</span>
                         </label>
                         <select
                             id="documentType"
@@ -247,7 +246,7 @@ function DocumentUploadForm({ onSubmit, onCancel }) {
                             className="submit-button"
                             disabled={isSubmitting || !selectedFile}
                         >
-                            {isSubmitting ? 'Uploading...' : 'Upload Document'}
+                            {isSubmitting ? 'Uploading…' : 'Upload document'}
                         </button>
                     </div>
                 </form>

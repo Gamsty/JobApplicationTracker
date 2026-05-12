@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { documentService } from "../services/documentService";
-import { DOCUMENT_TYPE_LABELS, getFileIcon } from '../utils/constants';
+import { DOCUMENT_TYPE_LABELS, getFileExtension } from '../utils/constants';
 import './DocumentList.css';
 
 // Displays all documents attached to a single job application.
@@ -86,7 +86,7 @@ function DocumentList({ applicationId, onUpload }) {
                     Documents ({documents.length})
                 </h3>
                 <button onClick={onUpload} className="upload-button-document">
-                    📤 Upload Document
+                    + Upload document
                 </button>
             </div>
 
@@ -105,9 +105,8 @@ function DocumentList({ applicationId, onUpload }) {
                 <div className="documents-grid">
                     {documents.map((doc) => (
                         <div key={doc.id} className="document-card">
-                            {/* Emoji icon based on the actual file format (PDF, Word, image, etc.) */}
                             <div className="document-icon">
-                                {getFileIcon(doc.fileType)}
+                                {getFileExtension(doc.originalFileName)}
                             </div>
 
                             <div className="document-info">
@@ -136,21 +135,18 @@ function DocumentList({ applicationId, onUpload }) {
                                 )}
                             </div>
 
-                            {/* Action buttons: download and delete */}
                             <div className="document-actions">
                                 <button
                                     onClick={() => handleDownload(doc)}
                                     className="download-button"
-                                    title="Download"
                                 >
-                                    ⬇️
+                                    Download
                                 </button>
                                 <button
                                     onClick={() => handleDelete(doc.id)}
                                     className="delete-button-doc"
-                                    title="Delete"
                                 >
-                                   🗑️
+                                   Delete
                                 </button>
                             </div>
                         </div>

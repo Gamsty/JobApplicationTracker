@@ -45,9 +45,9 @@ function Register() {
         <div className="auth-container">
             <div className="auth-card">
                 <div className="auth-header">
-                    <h1>📋 Job Tracker</h1>
-                    <h2>Create Account</h2>
-                    <p>Start tracking your job applications today</p>
+                    <h1>Job Tracker</h1>
+                    <h2>Create an account</h2>
+                    <p>Takes about a minute. No email confirmation needed.</p>
                 </div>
 
                 {/* Controlled form — each input is bound to state via value + onChange */}

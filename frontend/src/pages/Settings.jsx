@@ -81,9 +81,9 @@ function Settings({ showToast }) {
             <div className='settings-section'>
                 <h3>Email Settings</h3>
                 <div className='email-info-box'>
-                    <p>📧 Email reminders are sent to the email address associated with your account.</p>
-                    <p>⏰ Reminders are checked and sent every 5 minutes.</p>
-                    <p>🔔 You'll receive an email when the scheduled time arrives.</p>
+                    <p>Reminders are sent to the email address on your account.</p>
+                    <p>The scheduler checks every 5 minutes and dispatches anything due.</p>
+                    <p>You can disable a reminder at any time without deleting it.</p>
                 </div>
             </div>
         </div>
