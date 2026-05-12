@@ -162,9 +162,9 @@ function Dashboard() {
                                 data={pieData}
                                 cx='50%'
                                 cy='50%'
-                                labelLine={true}
-                                label={({name, percent}) => percent > 0 ? `${name}: ${(percent * 100).toFixed(0)}%` : ''}
-                                outerRadius={90}
+                                labelLine={false}
+                                label={false}
+                                outerRadius={110}
                                 fill="#8884d8"
                                 dataKey='value'
                             >

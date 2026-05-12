@@ -1,27 +1,26 @@
 .stats-summary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1px;
+    gap: 10px;
     margin-bottom: 32px;
-    background-color: var(--border-color);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    overflow: hidden;
 }
 
 .stat-card {
     background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
     padding: 18px 20px;
     color: var(--text-primary);
-    transition: background-color 0.15s;
+    transition: background-color 0.15s, border-color 0.15s;
 }
 
 .stat-card:hover {
-    background-color: var(--bg-hover);
+    border-color: var(--text-muted);
 }
 
 .stat-card.total {
     background-color: var(--accent-soft);
+    border-color: var(--accent-color);
 }
 
 .stat-value {
@@ -64,5 +63,11 @@
 @media (max-width: 768px) {
     .stats-summary {
         grid-template-columns: 1fr 1fr;
+    }
+
+    /* When the card count is odd (7 status entries today), make the trailing
+       card span both columns instead of leaving an empty slot beside it. */
+    .stat-card:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
     }
 }
